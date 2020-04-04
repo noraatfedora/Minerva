@@ -1,5 +1,4 @@
 import os
-from . import db, auth, request
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
@@ -24,19 +23,22 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
+    
     # Home page
     @app.route('/index')
     def index():
         return render_template("index.html")
 
+    from . import db
     db.init_app(app)
-
+    
+    from . import auth
     app.register_blueprint(auth.bp)
     # request.py has blueprints for both requesting and displaying orders
     # KARTHIK: That's the file where you put your cool google sheets stuff!
-    #app.register_blueprint(request.bp)
-    #app.add_url_rule('/', endpoint='index')
+    from . import request_items 
+    app.register_blueprint(request_items.bp)
+    app.add_url_rule('/', endpoint='index')
 
     return app
     
