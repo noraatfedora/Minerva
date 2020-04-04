@@ -6,10 +6,20 @@
 
 {% block content %}
   <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Create an Account">
+    <ul>
+      <li><label for="email">Your email address</label></li>
+      <li><input name="email" id="email" required></li>
+      <li><label for="address">Your home address</label></li>
+      <li><input name="address" id="address" required></li>
+      <li><label for="phone">Phone number (cell)<label></li>
+      <li><input name="cell phone" id="cell phone" required></li>
+      <li><label for="landline">Phone number (landline, optional)</label></li>
+      <li><input name="home phone" id="home phone"></li>
+      <li><label for="instructions">Special delivery instructions (optional)</label></li>
+      <li><input name="instructions" id="instructions"></li>
+      <li><label for="password">Password</label></li>
+      <li><input type="password" name="password" id="password" required></li>
+      <li><input type="submit" value="Create an Account"></li>
+    </ul>
   </form>
 {% endblock %}
