@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
+
 
 
 def create_app(test_config=None):
@@ -26,8 +27,13 @@ def create_app(test_config=None):
 
     # a simple page that says hello
     @app.route('/')
-    def index():
-        return render_template("index.html")
+    @app.route('/home')
+    def home():
+        return render_template('home.html', title = 'Home')
+    
+    @app.route('/volunteer')
+    def volunteer():
+        return render_template('volunteer.html', title = 'Volunteer')
 
     from . import db
     db.init_app(app)
@@ -36,4 +42,3 @@ def create_app(test_config=None):
     app.register_blueprint(auth.bp)
     
     return app
-    
