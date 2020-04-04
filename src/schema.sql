@@ -7,8 +7,9 @@ CREATE TABLE user (
     password TEXT NOT NULL,
     address TEXT NOT NULL,
     cellPhone TEXT NOT NULL,
-    instructions TEXT NOT NULL,
-    homePhone TEXT NOT NULL
+    instructions TEXT,
+    homePhone TEXT,
+    items TEXT
 );
 
 CREATE TABLE post (
