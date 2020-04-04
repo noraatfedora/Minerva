@@ -12,24 +12,28 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    redirect_url = request.args.get('redirect_url')
+    if redirect_url is None:
+        redirect_url = 'index'
+    print("Redirect url: " + redirect_url)
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
         db = get_db()
         error = None
         user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
+            'SELECT * FROM user WHERE email = ?', (email,)
         ).fetchone()
 
         if user is None:
-            error = 'Incorrect username.'
+            error = 'Incorrect email address.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
         
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('hello'))
+            return redirect(url_for(redirect_url))
         
         flash(error)
     
@@ -40,23 +44,31 @@ def register():
     if request.method == "POST":
         email = request.form['email']
         password = request.form['password']
+        address = request.form['address']
+        instructions = request.form['instructions']
+        cellPhone = request.form['cell phone']
+        homePhone = request.form['home phone']
 
         db = get_db()
         error = "" 
         
         if not email:
-            error += "Username is required."
+            error += "Username is required.\n"
         elif not password:
-            error += "Password is required."
+            error += "Password is required.\n"
+        elif not address:
+            error += "Home address is required.\n"
+        elif not cellPhone:
+            error += "Cell phone is required."
         elif db.execute(
-            'SELECT id FROM user WHERE username = ?', (username,)
+            'SELECT id FROM user WHERE email = ?', (email,)
         ).fetchone() is not None:
-            error = 'User {} is already registered.'.format(username)
+            error = 'User {} is already registered.'.format(email)
         
         if error is "":
             db.execute(
-                'INSERT INTO user (email, password) VALUES (?, ?)',
-                (email, generate_password_hash(password))
+                'INSERT INTO user (email, password, address, instructions, cellPhone, homePhone) VALUES (?, ?, ?, ?, ?, ?)',
+                (email, generate_password_hash(password), address, instructions, cellPhone, homePhone)
             )
             db.commit()
             return redirect(url_for('auth.login'))
