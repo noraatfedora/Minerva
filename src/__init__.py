@@ -1,5 +1,5 @@
 import os
-from . import db, auth
+from . import db, auth, request
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
@@ -26,21 +26,17 @@ def create_app(test_config=None):
         pass
 
     # Home page
-    @app.route('/')
+    @app.route('/index')
     def index():
         return render_template("index.html")
-
-    # Request food page, redirects to sign in page if you're not signed in
-    @app.route('/request')
-    def request():
-        if g.user is None:
-            return redirect(url_for("auth.login", redirect_url="request"))
-        else:
-            return render_template("request.html")
 
     db.init_app(app)
 
     app.register_blueprint(auth.bp)
-    
+    # request.py has blueprints for both requesting and displaying orders
+    # KARTHIK: That's the file where you put your cool google sheets stuff!
+    #app.register_blueprint(request.bp)
+    #app.add_url_rule('/', endpoint='index')
+
     return app
     
