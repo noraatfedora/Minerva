@@ -3,6 +3,10 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
 
+from flask import Flask, render_template, url_for
+
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -29,6 +33,16 @@ def create_app(test_config=None):
     def index():
         return render_template("index.html")
 
+    # a simple page that says hello
+    @app.route('/')
+    @app.route('/home')
+    def home():
+        return render_template('home.html', title = 'Home')
+    
+    @app.route('/volunteer')
+    def volunteer():
+        return render_template('volunteer.html', title = 'Volunteer')
+
     from . import db
     db.init_app(app)
     
@@ -41,4 +55,3 @@ def create_app(test_config=None):
     app.add_url_rule('/', endpoint='index')
 
     return app
-    

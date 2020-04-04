@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@200;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap');
+* {
+    margin: 0px;
+    padding: 0px;
+
+}
+
+html, body {
+    height:100%;
+    background-color: #f9f9f9;
+}
+
+#navtext {
+    font-family: sans-serif;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+p {
+    color: #37393a;
+    margin-left: 50px;
+    margin-right: 50px;
+    font-family:sans-serif;
+}
+
+h1 {
+    color:#77b6ea;
+    text-align: center;
+}
+
+#container {
+    min-height: 100%;
+}
+
+#main {
+    overflow: auto;
+    padding-bottom:50px
+}
+
+ .navbar {
+    min-height: 40px;
+    background-color: #77b6ea;
+ }
+
+#logo {
+    font-family:'Amatic SC', cursive;
+    color:#e5e5e5;
+    font-size: 30px
+}
+
+#Git {
+    position: relative;
+    left: -10px;
+}
+
+footer {
+    background-color:#a2c3a4;
+    color: #37393a;
+    min-width: 300px;
+    position: relative;
+    text-align:center;
+    padding:40px;
+    height: 100px;
+    clear:both;
+}
+
+
+
+
