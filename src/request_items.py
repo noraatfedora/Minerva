@@ -15,7 +15,7 @@ def request_items():
     if request.method == "POST":
         items = request.form['items']
         error = None
-
+        print("Items: " + items)
         if not items:
             error = "Items are required."
         
@@ -23,15 +23,13 @@ def request_items():
             flash(error)
         else:
             db = get_db()
-            
+            sqlcommand = """UPDATE user SET items = ? WHERE email = ?"""
+            print(sqlcommand)
             db.execute(
-                'UPDATE user' # change the params for users so that
-                'SET items = ?' # they have the given items
-                'WHERE email = ?', # but only for our logged in user.
-                # email is set to be unique, so each email has to correspond
-                # to exactly 1 user.
-                (items, g.user.email)
+                sqlcommand,
+                (items, g.user['email'])
             )
+            db.commit()
             return redirect("/index")
     
     return render_template("request_items.html")
