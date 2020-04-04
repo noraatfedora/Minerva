@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Request a Donation{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="items">Items</label>
+    <input name="items" id="items" required>
+  </form>
+{% endblock %}

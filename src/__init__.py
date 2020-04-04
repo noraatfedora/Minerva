@@ -1,7 +1,8 @@
 import os
-
-from flask import Flask
-
+from . import db, auth
+from flask import (
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
+)
 
 def create_app(test_config=None):
     # create and configure the app
@@ -24,15 +25,21 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
+    # Home page
     @app.route('/')
-    def hello():
-        return 'Hello, World!'
+    def index():
+        return render_template("index.html")
 
-    from . import db
+    # Request food page, redirects to sign in page if you're not signed in
+    @app.route('/request')
+    def request():
+        if g.user is None:
+            return redirect(url_for("auth.login", redirect_url="request"))
+        else:
+            return render_template("request.html")
+
     db.init_app(app)
 
-    from . import auth
     app.register_blueprint(auth.bp)
     
     return app
