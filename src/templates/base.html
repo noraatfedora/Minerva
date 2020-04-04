@@ -5,7 +5,7 @@
     <h1>Minerva</h1>
     <ul>
         <li><a href="{{ url_for('index') }}">Home</a></li>
-        <li><a href="{{ url_for('request') }}">Request a donation</a></li>
+        <li><a href="{{ url_for('request_items.request_items') }}">Request a donation</a></li>
         {% if g.user %}
             <li><span>Logged in as {{ g.user['email'] }}</span></li>
             <li><a href="{{ url_for('auth.logout') }}">Sign out</a></li>
