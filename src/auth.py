@@ -43,11 +43,12 @@ def login():
 def register():
     if request.method == "POST":
         email = request.form['email']
+        print(email)
         password = request.form['password']
         address = request.form['address']
         instructions = request.form['instructions']
-        cellPhone = request.form['cell phone']
-        homePhone = request.form['home phone']
+        cellPhone = request.form['cell']
+        homePhone = request.form['homePhone']
 
         db = get_db()
         error = "" 
