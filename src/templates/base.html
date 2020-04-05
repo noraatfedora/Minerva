@@ -31,6 +31,7 @@
               <div class="navbar-nav">
                 <a class="nav-item nav-link" href="{{ url_for('home') }}" id = "navtext"><strong>Home</strong></a>
                 <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id = "navtext"><strong>Volunteer</strong></a>
+
               </div>
               <div class="navbar-nav ml-auto">
                 <a class="nav-item nav-link" href="#" style="font-size: 20px;"><i class="fas fa-donate"></i></a>
@@ -45,6 +46,7 @@
     <br></br>
     <div id = "container">
         <div id = "main">
+            <h1>okai dis is {{ title }} </h1>
             {% block content %}
             {% endblock %}    
         </div>
