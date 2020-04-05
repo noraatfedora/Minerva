@@ -7,14 +7,16 @@ from src.db import get_db
 
 itemsList = [
     {
-        'name': 'ramen',
+        'name': 'Ramen',
         'category': 'food',
-        'max': '20'
+        'max': '20',
+        'picture': 'ramen.jpg'
     },
     {
-        'name': 'toothpaste',
+        'name': 'Toothpaste',
         'category': 'hygiene',
-        'max': '5'
+        'max': '5',
+        'picture': 'toothpaste.png'
     }
 
 ]
