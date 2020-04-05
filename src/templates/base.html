@@ -1,26 +1,65 @@
 <!DOCTYPE html>
-<title>{% block title %}{% endblock %} - Minerva</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<nav>
-    <h1>Minerva</h1>
-    <ul>
-        <li><a href="{{ url_for('index') }}">Home</a></li>
-        <li><a href="{{ url_for('request_items.request_items') }}">Request a donation</a></li>
-        {% if g.user %}
-            <li><span>Logged in as {{ g.user['email'] }}</span></li>
-            <li><a href="{{ url_for('auth.logout') }}">Sign out</a></li>
-        {% else %}
-            <li><a href="{{ url_for('auth.register') }}">Create an account</a></li>
-            <li><a href="{{ url_for('auth.login') }}">Sign in</a></li>
-        {% endif %}
-    </ul>
-</nav>
-<section class="content">
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- FontAwesome kit -->
+    <script src="https://kit.fontawesome.com/34bfb9292d.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+
+    {% if title %}
+        <title>Minerva — {{ title }}</title>
+    {% else %}
+        <title>Minerva</title>
+    {% endif %}
+
+</head>
+
+<body>
     <header>
-        {% block header %}{% endblock %}
+        <nav class="navbar navbar-expand-lg navbar navbar-dark">
+            <a class="navbar-brand" href="{{ url_for('home') }}" id="logo">Minerva</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" 
+            aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+              <div class="navbar-nav">
+                <a class="nav-item nav-link" href="{{ url_for('home') }}" id = "navtext"><strong>Home</strong></a>
+                <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id = "navtext"><strong>Volunteer</strong></a>
+
+              </div>
+              <div class="navbar-nav ml-auto">
+                <a class="nav-item nav-link" href="#" style="font-size: 20px;"><i class="fas fa-donate"></i></a>
+                <a class="nav-item nav-link" href="https://github.com/jaredgoodman03/Minerva" style="font-size: 20px;"><i class="fab fa-github"></i></a>
+                <button class="btn btn-outline-light bg-light my-2 my-sm-0" type="submit">
+                <a href="{{ url_for('auth.login') }}" style="text-decoration: none; color:#5db7de" id="navtext"> Sign In 
+                <i class="fas fa-sign-in-alt"></i></a></button>
+              </div>
+            </div>
+          </nav>
     </header>
-    {% for message in get_flashed_messages() %}
-        <div class="flash">{{ message }}</div>
-    {% endfor %}
-    {% block content %}{% endblock %}
-</section>
+    <br></br>
+    <div id = "container">
+        <div id = "main">
+            <h1>okai dis is {{ title }} </h1>
+            {% block content %}
+            {% endblock %}    
+        </div>
+    </div>
+
+    <footer>
+        <p>Minerva: Developed by Aikas Bajaj, Prarthana Gajjala, Jared Goodman, and Karthik Vetrivel</p>
+    </footer>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+</body>
+</html>
