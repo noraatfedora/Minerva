@@ -3,8 +3,6 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
 
-from flask import Flask, render_template, url_for
-
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -26,11 +24,6 @@ def create_app(test_config=None):
     except OSError:
         pass
     
-    # Home page
-    @app.route('/index')
-    def index():
-        return render_template("index.html")
-
     # a simple page that says hello
     @app.route('/')
     @app.route('/home')
