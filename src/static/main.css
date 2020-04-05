@@ -38,7 +38,7 @@ h1 {
     padding-bottom:50px
 }
 
- .navbar {
+.navbar {
     min-height: 40px;
     background-color: #77b6ea;
  }
@@ -52,6 +52,14 @@ h1 {
 #Git {
     position: relative;
     left: -10px;
+}
+
+#logged-in {
+    position:relative;
+    top:7px;
+    left:8px;
+    color:#a7d7f5;
+    font-size:22px
 }
 
 footer {

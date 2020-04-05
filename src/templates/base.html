@@ -31,14 +31,28 @@
               <div class="navbar-nav">
                 <a class="nav-item nav-link" href="{{ url_for('home') }}" id = "navtext"><strong>Home</strong></a>
                 <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id = "navtext"><strong>Volunteer</strong></a>
-
+                <a class="nav-item nav-link" href="{{ url_for('request_items.request_items') }}" id = "navtext"><strong>Request</strong></a>
               </div>
               <div class="navbar-nav ml-auto">
                 <a class="nav-item nav-link" href="#" style="font-size: 20px;"><i class="fas fa-donate"></i></a>
                 <a class="nav-item nav-link" href="https://github.com/jaredgoodman03/Minerva" style="font-size: 20px;"><i class="fab fa-github"></i></a>
-                <button class="btn btn-outline-light bg-light my-2 my-sm-0" type="submit">
-                <a href="{{ url_for('auth.login') }}" style="text-decoration: none; color:#5db7de" id="navtext"> Sign In 
-                <i class="fas fa-sign-in-alt"></i></a></button>
+                {% if g.user %}
+                    <div class="btn-group">
+                        <a class="dropdown-toggle" data-toggle="dropdown" 
+                        aria-haspopup="true" aria-expanded="false" id="logged-in">
+                            <i class="fas fa-user-circle"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item disabled" href="#">Logged in as {{g.user['email']}}</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sign Out</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <button class="btn btn-outline-light bg-light my-2 my-sm-0" type="submit">
+                    <a href="{{ url_for('auth.login') }}" style="text-decoration: none; color:#5db7de" id="navtext"> Sign In 
+                    <i class="fas fa-sign-in-alt"></i></a></button>
+                {% endif %}
               </div>
             </div>
           </nav>
@@ -46,7 +60,6 @@
     <br></br>
     <div id = "container">
         <div id = "main">
-            <h1>okai dis is {{ title }} </h1>
             {% block content %}
             {% endblock %}    
         </div>

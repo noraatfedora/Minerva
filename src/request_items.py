@@ -5,6 +5,21 @@ from werkzeug.exceptions import abort
 from src.auth import login_required
 from src.db import get_db
 
+itemsList = [
+    {
+        'name': 'ramen',
+        'category': 'food',
+        'max': '20'
+    },
+    {
+        'name': 'toothpaste',
+        'category': 'hygiene',
+        'max': '5'
+    }
+
+]
+
+
 bp = Blueprint('request_items', __name__)
 
 # request seems like it's a reserved word somewhere or something,
@@ -32,4 +47,4 @@ def request_items():
             db.commit()
             return redirect("/index")
     
-    return render_template("request_items.html")
+    return render_template("request_items.html",items = itemsList)
