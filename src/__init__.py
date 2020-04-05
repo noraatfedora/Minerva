@@ -24,10 +24,15 @@ def create_app(test_config=None):
     except OSError:
         pass
     
-    # Home page
-    @app.route('/index')
-    def index():
-        return render_template("index.html")
+    # a simple page that says hello
+    @app.route('/')
+    @app.route('/home')
+    def home():
+        return render_template('home.html', title = 'Home')
+    
+    @app.route('/volunteer')
+    def volunteer():
+        return render_template('volunteer.html', title = 'Volunteer')
 
     from . import db
     db.init_app(app)
@@ -41,4 +46,3 @@ def create_app(test_config=None):
     app.add_url_rule('/', endpoint='index')
 
     return app
-    
