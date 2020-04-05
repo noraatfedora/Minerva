@@ -33,7 +33,7 @@ def login():
         
         flash(error)
     
-    return render_template('auth/login.html')
+    return render_template('auth/login.html', title = "Log In")
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -61,7 +61,7 @@ def register():
             return redirect(url_for('auth.login'))
         
         flash(error)
-    return render_template('auth/register.html')
+    return render_template('auth/register.html', title = 'Register')
 
 @bp.before_app_request
 def load_logged_in_user():
