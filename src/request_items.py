@@ -12,10 +12,33 @@ itemsList = [
         'max': '20',
         'picture': 'ramen.jpg'
     },
+
+    {
+        'name': 'Apples',
+        'category': 'food',
+        'max': '3',
+        'picture': 'apple.jpg'
+    },
+
+    {
+        'name': 'Bananas',
+        'category': 'food',
+        'max': '3',
+        'picture': 'banana.jpg'
+    },
+
+    {
+        'name': 'Potatoes',
+        'category': 'food',
+        'max': '5',
+        'picture': 'potato.jpg'
+    },
+
+
     {
         'name': 'Toothpaste',
         'category': 'hygiene',
-        'max': '5',
+        'max': '2',
         'picture': 'toothpaste.png'
     }
 
