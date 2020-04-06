@@ -4,47 +4,10 @@ from flask import (
 from werkzeug.exceptions import abort
 from src.auth import login_required
 from src.db import get_db
+from json import loads
 
-itemsList = [
-    {
-        'name': 'Ramen',
-        'category': 'food',
-        'max': '20',
-        'picture': 'ramen.jpg'
-    },
-
-    {
-        'name': 'Apples',
-        'category': 'food',
-        'max': '3',
-        'picture': 'apple.jpg'
-    },
-
-    {
-        'name': 'Bananas',
-        'category': 'food',
-        'max': '3',
-        'picture': 'banana.jpg'
-    },
-
-    {
-        'name': 'Potatoes',
-        'category': 'food',
-        'max': '5',
-        'picture': 'potato.jpg'
-    },
-
-
-    {
-        'name': 'Toothpaste',
-        'category': 'hygiene',
-        'max': '2',
-        'picture': 'toothpaste.png'
-    }
-
-]
-
-
+print("bippity boop")
+itemsList = loads(open("src/items.json", "r").read())
 bp = Blueprint('request_items', __name__)
 
 # request seems like it's a reserved word somewhere or something,
@@ -72,4 +35,4 @@ def request_items():
             db.commit()
             return redirect("/index")
     
-    return render_template("request_items.html",items = itemsList)
+    return render_template("request_items.html",items = itemsList.values())
