@@ -1,24 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Send a request</h1>
-  <div class="card-deck">
-  {% for item in items %} 
-    <div class="card p-3" style="width: 18rem;">
-      <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt="Ramen">
-      <div class="card-body">
-        <h5 class="card-title">{{item.name}}</h5>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-          <label class="form-check-label" for="exampleCheck1">I want this</label>
-        </div>
-        <div class="custom-range">
-          <label for="customRange3">Quantity</label>
-          <input type="number" name="amountInput" min="0" max='{{item.max}}' value="0" oninput="this.form.amountRange.value=this.value"/>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='request.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <section class="jumbotron text-center">
+    <div class="container">
+      <h1>Send a request</h1>
+      <p class="lead text-muted">
+        Use this form to send a request to the volunteers. Expect about a week for items to get to you. 
+        Although we encourage items being bought in bulk to minimize trips to the grocery store, some 
+        items have maximums due to costs and other practicalities. We thank you for your consideration. 
+      </p>
+    </div>
+  </section>
+
+
+  <div class="album py-5 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <img class="card-img-top" src="/static/pictures/tea.jpg" id = "img">
+            <div class="card-body">
+              <p class="card-text">
+                <div id = "item-name"> Tea Bags (Lipton) </div>
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                  <label class="form-check-label" for="exampleCheck1">I want this</label>
+                </div>
+                <div class="custom-range">
+                  <label for="customRange3">Quantity</label>
+                  <input type="number" name="amountInput" min="0" max='3' value="0" oninput="this.form.amountRange.value=this.value"/>
+                </div>
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+              </div>
+            </div>
+          </div>
+      </div>
+      
+    {% for item in items %}
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt="Ramen" id = "img">
+        <div class="card-body">
+          <p class="card-text">
+            <div id = "item-name"> {{item.name}} </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="exampleCheck1">
+              <label class="form-check-label" for="exampleCheck1">I want this</label>
+            </div>
+            <div class="custom-range">
+              <label for="customRange3">Quantity</label>
+              <input type="number" name="amountInput" min="0" max='{{item.max}}' value="0" oninput="this.form.amountRange.value=this.value"/>
+            </div>
+          </p>
         </div>
       </div>
     </div>
   {% endfor%}
-</div>
-  <button type="submit" class="btn btn-primary">Submit</button> 
+  <button type="submit" class="btn btn-primary" id = "submit-button">Submit</button> 
 {% endblock %}
