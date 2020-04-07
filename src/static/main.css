@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@200;500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
+
+
 * {
     margin: 0px;
     padding: 0px;
@@ -25,9 +28,14 @@ p {
     font-family:sans-serif;
 }
 
-h1 {
+h1, h2, h3, h4, h5, h6 {
     color:#77b6ea;
-    text-align: center;
+    font-family: 'Lilita One', cursive;
+}
+
+input {
+    color: #37393a !important;
+    background-color: #e5e5e5 !important;
 }
 
 #container {
@@ -51,8 +59,18 @@ h1 {
 }
 #logo {
     font-family:'Amatic SC', cursive;
-    color:#e92f2f;
+    color:#37393a;
     font-size: 40px
+}
+
+#logo-login {
+    position: relative;
+    font-family:'Amatic SC', cursive;
+    font-size:50px;
+    text-align: center;
+    top: 0px;
+    text-decoration: none;
+    color: #37393a;
 }
 
 #Git {
@@ -68,6 +86,10 @@ h1 {
     font-size:20px
 }
 
+.text-info {
+    color: #37393a !important;
+}
+
 footer {
     background-color:#a2c3a4;
     color: #37393a;
@@ -79,6 +101,49 @@ footer {
     clear:both;
 }
 
+#login .container #login-row #login-column #login-box {
+    margin-left:auto;
+    margin-right: auto;
+    margin-top: 5px;
+    width: 300px;
+    height: 270px;
+    padding: 10px;
+    border: 1px solid #d8dee2;
+    border-radius: 5px;
+    background-color: #a2c3a4;
+}
 
 
+#login .container #login-row #login-column #login-box #login-form {
+    padding: 20px;
+}
+#login .container #login-row #login-column #login-box #login-form #register-link {
+    margin-top: -85px;
+}
+.register-text {
+    position: relative;
+    top: 20px;
+    border: 1px solid #77b6ea;
+    height: 50px;
+    width: 390px;
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right:0px;
+    padding-left: 0px;
+    margin-left:auto;
+    margin-right: auto;
+    text-align:center;
+}
 
+.btn-success {
+    color: #37393a;
+    background-color: #77b6ea;
+    border-color: #37393a;
+}
+
+.btn-success:hover {
+    background-color: #37393a;
+    color: #77b6ea;
+    border-color: #77b6ea;
+}
