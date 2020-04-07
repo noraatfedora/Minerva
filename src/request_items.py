@@ -4,7 +4,9 @@ from flask import (
 from werkzeug.exceptions import abort
 from src.auth import login_required
 from src.db import get_db
+from json import loads
 
+itemsList = loads(open("src/items.json", "r").read())
 bp = Blueprint('request_items', __name__)
 
 # request seems like it's a reserved word somewhere or something,
@@ -13,23 +15,16 @@ bp = Blueprint('request_items', __name__)
 @login_required
 def request_items():
     if request.method == "POST":
-        items = request.form['items']
-        error = None
-        print("Items: " + items)
-        if not items:
-            error = "Items are required."
-        
-        if error is not None:
-            flash(error)
-        else:
-            db = get_db()
-            sqlcommand = """UPDATE user SET items = ? WHERE email = ?"""
-            print(sqlcommand)
-            db.execute(
-                sqlcommand,
-                (items, g.user['email'])
-            )
-            db.commit()
-            return redirect("/index")
+        db = get_db()
+        argumentsList = []
+        sqlcommand = 'UPDATE user'
+        for item in itemsList.values():
+            sqlcommand += ' SET ? = ?'
+            # TODO: Security here
+            db.execute("UPDATE user SET " + item['name'] + " = " + request.form[item['name'] + "-quantity"] + " WHERE id = " + str(g.user['id']))
+
+        sqlcommand += ' WHERE email = ?'
+        db.commit()
+        return redirect("/home")
     
-    return render_template("request_items.html")
+    return render_template("request_items.html",items = itemsList.values())

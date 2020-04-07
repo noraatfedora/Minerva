@@ -3,6 +3,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
 
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -33,6 +34,10 @@ def create_app(test_config=None):
     @app.route('/volunteer')
     def volunteer():
         return render_template('volunteer.html', title = 'Volunteer')
+
+    @app.route('/success')
+    def sucesss():
+        return render_template('success.html', title = 'Request Submitted')
 
     from . import db
     db.init_app(app)

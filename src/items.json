@@ -1,0 +1,36 @@
+{
+    "ramen" : {
+        "name" : "Ramen",
+        "category": "food",
+        "max": "20",
+        "picture": "ramen.jpg"
+    },
+
+    "apples" : {
+        "name": "Apples",
+        "category" : "food",
+        "max": "3",
+        "picture": "apple.jpg"
+    },
+
+    "bananas" : {
+        "name": "Bananas",
+        "category": "food",
+        "max": "3",
+        "picture": "banana.jpg"
+    },
+
+    "potatoes" : {
+        "name": "Potatoes",
+        "category": "food",
+        "max": "5",
+        "picture": "potato.jpg"
+    },
+
+    "toothpaste" : {
+        "name": "Toothpaste",
+        "category": "hygiene",
+        "max": "2",
+        "picture" : "toothpaste.png"
+    }
+}
