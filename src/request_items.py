@@ -16,17 +16,14 @@ bp = Blueprint('request_items', __name__)
 def request_items():
     if request.method == "POST":
         db = get_db()
-        sqlcommand = "UPDATE user"
+        argumentsList = []
+        sqlcommand = 'UPDATE user'
         for item in itemsList.values():
-            name = request.form[item['name'] + "-quantity"]
-            sqlcommand += " SET " + name + "= ?"
-        sqlcommand += "WHERE email = ?"
-        arguments = tuple(itemsList.values()) + (g.user['email'],)
-        print("Arguments: " + str(arguments))
-        db.execute(
-            sqlcommand,
-            arguments
-        )
+            sqlcommand += ' SET ? = ?'
+            # TODO: Security here
+            db.execute("UPDATE user SET " + item['name'] + " = " + request.form[item['name'] + "-quantity"] + " WHERE id = " + str(g.user['id']))
+
+        sqlcommand += ' WHERE email = ?'
         db.commit()
         return redirect("/home")
     
