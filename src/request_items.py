@@ -6,7 +6,6 @@ from src.auth import login_required
 from src.db import get_db
 from json import loads
 
-print("bippity boop")
 itemsList = loads(open("src/items.json", "r").read())
 bp = Blueprint('request_items', __name__)
 
@@ -15,19 +14,18 @@ bp = Blueprint('request_items', __name__)
 @bp.route('/request_items', methods=('GET', 'POST'))
 @login_required
 def request_items():
-    print("asdfdsfdsfljkfsdljk")
     if request.method == "POST":
-        print("in if statement")
         db = get_db()
         sqlcommand = "UPDATE user"
         for item in itemsList.values():
-            name = request.form[item['name']]
+            name = request.form[item['name'] + "-quantity"]
             sqlcommand += " SET " + name + "= ?"
         sqlcommand += "WHERE email = ?"
-        print(sqlcommand)
+        arguments = tuple(itemsList.values()) + (g.user['email'],)
+        print("Arguments: " + str(arguments))
         db.execute(
             sqlcommand,
-            tuple(itemsList.values()) + (g.user['email'],)
+            arguments
         )
         db.commit()
         return redirect("/home")
