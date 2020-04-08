@@ -119,6 +119,22 @@ footer {
     background-color: #e5e5e5;
 }
 
+#register-form-text {
+    width: 430px !important;
+    padding: 20px;
+}
+
+#register-box {
+    border: 5px solid #a2c3a4;
+    width: 450px;
+    margin-left:auto;
+    margin-right:auto;
+    border-radius:5px;
+}
+
+.form-control {
+    background-color: #e5e5e5 !important;
+}
 
 #login .container #login-row #login-column #login-box #login-form {
     padding: 20px;
