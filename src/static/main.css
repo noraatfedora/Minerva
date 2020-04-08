@@ -12,6 +12,7 @@
 html, body {
     height:100%;
     background-color: #e5e5e5;
+    color: #37393a !important;
 }
 
 #navtext {
@@ -22,10 +23,15 @@ html, body {
 }
 
 p {
-    color: #37393a;
     margin-left: 50px;
     margin-right: 50px;
     font-family:sans-serif;
+}
+
+.big-boy-body {
+    color:#37393a;
+    font-size: x-large;
+    margin-right: 0px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -108,9 +114,9 @@ footer {
     width: 300px;
     height: 270px;
     padding: 10px;
-    border: 1px solid #d8dee2;
+    border: 5px solid #a2c3a4;
     border-radius: 5px;
-    background-color: #a2c3a4;
+    background-color: #e5e5e5;
 }
 
 
@@ -123,11 +129,14 @@ footer {
 .register-text {
     position: relative;
     top: 20px;
-    border: 1px solid #77b6ea;
     height: 50px;
     width: 390px;
+    /*
+    border: 1px solid #77b6ea;
     border-radius: 5px;
     padding-top: 10px;
+    border: 5px solid #a2c3a4;
+    */
     padding-bottom: 10px;
     padding-right:0px;
     padding-left: 0px;
@@ -138,12 +147,12 @@ footer {
 
 .btn-success {
     color: #37393a;
-    background-color: #77b6ea;
+    background-color: #77b6ea !important;
     border-color: #37393a;
 }
 
 .btn-success:hover {
-    background-color: #37393a;
-    color: #77b6ea;
-    border-color: #77b6ea;
+    background-color: #a2c3a4 !important;
+    color: #37393a;
+    border-color: #37393a;
 }
