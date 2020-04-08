@@ -5,19 +5,18 @@
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <!------ Include the above in your HEAD tag ---------->
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='register.css') }}">
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
     </head>
-    <body>
+    <body style="margin-top: 50px;">
     {% block content %}
-        <p id = "logo">Minerva</p>
-        <h1>Create An Account</h1>
+        <p id = "logo-login">Create an account</p>
     {% endblock %}
         <div id="login">
             <div class="container">
-                <div id="login-row" class="row justify-content-center align-items-center">
-                    <div id="login-column" class="col-md-6">
-                        <div id="login-box" class="col-md-12">
-                            <form id="login-form" class="form" action="" method="post">
+                <div id="register-box" class="row justify-content-center align-items-center">
+                    <div id="login-column" class="register-form-text">
+                        <div id="login-box" class="register-form-text">
+                            <form id="register-form-text" class="form" action="" method="post">
                                 <div class="form-group">
                                     <label for="email" class="text-info">Email</label><br>
                                     <input type="text" name="email" id="email" class="form-control">

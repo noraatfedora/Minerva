@@ -5,12 +5,12 @@
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <!------ Include the above in your HEAD tag ---------->
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='login.css') }}">
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
     </head>
-    <body>
+    <body style="margin-top: 50px;">
     {% block content %}
-        <p id = "logo">Minerva</p>
-        <h1>Sign in to Minerva</h1>
+        <!--<center> <h1>Sign into Minerva</h1> </center>-->
+        <p id="logo-login">Sign Into Minerva</div>
     {% endblock %}
         <div id="login">
             <div class="container">
