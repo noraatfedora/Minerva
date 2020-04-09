@@ -22,9 +22,9 @@ html, body {
     color:#37393a
 }
 
-p {
-    margin-left: 50px;
-    margin-right: 50px;
+.normal-body{
+    margin-left: 500px;
+    margin-right: 500px;
     font-family:sans-serif;
 }
 
@@ -39,6 +39,9 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Lilita One', cursive;
 }
 
+.body-header {
+    text-align: center !important;
+}
 input {
     color: #37393a !important;
     background-color: #e5e5e5 !important;
