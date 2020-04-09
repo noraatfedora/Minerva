@@ -66,7 +66,7 @@ def register():
         ).fetchone() is not None:
             error = 'User {} is already registered.'.format(email)
         
-        if error is "":
+        if error == "":
             db.execute(
                 'INSERT INTO user (email, password, address, instructions, cellPhone, homePhone) VALUES (?, ?, ?, ?, ?, ?)',
                 (email, generate_password_hash(password), address, instructions, cellPhone, homePhone)
