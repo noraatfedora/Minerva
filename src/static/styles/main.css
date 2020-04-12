@@ -88,7 +88,7 @@
 }
 
 #register-box {
-  border: 5px solid #e5e5e5;
+  border: 5px solid #a2c3a4;
   width: 450px;
   margin-left: auto;
   margin-right: auto;
@@ -112,12 +112,6 @@
   top: 20px;
   height: 50px;
   width: 390px;
-  /*
-    border: 1px solid #77b6ea;
-    border-radius: 5px;
-    padding-top: 10px;
-    border: 5px solid #a2c3a4;
-    */
   padding-bottom: 10px;
   padding-right: 0px;
   padding-left: 0px;
