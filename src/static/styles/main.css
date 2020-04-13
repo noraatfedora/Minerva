@@ -1,0 +1,206 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@200;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
+#navtext {
+  font-family: sans-serif;
+  font-size: 15px;
+  text-decoration: none;
+  color: #37393a;
+  transition: all 0.4s linear;
+  -webkit-transition: all 0.4s linear;
+  -moz-transition: all 0.4s linear;
+}
+
+#Git {
+  position: relative;
+  color: #37393a;
+  font-size: 25px;
+  transition: all 0.4s linear;
+  -webkit-transition: all 0.4s linear;
+  -moz-transition: all 0.4s linear;
+}
+
+#Git:hover {
+  color: white;
+}
+
+#navtext:hover {
+  color: white;
+}
+
+#user-icon {
+  font-size: 25px;
+}
+
+.navbar {
+  min-height: 40px;
+  background-color: #77b6ea;
+}
+
+#navbar-button {
+  position: relative;
+  background-color: #e5e5e5 !important;
+  border-color: #37393a !important;
+  color: #37393a !important;
+  top: 5px;
+}
+
+#logo {
+  font-family: "Amatic SC", cursive;
+  color: #37393a;
+  font-size: 40px;
+}
+
+#login .container #login-row #login-column #login-box {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+  width: 300px;
+  height: 270px;
+  padding: 10px;
+  border: 5px solid #a2c3a4;
+  border-radius: 5px;
+  background-color: #e5e5e5;
+}
+
+#logo-login {
+  position: relative;
+  font-family: "Amatic SC", cursive;
+  font-size: 50px;
+  text-align: center;
+  top: 0px;
+  text-decoration: none;
+  color: #37393a;
+}
+
+#logged-in {
+  position: relative;
+  top: 7px;
+  left: 8px;
+  columns: #37393a;
+  font-size: 20px;
+}
+
+#register-form-text {
+  width: 430px !important;
+  padding: 20px;
+}
+
+#register-box {
+  border: 5px solid #a2c3a4;
+  width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+}
+
+.form-control {
+  background-color: #e5e5e5 !important;
+}
+
+#login .container #login-row #login-column #login-box #login-form {
+  padding: 20px;
+}
+
+#login .container #login-row #login-column #login-box #login-form #register-link {
+  margin-top: -85px;
+}
+
+.register-text {
+  position: relative;
+  top: 20px;
+  height: 50px;
+  width: 390px;
+  padding-bottom: 10px;
+  padding-right: 0px;
+  padding-left: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.btn-success {
+  color: #37393a;
+  background-color: #77b6ea !important;
+  border-color: #37393a;
+}
+
+.completed {
+  background-color: #0ab45f !important;
+  color: #e5e5e5 !important;
+}
+
+.btn-success:hover {
+  background-color: #a2c3a4 !important;
+  color: #37393a;
+  border-color: #37393a;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+html, body {
+  height: 100%;
+  background-color: #e5e5e5;
+  color: #37393a !important;
+}
+
+#jumbohome {
+  background-color: #77b6ea;
+  background-size: cover;
+  height: 650px;
+}
+
+.big-boy-body {
+  color: #37393a;
+  font-size: x-large;
+  margin-right: 0px;
+}
+
+h2, h3, h4, h5, h6 {
+  color: #77b6ea;
+  font-family: "Lilita One", cursive;
+}
+
+.body-header {
+  text-align: center !important;
+}
+
+.normal-body {
+  margin-left: 10%;
+  margin-right: 10%;
+  font-family: sans-serif;
+}
+
+input {
+  color: #37393a !important;
+  background-color: #e5e5e5 !important;
+}
+
+#container {
+  min-height: 100%;
+}
+
+#main {
+  overflow: auto;
+  padding-bottom: 50px;
+}
+
+.text-info {
+  color: #37393a !important;
+}
+
+footer {
+  background-color: #a2c3a4;
+  color: #37393a;
+  min-width: 300px;
+  position: relative;
+  text-align: center;
+  padding: 40px;
+  height: 100px;
+  clear: both;
+}
+
+/*# sourceMappingURL=main.css.map */
