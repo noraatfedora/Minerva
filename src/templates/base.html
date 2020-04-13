@@ -8,7 +8,7 @@
     <script src="https://kit.fontawesome.com/34bfb9292d.js" crossorigin="anonymous"></script>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
 
     {% if title %}
         <title>Minerva — {{ title }}</title>
@@ -29,9 +29,27 @@
             
             <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
               <div class="navbar-nav">
-                <a class="nav-item nav-link" href="{{ url_for('home') }}" id = "navtext"><strong>Home</strong></a>
-                <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id = "navtext"><strong>Volunteer</strong></a>
-                <a class="nav-item nav-link" href="{{ url_for('request_items.request_items') }}" id = "navtext"><strong>Request</strong></a>
+                <a class="nav-item nav-link active" href="{{ url_for('home') }}" id = "navtext">
+                    {% if request.path == "/home" or request.path == "/" %}
+                    <strong style = "color:white;">Home</strong>
+                    {% else %}
+                    <strong>Home</strong>
+                    {% endif %}
+                </a>
+                <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id = "navtext">
+                    {% if request.path == "/volunteer" %}
+                    <strong style = "color:white;">Volunteer</strong>
+                    {% else %}
+                    <strong>Volunteer</strong>
+                    {% endif %}
+                </a>
+                <a class="nav-item nav-link" href="{{ url_for('request_items.request_items') }}" id = "navtext">
+                    {% if request.path == "/request_items" %}
+                    <strong style = "color:white;">Request</strong>
+                    {% else %}
+                    <strong>Request</strong>
+                    {% endif %}
+                </a>
                 <a class="nav-item nav-link" href="#" id = "navtext"><strong>Donate</strong></a>
               </div>
               <div class="navbar-nav ml-auto">
@@ -40,7 +58,7 @@
                     <div class="btn-group">
                         <a class="dropdown-toggle" data-toggle="dropdown" 
                         aria-haspopup="true" aria-expanded="false" id="logged-in">
-                            <i class="fas fa-user-circle"></i>
+                            <i class="fas fa-user-circle" id = "user-icon"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item disabled" href="#">Logged in as {{g.user['email']}}</a>
@@ -50,9 +68,10 @@
                         </div>
                     </div>
                 {% else %}
+                <a href="{{ url_for('auth.login') }}" style="text-decoration: none;" id="navtext">
                     <button class="btn btn-outline-light bg-light my-2 my-sm-0" id="navbar-button" type="submit">
-                    <a href="{{ url_for('auth.login') }}" style="text-decoration: none;" id="navtext"> Sign In 
-                    <i class="fas fa-sign-in-alt"></i></a></button>
+                        Sign In 
+                    <i class="fas fa-sign-in-alt"></i></button></a>
                 {% endif %}
               </div>
             </div>

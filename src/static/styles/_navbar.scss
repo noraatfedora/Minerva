@@ -1,0 +1,55 @@
+
+@import "./colors";
+
+@mixin createHover {
+    transition: all 0.4s linear;
+   -webkit-transition: all 0.4s linear;
+   -moz-transition: all 0.4s linear
+}
+
+#navtext {
+    font-family: sans-serif;
+    font-size: 15px;
+    text-decoration: none;
+    color: $textClr;
+    @include createHover();
+}
+
+#Git {
+    position: relative;
+    color: $textClr;
+    font-size:25px;
+    @include createHover();
+}
+
+#Git:hover {
+    color: white;
+}
+
+#navtext:hover {
+    color:white;
+}
+
+
+#user-icon {
+    font-size:25px;
+}
+
+.navbar {
+    min-height: 40px;
+    background-color: $navClr;
+}
+  
+#navbar-button {
+    position: relative;
+    background-color: $primaryClr !important;
+    border-color: $textClr !important;
+    color: $textClr !important;
+    top: 5px;
+}
+  
+#logo {
+    font-family: 'Amatic SC', cursive;
+    color: $textClr;
+    font-size: 40px;
+}

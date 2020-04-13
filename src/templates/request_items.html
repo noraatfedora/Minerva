@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='request.css') }}">
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/request.css') }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <section class="jumbotron">
     <div class="container">
@@ -26,14 +26,6 @@
                   <div class="card-body">
                     <p class="card-text">
                       <div id = "item-name"> {{item.name}} </div>
-                      <!--
-                      <div class="form-group">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">I want this</label>
-                      </div>
-                    -->
-                    <br> <!-- Aikas fix this  -->
-                      
                       <div class="form-group" style="text-align:center">
                         <label for="customRange3">Quantity:</label>
                         <input type="number" name="{{ item.name }}-quantity" min="0" max='{{item.max}}' value="0" oninput="this.form.amountRange.value=this.value" size="2"/>
@@ -43,6 +35,6 @@
               </div>
             </div>
           {% endfor %}
-          <input type="submit" name="submit" value="Submit" class="btn btn-primary" id = "submit-button"> 
-          </form>
+        <input type="submit" name="submit" value="Submit" class="btn btn-primary" id = "submit-button"> 
+        </form>
 {% endblock %}
