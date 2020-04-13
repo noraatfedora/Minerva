@@ -3,6 +3,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from src.auth import login_required, volunteer_required
+from json import loads
 from src.db import get_db
 
 bp = Blueprint('dashboard', __name__)
@@ -13,4 +14,8 @@ bp = Blueprint('dashboard', __name__)
 @login_required
 @volunteer_required
 def dashboard():
-    return render_template("dashboard.html")
+    db = get_db()
+    itemsList = loads(open("src/items.json", "r").read()).keys()
+    print(itemsList)
+    users = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\"")
+    return render_template("dashboard.html", users=users, items=itemsList)
