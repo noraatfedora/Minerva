@@ -1,4 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-Dashboard view!
+<center><h2>Volunteer Dashboard</h2></center>
+    {% for user in users %}
+        <div class="card">
+            <div class="card-header">
+                {{ user['email'] }}, {{ user['cellPhone']}}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ user['address'] }}</h5>
+                <p class="card-text">
+                    <ul>
+                        {% for item in items %}
+                            {% if user[item] > 0 %}
+                                <li>{{ item }}: {{ user[item] }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </p>
+                <a href="#" class="btn btn-primary">Mark as completed</a>
+            </div>
+        </div>
+    {% endfor %}
 {% endblock content %}
