@@ -6,6 +6,7 @@ CREATE TABLE user (
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     address TEXT NOT NULL,
+    role TEXT NOT NULL,
     cellPhone TEXT NOT NULL,
     instructions TEXT,
     homePhone TEXT,
