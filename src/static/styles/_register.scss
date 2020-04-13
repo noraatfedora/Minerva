@@ -1,0 +1,80 @@
+
+@import "./colors";
+
+#login .container #login-row #login-column #login-box {
+    margin-left:auto;
+    margin-right: auto;
+    margin-top: 5px;
+    width: 300px;
+    height: 270px;
+    padding: 10px;
+    border: 5px solid $secondaryClr;
+    border-radius: 5px;
+    background-color: $primaryClr;
+}
+
+#logo-login {
+    position: relative;
+    font-family:'Amatic SC', cursive;
+    font-size:50px;
+    text-align: center;
+    top: 0px;
+    text-decoration: none;
+    color: $textClr;
+}
+
+#logged-in {
+    position:relative;
+    top:7px;
+    left:8px;
+    columns: $textClr;
+    font-size:20px
+}
+
+#register-form-text {
+    width: 430px !important;
+    padding: 20px;
+}
+
+#register-box {
+    border: 5px solid $secondaryClr;
+    width: 450px;
+    margin-left:auto;
+    margin-right:auto;
+    border-radius:5px;
+}
+
+.form-control {
+    background-color: $primaryClr!important;
+}
+
+#login .container #login-row #login-column #login-box #login-form {
+    padding: 20px;
+}
+#login .container #login-row #login-column #login-box #login-form #register-link {
+    margin-top: -85px;
+}
+.register-text {
+    position: relative;
+    top: 20px;
+    height: 50px;
+    width: 390px;
+    padding-bottom: 10px;
+    padding-right:0px;
+    padding-left: 0px;
+    margin-left:auto;
+    margin-right: auto;
+    text-align:center;
+}
+
+.btn-success {
+    color: $textClr;
+    background-color: $navClr !important;
+    border-color: $textClr;
+}
+
+.btn-success:hover {
+    background-color: $secondaryClr !important;
+    color: $textClr;
+    border-color: $textClr;
+}

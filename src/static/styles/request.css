@@ -1,16 +1,16 @@
 #card {
-    width: 400px;
-    height: 500px;
+    width: 400px !important;
+    height: 500px !important;
     margin-left: 25%;
 
 }
 
 h1 {
-   text-align:50%;; 
+   text-align:50%; 
 }
 
 #img {
-    height: 300px;
+    height: 300px !important;
 }
 
 .card-columns {
@@ -23,45 +23,44 @@ h1 {
     padding-top: 3rem;
     padding-bottom: 3rem;
     margin-bottom: 0;
-    background-color: #fff;
+    background-color: #ffffff;
   }
-  @media (min-width: 768px) {
-    .jumbotron {
-      padding-top: 6rem;
-      padding-bottom: 6rem;
-    }
-  }
-  
-  .jumbotron p:last-child {
-    margin-bottom: 0;
-  }
-  
-  .jumbotron h1 {
-    font-weight: 300;
-  }
-  
-  .jumbotron .container {
-    max-width: 40rem;
-  }
- 
-  
-  
 
+@media (min-width: 768px) {
+  .jumbotron {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+  
+.jumbotron p:last-child {
+  margin-bottom: 0;
+}
+  
+.jumbotron h1 {
+  font-weight: 300;
+}
+  
+.jumbotron .container {
+   max-width: 40rem;
+}
+ 
 #submit-button {
     text-align:center;
     margin-left: 50%;
     margin-right: 50%;
-    margin-top: 30px;
+    margin-top: 50px;
     margin-bottom: 40px;
 }
 
 #item-name {
     position: relative;
+    margin-bottom: 10px;
     font-weight: bold;
     text-align: center;
 }
 
 .card-columns {
-    column-count: 3;
+    column-count: 1;
     margin-left:50px;
 }
