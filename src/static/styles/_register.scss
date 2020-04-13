@@ -73,6 +73,11 @@
     border-color: $textClr;
 }
 
+.completed {
+    background-color: $successClr !important;
+    color: $primaryClr !important;
+}
+
 .btn-success:hover {
     background-color: $secondaryClr !important;
     color: $textClr;
