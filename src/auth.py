@@ -68,8 +68,8 @@ def register():
         
         if error == "":
             db.execute(
-                'INSERT INTO user (email, password, address, role, instructions, cellPhone, homePhone) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (email, generate_password_hash(password), address, "RECEIVER", instructions, cellPhone, homePhone)
+                'INSERT INTO user (email, password, address, role, instructions, cellPhone, homePhone, completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                (email, generate_password_hash(password), address, "RECEIVER", instructions, cellPhone, homePhone, 0)
             )
             db.commit()
             return redirect(url_for('auth.login'))
