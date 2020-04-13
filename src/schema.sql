@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS post;
 
 CREATE TABLE user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    completed INTEGER DEFAULT 0,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     address TEXT NOT NULL,

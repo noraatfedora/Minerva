@@ -28,6 +28,7 @@ def request_items():
             itemsDict[name] = quantity
 
         send_request_conformation(g.user['email'], itemsDict)
+        db.execute("UPDATE user SET completed=0 WHERE ID=" + str(g.user['id']))
         db.commit()
         return redirect("/home")
     
