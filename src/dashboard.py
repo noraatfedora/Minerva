@@ -12,5 +12,5 @@ bp = Blueprint('dashboard', __name__)
 @bp.route('/dashboard', methods=('GET', 'POST'))
 @login_required
 @volunteer_required
-def request_items():
+def dashboard():
     return render_template("dashboard.html")
