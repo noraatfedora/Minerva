@@ -44,6 +44,9 @@ def create_app(test_config=None):
     
     from . import auth
     app.register_blueprint(auth.bp)
+
+    from . import dashboard
+    app.register_blueprint(dashboard.bp)
     # request.py has blueprints for both requesting and displaying orders
     # KARTHIK: That's the file where you put your cool google sheets stuff!
     from . import request_items 

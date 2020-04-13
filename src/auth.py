@@ -68,8 +68,8 @@ def register():
         
         if error == "":
             db.execute(
-                'INSERT INTO user (email, password, address, instructions, cellPhone, homePhone) VALUES (?, ?, ?, ?, ?, ?)',
-                (email, generate_password_hash(password), address, instructions, cellPhone, homePhone)
+                'INSERT INTO user (email, password, address, role, instructions, cellPhone, homePhone, completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                (email, generate_password_hash(password), address, "RECEIVER", instructions, cellPhone, homePhone, 0)
             )
             db.commit()
             return redirect(url_for('auth.login'))
@@ -99,6 +99,19 @@ def login_required(view):
         if g.user is None:
             return redirect(url_for('auth.login'))
         
+        return view(**kwargs)
+
+    return wrapped_view
+
+def volunteer_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        role = g.user['role'].lower()
+        if role != "volunteer" and role != "admin":
+            print("Invalid authentication!")
+            print(role)
+            return redirect('/')
+
         return view(**kwargs)
 
     return wrapped_view
