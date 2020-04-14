@@ -28,6 +28,6 @@ def request_items():
         send_request_conformation(g.user['email'], itemsDict)
         db.execute("UPDATE user SET completed=0 WHERE ID=?", (str(g.user['id']),))
         db.commit()
-        return redirect("/home")
+        return redirect("/success")
     
     return render_template("request_items.html",items = itemsList.values())
