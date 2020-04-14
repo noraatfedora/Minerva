@@ -1,12 +1,10 @@
 import functools
-
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from src.db import get_db
+from json import loads
 
 bp = Blueprint('auth', __name__)
 
@@ -45,6 +43,7 @@ def register():
         email = request.form['email']
         print(email)
         password = request.form['password']
+        confirm = request.form['confirm']
         address = request.form['address']
         instructions = request.form['instructions']
         cellPhone = request.form['cell']
@@ -57,6 +56,8 @@ def register():
             error += "Email is required.\n"
         elif not password:
             error += "Password is required.\n"
+        elif password != confirm:
+            error += "Passwords do not match.\n"
         elif not address:
             error += "Home address is required.\n"
         elif not cellPhone:
@@ -93,6 +94,7 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
@@ -115,3 +117,32 @@ def volunteer_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+@bp.route('/youraccount')
+@login_required
+def your_account():
+    attributes = {
+        'email': 'email',
+        'address': 'home address',
+        'cellPhone': "cell phone",
+        'instructions': 'special delivery instructions',
+        'homePhone': "home phone"
+    }
+
+    return render_template("youraccount.html", attributes=attributes, user=g.user)
+
+@bp.route('/changeinfo', methods=['GET', 'POST'])
+@login_required
+def change_info():
+    # For security, we double check that the column we're inserting is in this list.
+    attributesList = {
+        'email', 'address', 'cellPhone', 'instructions', 'homePhone'
+    }
+    if request.method=='POST':
+        db = get_db()
+        for attribute in request.form:
+            if request.form[attribute] != '' and attribute != 'submit' and attribute in attributesList:
+                db.execute("UPDATE user SET " + attribute + "= ? WHERE id=?", (request.form[attribute], g.user['id']))
+                db.commit()
+        return redirect('/youraccount')
+    return render_template("auth/changeinfo.html", user=g.user)

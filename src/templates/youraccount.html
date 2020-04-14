@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1> Your Account </h1>
+<ul>
+    {% for attribute in attributes.keys() if user[attribute] %}
+    <li>
+        Your {{ attributes[attribute] }}: {{ user[attribute] }}
+    </li>
+    {% endfor %}
+</ul>
+<form action="/changeinfo">
+    <button type="submit" class="btn">Change account info</button>
+</form>
+<button class="btn my-2 m-sm-0" id="change-pass" type="submit">Change password</button>
+{% endblock content %}
