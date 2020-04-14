@@ -35,7 +35,9 @@
                 </div>
             </div>
         </div>
-
+        {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
         <div class="register-text">
         <p>New to Minerva? <a href="{{ url_for('auth.register') }}">Create an account.</a></p>
         </div>

@@ -33,8 +33,8 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('home'))
-        
+            return redirect(url_for('index'))
+        print(error)
         flash(error)
     
     return render_template('auth/login.html', title = "Log In")
@@ -54,7 +54,7 @@ def register():
         error = "" 
         
         if not email:
-            error += "Username is required.\n"
+            error += "Email is required.\n"
         elif not password:
             error += "Password is required.\n"
         elif not address:
