@@ -52,7 +52,7 @@ def update_db():
         name = item['name']
         try:
             print("Name: " + name)
-            db.execute("ALTER TABLE user ADD COLUMN " + name + " INTEGER " "DEFAULT 0")
+            db.execute("ALTER TABLE user ADD COLUMN ? INTEGER " "DEFAULT 0", (name,))
         except:
             print(name + " already exists in the database...")
     db.commit()
