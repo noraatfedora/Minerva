@@ -21,4 +21,17 @@ def dashboard():
         userId = next(request.form.keys())
         db.execute("UPDATE USER SET completed=1 WHERE ID=" + userId)
         db.commit()
-    return render_template("dashboard.html", users=users, items=itemsList)
+        users = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\"") 
+    generate_optimap()
+    return render_template("dashboard.html", users=users, items=itemsList, optimap=generate_optimap())
+
+def generate_optimap():
+    db = get_db()
+    users = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\" AND completed=0") 
+    addresses = []
+    for user in users:
+       addresses.append(user['address']) 
+    link = "http://gebweb.net/optimap/index.php?loc0=2640 134th ave ne Bellevue, WA 98005"
+    for x in range(0, len(addresses)):
+        link += "&loc" + str(x+1) + "=" + addresses[x]
+    return link.replace(" ", "%20")
