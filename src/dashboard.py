@@ -5,6 +5,7 @@ from werkzeug.exceptions import abort
 from src.auth import login_required, volunteer_required
 from json import loads
 from src.db import get_db
+from src.send_conformation import send_recieved_notification
 
 bp = Blueprint('dashboard', __name__)
 
@@ -19,9 +20,15 @@ def dashboard():
     users = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\"") 
     if request.method == "POST":
         userId = next(request.form.keys())
-        db.execute("UPDATE USER SET completed=1 WHERE ID=" + userId)
-        db.commit()
-        users = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\"") 
+        completed = int(next(db.execute("SELECT completed FROM USER WHERE id=" + userId))['email'])
+        # If you refresh the page and resend data, it'll send 2 conformation emails. This prevents that.
+        if (completed == 0):
+            email = str(next(db.execute("SELECT email FROM USER WHERE id=" + userId))['email'])
+            send_recieved_notification(email)
+            db.execute("UPDATE USER SET completed=1 WHERE ID=" + userId)
+            db.commit()
+            print("asdf")
+            users = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\"") 
     generate_optimap()
     return render_template("dashboard.html", users=users, items=itemsList, optimap=generate_optimap())
 
