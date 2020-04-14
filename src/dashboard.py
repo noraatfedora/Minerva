@@ -17,10 +17,12 @@ bp = Blueprint('dashboard', __name__)
 def dashboard():
     db = get_db()
     itemsList = loads(open("src/items.json", "r").read()).keys()
-    users = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\"") 
+    completedUsers = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\" AND completed=1") 
+    uncompletedUsers = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\" AND completed=0") 
     if request.method == "POST":
         userId = next(request.form.keys())
-        completed = int(next(db.execute("SELECT completed FROM USER WHERE id=" + userId))['email'])
+        print(userId)
+        completed = int(next(db.execute("SELECT completed FROM USER WHERE id=" + userId))['completed'])
         # If you refresh the page and resend data, it'll send 2 conformation emails. This prevents that.
         if (completed == 0):
             email = str(next(db.execute("SELECT email FROM USER WHERE id=" + userId))['email'])
@@ -28,9 +30,10 @@ def dashboard():
             db.execute("UPDATE USER SET completed=1 WHERE ID=" + userId)
             db.commit()
             print("asdf")
-            users = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\"") 
+            completedUsers = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\" AND completed=1") 
+            uncompletedUsers = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\" AND completed=0") 
     generate_optimap()
-    return render_template("dashboard.html", users=users, items=itemsList, optimap=generate_optimap())
+    return render_template("dashboard.html", completedUsers=completedUsers, uncompletedUsers=uncompletedUsers, items=itemsList, optimap=generate_optimap())
 
 def generate_optimap():
     db = get_db()
