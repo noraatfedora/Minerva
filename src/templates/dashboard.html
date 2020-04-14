@@ -1,32 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
-<center><h2>Volunteer Dashboard</h2></center>
-    {% for user in users %}
-        <div class="card">
-            <div class="card-header">
-                {{ user['email'] }}, {{ user['cellPhone']}}
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">{{ user['address'] }}</h5>
-                <p class="card-text">
-                    <ul>
-                        {% for item in items %}
-                            {% if user[item] > 0 %}
-                                <li>{{ item }}: {{ user[item] }}</li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                </p>
-                {% if user["completed"]  == 0 %}
-                    <form action="" method="POST">
-                        <input type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn btn-primary"></input>
-                    </form>
-                {% else %}
-                    <form action="" method="POST">
-                        <input type="submit" value="Completed" name="{{ user['id'] }}" class="btn btn-primary completed"></input>
-                    </form>
+<center>
+    <h2>Volunteer Dashboard</h2>
+</center>
+Find the best route by clicking <a href="{{ optimap }}"> here</a>, selecting "Calculate!", and then hit "Export".
+
+{% for user in uncompletedUsers %}
+<div class="card">
+    <div class="card-header">
+        {{ user['email'] }}, {{ user['cellPhone'] }}
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{{ user['address'] }}</h5>
+        <p class="card-text">
+            <ul>
+                {% for item in items %}
+                {% if user[item] > 0 %}
+                <li>{{ item }}: {{ user[item] }}</li>
                 {% endif %}
-            </div>
-        </div>
-    {% endfor %}
-{% endblock content %}
+                {% endfor %}
+            </ul>
+        </p>
+        <form action="" method="POST">
+            <input type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn btn-primary"></input>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+{% for user in completedUsers %}
+<div class="card">
+    <div class="card-header">
+        {{ user['email'] }}, {{ user['cellPhone'] }}
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{{ user['address'] }}</h5>
+        <p class="card-text">
+            <ul>
+                {% for item in items %}
+                {% if user[item] > 0 %}
+                <li>{{ item }}: {{ user[item] }}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </p>
+        <input type="submit" value="Completed" name="{{ user['id'] }}" class="btn btn-primary completed"></input>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock content %} 
