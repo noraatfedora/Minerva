@@ -20,15 +20,13 @@ def request_items():
         sqlcommand = 'UPDATE user'
         itemsDict = {} # Used for email conformation script
         for item in itemsList.values():
-            sqlcommand += ' SET ? = ?'
-            # TODO: Security here
             name = item['name']
             quantity = request.form[name + "-quantity"]
-            db.execute("UPDATE user SET " + name + " = " + quantity + " WHERE id = " + str(g.user['id']))
+            db.execute("UPDATE user SET " + name + " = ? WHERE id = ?", (quantity, str(g.user['id'])))
             itemsDict[name] = quantity
 
         send_request_conformation(g.user['email'], itemsDict)
-        db.execute("UPDATE user SET completed=0 WHERE ID=" + str(g.user['id']))
+        db.execute("UPDATE user SET completed=0 WHERE ID=?", (str(g.user['id']),))
         db.commit()
         return redirect("/home")
     

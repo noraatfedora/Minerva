@@ -22,12 +22,12 @@ def dashboard():
     if request.method == "POST":
         userId = next(request.form.keys())
         print(userId)
-        completed = int(next(db.execute("SELECT completed FROM USER WHERE id=" + userId))['completed'])
+        completed = int(next(db.execute("SELECT completed FROM USER WHERE id=?", (userId,)))['completed'])
         # If you refresh the page and resend data, it'll send 2 conformation emails. This prevents that.
         if (completed == 0):
-            email = str(next(db.execute("SELECT email FROM USER WHERE id=" + userId))['email'])
+            email = str(next(db.execute("SELECT email FROM USER WHERE id=?", (userId,)))['email'])
             send_recieved_notification(email)
-            db.execute("UPDATE USER SET completed=1 WHERE ID=" + userId)
+            db.execute("UPDATE USER SET completed=1 WHERE ID=?", (userId))
             db.commit()
             print("asdf")
             completedUsers = db.execute("SELECT * FROM USER WHERE role=\"RECEIVER\" AND completed=1") 
