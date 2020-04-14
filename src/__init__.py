@@ -36,7 +36,7 @@ def create_app(test_config=None):
         return render_template('volunteer.html', title = 'Volunteer')
 
     @app.route('/success')
-    def sucesss():
+    def success():
         return render_template('success.html', title = 'Request Submitted')
 
     from . import db

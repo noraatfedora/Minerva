@@ -34,6 +34,11 @@ html, body {
     margin-right: 0px;
 }
 
+.flash {
+    color: $errorClr;
+    text-align: center;
+}
+
 h2, h3, h4, h5, h6 {
     color:$navClr;
     font-family: 'Lilita One', cursive;
