@@ -1,0 +1,15 @@
+MANIFEST.in
+README.md
+setup.py
+minerva.egg-info/PKG-INFO
+minerva.egg-info/SOURCES.txt
+minerva.egg-info/dependency_links.txt
+minerva.egg-info/not-zip-safe
+minerva.egg-info/requires.txt
+minerva.egg-info/top_level.txt
+src/__init__.py
+src/auth.py
+src/dashboard.py
+src/db.py
+src/request_items.py
+src/send_conformation.py
