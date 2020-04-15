@@ -159,6 +159,11 @@ html, body {
   margin-right: 0px;
 }
 
+.flash {
+  color: #EE0000;
+  text-align: center;
+}
+
 h2, h3, h4, h5, h6 {
   color: #77b6ea;
   font-family: "Lilita One", cursive;
