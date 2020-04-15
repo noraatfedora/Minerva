@@ -146,3 +146,21 @@ def change_info():
                 db.commit()
         return redirect('/youraccount')
     return render_template("auth/changeinfo.html", user=g.user)
+
+@bp.route('/changepass', methods=['GET', 'POST'])
+@login_required
+def change_pass():
+    if request.method=='POST':
+        old = request.form['old']
+        new = request.form['new']
+        confirm = request.form['confirm']
+        if check_password_hash(g.user['password'], old):
+            if new == confirm:
+                db = get_db()
+                db.execute("UPDATE user SET password=? WHERE id=?", (generate_password_hash(new), str(g.user['id'])))
+                db.commit()
+            else:
+                flash("error", "Passwords do not match.")
+        else:
+            flash("error", "Your current password is incorrect.")
+    return render_template("auth/changepass.html")
