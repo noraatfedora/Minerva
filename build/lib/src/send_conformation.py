@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 port = 465
-password = open("email_password").read()
+password = open("src/email_password").read()
 sender_email = "contactusminerva@gmail.com"
 
 
