@@ -1,6 +1,4 @@
-email_password
-.vscode/
-instance/requests.sqlite
+
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
