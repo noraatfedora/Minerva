@@ -2,10 +2,10 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
     request, session, url_for, Flask
 )
 from werkzeug.exceptions import abort
-from src.auth import login_required, volunteer_required
+from auth import login_required, volunteer_required
 from json import loads
-from src.db import get_db
-from src.send_conformation import send_recieved_notification
+from db import get_db
+from send_conformation import send_recieved_notification
 
 bp = Blueprint('dashboard', __name__)
 

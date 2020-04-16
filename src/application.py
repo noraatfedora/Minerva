@@ -39,18 +39,23 @@ def create_app(test_config=None):
     def success():
         return render_template('success.html', title = 'Request Submitted')
 
-    from . import db
+    import db
     db.init_app(app)
     
-    from . import auth
+    import auth
     app.register_blueprint(auth.bp)
 
-    from . import dashboard
+    import dashboard
     app.register_blueprint(dashboard.bp)
     # request.py has blueprints for both requesting and displaying orders
     # KARTHIK: That's the file where you put your cool google sheets stuff!
-    from . import request_items 
+    import request_items 
     app.register_blueprint(request_items.bp)
     app.add_url_rule('/', endpoint='index')
 
     return app
+
+if __name__ == '__main__':
+    create_app()
+
+app = create_app()

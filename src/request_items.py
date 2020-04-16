@@ -2,12 +2,12 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
 from werkzeug.exceptions import abort
-from src.auth import login_required
-from src.db import get_db
-from src.send_conformation import send_request_conformation
+from auth import login_required
+from db import get_db
+from send_conformation import send_request_conformation
 from json import loads
 
-itemsList = loads(open("src/items.json", "r").read())
+itemsList = loads(open("items.json", "r").read())
 bp = Blueprint('request_items', __name__)
 
 # request seems like it's a reserved word somewhere or something,
