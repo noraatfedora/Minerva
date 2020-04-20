@@ -3,7 +3,8 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from db import get_db
+from db import users, conn
+from sqlalchemy import select, update 
 from json import loads
 
 bp = Blueprint('auth', __name__)
@@ -17,12 +18,10 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        db = get_db()
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE email = ?', (email,)
-        ).fetchone()
-
+        user = conn.execute(users.select().where(users.c.email==email)).fetchone()
+        print(user['email'])
+        print(user['password'])
         if user is None:
             error = 'Incorrect email address.'
         elif not check_password_hash(user['password'], password):
@@ -49,7 +48,6 @@ def register():
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
 
-        db = get_db()
         error = "" 
         
         if not email:
@@ -62,17 +60,13 @@ def register():
             error += "Home address is required.\n"
         elif not cellPhone:
             error += "Cell phone is required."
-        elif db.execute(
-            'SELECT id FROM user WHERE email = ?', (email,)
-        ).fetchone() is not None:
+        elif conn.execute(users.select().where(users.c.email==email)).fetchone() is not None:
             error = 'User {} is already registered.'.format(email)
         
         if error == "":
-            db.execute(
-                'INSERT INTO user (email, password, address, role, instructions, cellPhone, homePhone, completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                (email, generate_password_hash(password), address, "RECEIVER", instructions, cellPhone, homePhone, 0)
-            )
-            db.commit()
+            print("poopdsfy poop!")
+            password_hash = generate_password_hash(password)
+            conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, completed=0)
             return redirect(url_for('auth.login'))
         
         flash(error)
@@ -85,9 +79,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        g.user = conn.execute(users.select().where(users.c.id==user_id)).fetchone()
 
 @bp.route('/logout')
 def logout():
@@ -139,11 +131,19 @@ def change_info():
         'email', 'address', 'cellPhone', 'instructions', 'homePhone'
     }
     if request.method=='POST':
-        db = get_db()
         for attribute in request.form:
-            if request.form[attribute] != '' and attribute != 'submit' and attribute in attributesList:
-                db.execute("UPDATE user SET " + attribute + "= ? WHERE id=?", (request.form[attribute], g.user['id']))
-                db.commit()
+            given = request.form[attribute]
+            if given != '' and attribute != 'submit' and attribute in attributesList:
+                print("about to generate query")
+                query = users.update().where(users.c.id==g.user['id'])
+                values = {
+                    'email': query.values(email=given),
+                    'address': query.values(address=given),
+                    'cellPhone': query.values(cellPhone=given),
+                    'instructions': query.values(instructions=given),
+                    'homePhone': query.values(homePhone=given)
+                }[attribute]
+                conn.execute(values)
         return redirect('/youraccount')
     return render_template("auth/changeinfo.html", user=g.user)
 
@@ -156,11 +156,10 @@ def change_pass():
         confirm = request.form['confirm']
         if check_password_hash(g.user['password'], old):
             if new == confirm:
-                db = get_db()
-                db.execute("UPDATE user SET password=? WHERE id=?", (generate_password_hash(new), str(g.user['id'])))
-                db.commit()
+                conn.execute(users.update().where(users.c.id==g.user['id']).values(password=generate_password_hash(new)))
+                return redirect('/youraccount')
             else:
-                flash("error", "Passwords do not match.")
+                flash("Passwords do not match.")
         else:
-            flash("error", "Your current password is incorrect.")
+            flash("Your current password is incorrect.")
     return render_template("auth/changepass.html")
