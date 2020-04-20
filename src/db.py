@@ -16,11 +16,10 @@ users = Table(
     Column('instructions', String),
     Column('homePhone', String),
     Column('address', String),
-    Column('items', String), # Stored as a JSON because g.db doesn't support adding Columns
+    Column('order', String), # Stored as a JSON because g.db doesn't support adding Columns
     Column('completed', Integer) # either 0 or 1
 )
 conn = engine.connect()
-
 # TODO: Remove this 
 def get_db():
     return conn 
