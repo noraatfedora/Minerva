@@ -38,11 +38,39 @@
         "max": "3",
         "picture" : "milk.jpg"
     },
-    
+
+    "Ramen" : {
+        "name" : "Ramen",
+        "category": "food",
+        "max": "20",
+        "picture": "ramen.jpg"
+    },
+
+    "Apples" : {
+        "name": "Apples",
+        "category" : "food",
+        "max": "3",
+        "picture": "apple.jpg"
+    },
+
+    "Bananas" : {
+        "name": "Bananas",
+        "category": "food",
+        "max": "3",
+        "picture": "banana.jpg"
+    },
+
+    "Potatoes" : {
+        "name": "Potatoes",
+        "category": "food",
+        "max": "5",
+        "picture": "potato.jpg"
+    },
+
     "Toothpaste" : {
         "name": "Toothpaste",
-        "category" : "food",
-        "subcategory": "dental" ,
+        "category": "hygiene",
+        "subcategory":, "dental",
         "max": "2",
         "picture" : "toothpaste.png"
     }
