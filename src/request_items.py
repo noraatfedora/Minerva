@@ -3,9 +3,9 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from auth import login_required
-from db import get_db
+from db import users, conn
 from send_conformation import send_request_conformation
-from json import loads
+from json import loads, dumps
 
 itemsList = loads(open("items.json", "r").read())
 bp = Blueprint('request_items', __name__)
@@ -16,18 +16,15 @@ bp = Blueprint('request_items', __name__)
 @login_required
 def request_items():
     if request.method == "POST":
-        db = get_db()
-        sqlcommand = 'UPDATE user'
         itemsDict = {} # Used for email conformation script
         for item in itemsList.values():
             name = item['name']
             quantity = request.form[name + "-quantity"]
-            db.execute("UPDATE user SET " + name + " = ? WHERE id = ?", (quantity, str(g.user['id'])))
             itemsDict[name] = quantity
 
         send_request_conformation(g.user['email'], itemsDict)
-        db.execute("UPDATE user SET completed=0 WHERE ID=?", (str(g.user['id']),))
-        db.commit()
+        conn.execute(users.update().where(users.c.id==g.user['id'])
+            .values(order=dumps(itemsDict), completed=0))
         return redirect("/success")
     
     return render_template("request_items.html",items = itemsList.values())
