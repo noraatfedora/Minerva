@@ -1,35 +1,48 @@
 {
-    "Ramen" : {
-        "name" : "Ramen",
-        "category": "food",
-        "max": "20",
-        "picture": "ramen.jpg"
+    "Ramen" :{
+            "name" : "Ramen",
+            "category" : "food",
+            "subcategory": "packaged",
+            "max": "20",
+            "picture": "ramen.jpg"
     },
 
-    "Apples" : {
-        "name": "Apples",
-        "category" : "food",
+    "Apples" :{
+            "name": "Apples",
+            "category" : "food",
+            "subcategory": "produce",
+            "max": "3",
+            "picture": "apple.jpg"
+    },
+
+    "Bananas" :{
+            "name": "Bananas",
+            "category" : "food",
+            "subcategory": "produce",
+            "max": "3",
+            "picture": "banana.jpg"
+    },
+
+    "Potatoes" :{
+            "name": "Potatoes",
+            "category" : "food",
+            "subcategory": "produce",
+            "max": "5",
+            "picture": "potato.jpg"
+    },
+    
+    "Milk" : {
+        "name": "Milk",
+        "category" : "drink",
+        "subcategory": "dairy",
         "max": "3",
-        "picture": "apple.jpg"
+        "picture" : "milk.jpg"
     },
-
-    "Bananas" : {
-        "name": "Bananas",
-        "category": "food",
-        "max": "3",
-        "picture": "banana.jpg"
-    },
-
-    "Potatoes" : {
-        "name": "Potatoes",
-        "category": "food",
-        "max": "5",
-        "picture": "potato.jpg"
-    },
-
+    
     "Toothpaste" : {
         "name": "Toothpaste",
-        "category": "hygiene",
+        "category" : "food",
+        "subcategory": "dental" ,
         "max": "2",
         "picture" : "toothpaste.png"
     }
