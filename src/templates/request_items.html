@@ -1,6 +1,4 @@
 {% extends 'base.html' %}
-
-{% block content %}
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/request.css') }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <section class="jumbotron">
@@ -15,26 +13,46 @@
       </p>
     </div>
   </section>
+    <br> </br>
+    <h1>{{category}}</h1>
     <div class="album py-5 bg-light">
       <div class="container">
         <form id="request-form" class="form" action="" method="post">
         <div class="row">
-          {% for item in items %}
+          {% for item in items % }
               <div class="col-md-4">
                 <div class="card mb-4 shadow-sm">
                   <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt="..." id = "img">
                   <div class="card-body">
                     <p class="card-text">
                       <div id = "item-name"> {{item.name}} </div>
-                      <div class="form-group" style="text-align:center">
-                        <label for="customRange3">Quantity:</label>
-                        <input type="number" name="{{ item.name }}-quantity" min="0" max='{{item.max}}' value="0" oninput="this.form.amountRange.value=this.value" size="2"/>
+                      <div id = "badges" style="text-align:center"> 
+                        <p>
+                          {% if item.subcategory != null  %}
+                            {% if item.subcategory == "produce" %}
+                              <span class="badge badge-success">Produce</span>
+                            {% endif %}
+                            {% if item.subcategory == "dairy" %}
+                              <span class="badge badge-light">Dairy</span>
+                            {% endif %}
+                            {% if item.subcategory == "packaged" %}
+                              <span class="badge badge-warning">Packaged</span>
+                            {% endif %}
+                            {% if item.subcategory == "dental" %}
+                              <span class="badge badge-light">Dental</span>
+                            {% endif %}
+                          {% endif %}
+                      </p>
+                    </div>
+                    <div class="form-group" style="text-align:center">
+                      <label for="customRange3">Quantity:</label>
+                      <input type="number" name="{{ item.name }}-quantity" min="0" max='{{item.max}}' value="0" oninput="this.form.amountRange.value=this.value" size="2"/>
                     </div>
                   </p>
-              </div>
+                </div>
               </div>
             </div>
-          {% endfor %}
-        <input type="submit" name="submit" value="Submit" class="btn btn-primary" id = "submit-button"> 
-        </form>
+        {% endfor %}
+    <input type="submit" name="submit" value="Submit" class="btn btn-primary" id = "submit-button"> 
+    </form>
 {% endblock %}
