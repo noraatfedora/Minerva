@@ -20,8 +20,6 @@ def login():
         password = request.form['password']
         error = None
         user = conn.execute(users.select().where(users.c.email==email)).fetchone()
-        print(user['email'])
-        print(user['password'])
         if user is None:
             error = 'Incorrect email address.'
         elif not check_password_hash(user['password'], password):

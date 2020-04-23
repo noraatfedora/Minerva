@@ -51,9 +51,11 @@ def dictList(rows):
         for column in conn.execute(users.select()).keys():
             user[str(column)] = str(getattr(row, str(column)))
             print(str(column) + ": " + user[str(column)])
-        if user['order'] != None:
+        if user['order'] != "None":
+            print("Order: " + user['order'])
             user['itemsDict'] = loads(str(user['order']))
-        toReturn.append(user)
+            toReturn.append(user)
+
     for user in toReturn:
         user['itemsDict'] = loads(user['order'])
 
