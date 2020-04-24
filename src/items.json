@@ -4,6 +4,7 @@
             "category" : "food",
             "subcategory": "packaged",
             "max": "20",
+            "units": "packets",
             "picture": "ramen.jpg"
     },
 
@@ -11,6 +12,7 @@
             "name": "Apples",
             "category" : "food",
             "subcategory": "produce",
+            "units": "apples",
             "max": "3",
             "picture": "apple.jpg"
     },
@@ -20,6 +22,7 @@
             "category" : "food",
             "subcategory": "produce",
             "max": "3",
+            "units": "bunches",
             "picture": "banana.jpg"
     },
 
@@ -36,6 +39,7 @@
         "category" : "drink",
         "subcategory": "dairy",
         "max": "3",
+        "units": "cartons",
         "picture" : "milk.jpg"
     },
 
@@ -44,6 +48,7 @@
         "category": "hygiene",
         "subcategory": "dental",
         "max": "2",
+        "units": "tubes",
         "picture" : "toothpaste.png"
     }
 }
