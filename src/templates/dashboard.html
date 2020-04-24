@@ -4,7 +4,11 @@
     <h2>Volunteer Dashboard</h2>
 </center>
 Find the best route by clicking <a href="{{ optimap }}"> here</a>, selecting "Calculate!", and then hit "Export".
-
+<form action="" method="GET">
+    Zip code:
+    <input type="number" value="zipCode" name="zipCode" placeholder="{{ zipDefault }}" class="form-control form-control-inline" size=5>
+    <input type="submit" value="Submit" name="zipCodeButton" class="btn btn-primary">
+</form>
 {% for user in uncompletedUsers %}
 <div class="card">
     <div class="card-header">
@@ -48,5 +52,6 @@ Find the best route by clicking <a href="{{ optimap }}"> here</a>, selecting "Ca
     </div>
 </div>
 {% endfor %}
+
 
 {% endblock content %} 

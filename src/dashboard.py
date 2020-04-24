@@ -17,10 +17,15 @@ bp = Blueprint('dashboard', __name__)
 @volunteer_required
 def dashboard():
     itemsList = loads(open("items.json", "r").read()).keys()
-    completedUsers = getUsers(1)
-    uncompletedUsers = getUsers(0)
-    print("Completed users: " + str(len(completedUsers)))
-    print("Uncompleted: " + str(len(uncompletedUsers)))
+    filter = False
+    zipCode = ""
+
+    if 'zipCode' in request.args:
+        filter = True 
+        zipCode = request.args['zipCode']
+    completedUsers = getUsers(1, zipCode)
+    uncompletedUsers = getUsers(0, zipCode)
+
     if request.method == "POST":
         userId = next(request.form.keys())
         print(userId)
@@ -32,15 +37,20 @@ def dashboard():
             email = conn.execute(select([users.c.email]).where(users.c.id==userId)).fetchone()[0]
             send_recieved_notification(email)
             conn.execute(users.update().where(users.c.id==userId).values(completed=1))
-            completedUsers = getUsers(1)
-            uncompletedUsers = getUsers(0)
+            completedUsers = getUsers(1, zipCode)
+            uncompletedUsers = getUsers(0, zipCode)
             
             for user in completedUsers:
                 print(user)
-    return render_template("dashboard.html", completedUsers=completedUsers, uncompletedUsers=uncompletedUsers, items=itemsList, optimap=generate_optimap(completedUsers))
+    return render_template("dashboard.html", completedUsers=completedUsers, uncompletedUsers=uncompletedUsers, items=itemsList, optimap=generate_optimap(completedUsers), zipDefault=zipCode)
 
-def getUsers(completed):
-    return dictList(conn.execute(users.select().where(and_(users.c.role=="RECIEVER", users.c.completed==completed))))
+def getUsers(completed, zipCode):
+    if zipCode != "":
+        logic = and_(users.c.role=="RECIEVER", users.c.completed==completed, users.c.zipCode==zipCode)
+    else:
+        logic = and_(users.c.role=="RECIEVER", users.c.completed==completed)
+    print("Logic: " + logic)
+    return dictList(conn.execute(users.select().where(logic)))
 
 # A list of dicts, where each dict contains a dict.
 def dictList(rows):

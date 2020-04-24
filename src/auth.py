@@ -42,6 +42,7 @@ def register():
         password = request.form['password']
         confirm = request.form['confirm']
         address = request.form['address']
+        zipCode = request.form['zipCode']
         instructions = request.form['instructions']
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
@@ -64,7 +65,7 @@ def register():
         if error == "":
             print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
-            conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, completed=0)
+            conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, zipCode=zipCode, completed=0)
             return redirect(url_for('auth.login'))
         
         flash(error)

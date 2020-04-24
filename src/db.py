@@ -30,13 +30,14 @@ users = Table(
     Column('instructions', String(255)),
     Column('homePhone', String(15)),
     Column('address', String(40)),
+    Column('zipCode', Integer),
     # Stored as a JSON because g.db doesn't support adding Columns
     Column('order', String(255)),
     Column('completed', Integer)  # either 0 or 1
 )
 conn = engine.connect()
-# TODO: Remove this
-
+print("Initializing db!")
+meta.create_all(engine)
 
 def get_db():
     return conn
@@ -52,4 +53,3 @@ def close_db(e=None):
 def init_app(app):
     app.teardown_appcontext(close_db)
 
-    meta.create_all(engine)
