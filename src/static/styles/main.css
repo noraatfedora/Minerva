@@ -98,6 +98,12 @@
   background-color: #e5e5e5 !important;
 }
 
+.form-control-inline {
+  min-width: 0;
+  width: auto;
+  display: inline;
+}
+
 #login .container #login-row #login-column #login-box #login-form {
   padding: 20px;
 }
