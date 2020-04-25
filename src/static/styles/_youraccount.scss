@@ -1,19 +1,21 @@
 .ya-display {
     position: relative;
-    margin-top: 30px;
+    margin-top: 50px;
     margin-left: auto;
     margin-right:auto;
-    text-align: center;
     width: 500px;
-    height: 250px;
-    border: 1px solid $secondaryClr;
+    height: 200px;
+    border: 5px solid $secondaryClr;
     border-radius: 5px;
-    background-color: white;
+    background-color: $primaryClr;
 }
 
 #main-text {
     position:relative;
-    top: 20px;
+    text-align: center;
+    top: 40px;
+    font-family: 'Amatic SC', cursive;
+    font-size: 50px;
 }
 
 #ya-bull {
@@ -21,7 +23,9 @@
     top:25px;
     font-size:18px;
     list-style-type: none;
+    left: 70px;
 }
+
 
 .buttons {
     position:relative;
@@ -31,7 +35,7 @@
 
 #btn_account {
     float:left;
-    margin-right:2%;
+    margin-right:3%;
 }
 
 #btn_password {

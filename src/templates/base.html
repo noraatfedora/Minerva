@@ -67,7 +67,7 @@
                             {% if g.user and g.user['role'].lower() == "volunteer" %}
                                 <a class="dropdown-item" href="{{ url_for('dashboard.dashboard') }}" id = "navtext">Volunteer Dashboard</a>
                             {% endif %}
-                            <a class="dropdown-item" href="{{ url_for('auth.your_account') }}">Your account</a>
+                            <a class="dropdown-item" href="{{ url_for('auth.your_account') }}">Your Account</a>
                         </div>
                     </div>
                 {% else %}
