@@ -1,0 +1,39 @@
+.ya-display {
+    position: relative;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right:auto;
+    text-align: center;
+    width: 500px;
+    height: 250px;
+    border: 1px solid $secondaryClr;
+    border-radius: 5px;
+    background-color: white;
+}
+
+#main-text {
+    position:relative;
+    top: 20px;
+}
+
+#ya-bull {
+    position:relative;
+    top:25px;
+    font-size:18px;
+    list-style-type: none;
+}
+
+.buttons {
+    position:relative;
+    top:25px;
+    left: 70px;
+}
+
+#btn_account {
+    float:left;
+    margin-right:2%;
+}
+
+#btn_password {
+    float:left;  
+}
