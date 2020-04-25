@@ -4,9 +4,9 @@
     <h2>Volunteer Dashboard</h2>
     Find the best route by clicking <a href="{{ optimap }}"> here</a>, selecting "Calculate!", and then hit "Export".
     <form action="" method="GET">
-        Zip code:
-        <input type="number" value="zipCode" name="zipCode" placeholder="{{ zipDefault }}"
-            class="form-control form-control-inline" size=5>
+        Zip code (separate with commas for multiple):
+        <input type="text" value="{{ zipDefault }}" name="zipCode"
+            class="form-control form-control-inline" size=20>
         <input type="submit" value="Submit" name="zipCodeButton" class="btn btn-primary">
     </form>
     <br>
