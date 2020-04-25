@@ -1,17 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<h1> Your Account </h1>
-<ul>
-    {% for attribute in attributes.keys() if user[attribute] %}
-    <li>
-        Your {{ attributes[attribute] }}: {{ user[attribute] }}
-    </li>
-    {% endfor %}
-</ul>
-<form action="/changeinfo">
-    <button type="submit" class="btn">Change account info</button>
-</form>
-<form action="/changepass">
-    <button type="submit" class="btn">Change your password</button>
-</form>
+
+    <h1 id= "main-text"> Your Account </h1>
+    <div class="ya-display">
+        <div class = "display-text">
+            <ul id = "ya-bull">
+                {% for attribute in attributes.keys() if user[attribute] %}
+                <li>
+                    <strong>Your {{ attributes[attribute] }}: </strong>
+                        {{ user[attribute]}}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    <div class = "buttons">
+        <form action="/changeinfo">
+            <button type="submit" class="btn" id = "btn_account" >Change account info</button>
+        </form>
+        <form action="/changepass">
+            <button type="submit" class="btn" id = "btn_password">Change your password</button>
+        </form>
+    </div>
+</div>
 {% endblock content %}
