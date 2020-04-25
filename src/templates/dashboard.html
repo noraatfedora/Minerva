@@ -21,18 +21,21 @@
         <div class="card-header">
             {{ user['cellPhone']}}
         </div>
+        <table class="table table-striped">
+            <tbody>
+                {% for item in items %}
+                {% if user['itemsDict'][item] != '0' %}
+                <tr>
+                    <td style="border: none;">{{ item }}</td>
+                    <td style="border: none;">{{ user['itemsDict'][item] }} </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
         <div class="card-body">
-            <p class="card-text">
-                <ul class="list-group list-group-flush">
-                    {% for item in items %}
-                    {% if user['itemsDict'][item] != '0' %}
-                    <li class="list-group-item">{{ item }}: {{ user['itemsDict'][item] }}</li>
-                    {% endif %}
-                    {% endfor %}
-                </ul>
-            </p>
             <form action="" method="POST">
-                <input type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn btn-primary"></input>
+                <input type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn bg-dark text-white"></input>
             </form>
         </div>
     </div>
@@ -50,13 +53,13 @@
         <div class="card-header">
             {{ user['cellPhone']}}
         </div>
-        <table class="table">
+        <table class="table table-striped">
             <tbody>
                 {% for item in items %}
                 {% if user['itemsDict'][item] != '0' %}
                 <tr>
-                    <td>{{ item }}</td>
-                    <td>{{ user['itemsDict'][item] }} </td>
+                    <td style="border: none;">{{ item }}</td>
+                    <td style="border: none;">{{ user['itemsDict'][item] }} </td>
                 </tr>
                 {% endif %}
                 {% endfor %}
