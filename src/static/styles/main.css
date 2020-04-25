@@ -131,10 +131,6 @@
   border-color: #37393a;
 }
 
-.completed {
-  background-color: #0ab45f !important;
-  color: #e5e5e5 !important;
-}
 
 .btn-success:hover {
   background-color: #a2c3a4 !important;
