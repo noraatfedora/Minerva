@@ -23,6 +23,12 @@ def dashboard():
     if 'zipCode' in request.args:
         filter = True 
         zipCode = request.args['zipCode']
+        # save list in our volunteer's column so they don't need to reenter
+        conn.execute(users.update().where(users.c.id==g.user['id']).values(assignedZipCodes=zipCode))
+    else:
+        zipCode = str(conn.execute(select([users.c.assignedZipCodes]).where(users.c.id==g.user['id'])).fetchone()[0])
+
+
     completedUsers = getUsers(1, zipCode)
     uncompletedUsers = getUsers(0, zipCode)
 
@@ -46,11 +52,13 @@ def dashboard():
 
 def getUsers(completed, zipCode):
     if zipCode != "":
-        logic = and_(users.c.role=="RECIEVER", users.c.completed==completed, users.c.zipCode==zipCode)
+        zipList = zipCode.replace(" ", "").split(",")
+        toReturn = []
+        for code in zipList:
+            toReturn += dictList(conn.execute(users.select().where(and_(users.c.role=="RECIEVER", users.c.completed==completed, users.c.zipCode==code))))
+        return toReturn
     else:
-        logic = and_(users.c.role=="RECIEVER", users.c.completed==completed)
-    print("Logic: " + logic)
-    return dictList(conn.execute(users.select().where(logic)))
+        return dictList(conn.execute(users.select().where(and_(users.c.role=="RECIEVER", users.c.completed==completed))))
 
 # A list of dicts, where each dict contains a dict.
 def dictList(rows):

@@ -31,6 +31,8 @@ users = Table(
     Column('homePhone', String(15)),
     Column('address', String(40)),
     Column('zipCode', Integer),
+    # for volunteers
+    Column('assignedZipCodes', String(255)),
     # Stored as a JSON because g.db doesn't support adding Columns
     Column('order', String(255)),
     Column('completed', Integer)  # either 0 or 1
