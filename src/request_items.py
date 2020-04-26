@@ -8,6 +8,9 @@ from send_conformation import send_request_conformation
 from json import loads, dumps
 
 itemsList = loads(open("items.json", "r").read())
+categories = set()
+for item in itemsList.values():
+    categories.add(item['subcategory'])
 bp = Blueprint('request_items', __name__)
 
 # request seems like it's a reserved word somewhere or something,
@@ -27,4 +30,4 @@ def request_items():
             .values(order=dumps(itemsDict), completed=0))
         return redirect("/success")
     
-    return render_template("request_items.html",items = itemsList.values())
+    return render_template("request_items.html", items = itemsList.values(), categories=categories)
