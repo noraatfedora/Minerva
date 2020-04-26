@@ -3,4 +3,4 @@
 #!/bin/bash
 export FLASK_APP=src
 export FLASK_ENV=development
-FLASK_DEBUG=1 flask run
+flask run
