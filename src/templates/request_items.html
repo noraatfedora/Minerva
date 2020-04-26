@@ -18,9 +18,9 @@
           Filter
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" onclick="updateFilter('')" href="">Reset Filter</a>
+          <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
           {% for category in categories %}
-            <a class="dropdown-item" onclick="updateFilter('{{category}}')" href="">{{category[0]|upper}}{{category[1:]}}</a>
+            <a class="dropdown-item" onclick="updateFilter('{{category}}')">{{category[0]|upper}}{{category[1:]}}</a>
           {% endfor %}
         </div>
       </div>
