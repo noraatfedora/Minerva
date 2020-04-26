@@ -5,3 +5,4 @@ instance/requests.sqlite
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+src/__pycache__/*
