@@ -1,23 +1,23 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@200;500&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
+
 #navtext {
-  font-family: sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 15px;
   text-decoration: none;
   color: #37393a;
-  transition: all 0.4s linear;
-  -webkit-transition: all 0.4s linear;
-  -moz-transition: all 0.4s linear;
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
 }
 
 #Git {
   position: relative;
   color: #37393a;
   font-size: 25px;
-  transition: all 0.4s linear;
-  -webkit-transition: all 0.4s linear;
-  -moz-transition: all 0.4s linear;
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
 }
 
 #Git:hover {
@@ -46,7 +46,7 @@
 }
 
 #logo {
-  font-family: 'Amatic SC', cursive;
+  font-family: var(--logo-font);
   color: #37393a;
   font-size: 40px;
 }
@@ -65,7 +65,7 @@
 
 #logo-login {
   position: relative;
-  font-family: 'Amatic SC', cursive;
+  font-family: var(--logo-font);
   font-size: 50px;
   text-align: center;
   top: 0px;
@@ -159,7 +159,7 @@
   position: relative;
   text-align: center;
   top: 40px;
-  font-family: 'Amatic SC', cursive;
+  font-family: var(--logo-font);
   font-size: 50px;
 }
 
@@ -205,6 +205,22 @@ html, body {
   background-color: #77b6ea;
   background-size: cover;
   height: 650px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  height: calc(100vh - 86px);
+}
+
+#jumbomain {
+  display: inline;
+  font-family: var(--logo-font);
+  font-size: 8rem;
+}
+
+@media (max-width: 768px) {
+  #jumbomain {
+    font-size: 6rem;
+  }
 }
 
 .big-boy-body {
@@ -230,7 +246,7 @@ h2, h3, h4, h5, h6 {
 .normal-body {
   margin-left: 10%;
   margin-right: 10%;
-  font-family: sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 input {
@@ -261,4 +277,58 @@ footer {
   height: 100px;
   clear: both;
 }
+
+#scrolldown:hover {
+  cursor: pointer;
+  color: white;
+}
+
+#scrolldown {
+  margin-top: 200px;
+  display: inline-block;
+  transition: 0.3s;
+  color: #37393a;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#scrolldown span {
+  position: absolute;
+  top: 75vh;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  border-left: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  -webkit-animation: sda 2s infinite;
+  animation: sda 2s infinite;
+  box-sizing: border-box;
+}
+
+@-webkit-keyframes sda {
+  0% {
+    -webkit-transform: rotate(-45deg) translate(0, 0);
+  }
+  20% {
+    -webkit-transform: rotate(-45deg) translate(-10px, 10px);
+  }
+  40% {
+    -webkit-transform: rotate(-45deg) translate(0, 0);
+  }
+}
+@keyframes sda {
+  0% {
+    transform: rotate(-45deg) translate(0, 0);
+  }
+  20% {
+    transform: rotate(-45deg) translate(-10px, 10px);
+  }
+  40% {
+    transform: rotate(-45deg) translate(0, 0);
+  }
+}
+
 /*# sourceMappingURL=main.css.map */
