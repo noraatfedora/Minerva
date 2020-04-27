@@ -99,12 +99,6 @@
   background-color: #e5e5e5 !important;
 }
 
-.form-control-inline {
-  min-width: 0;
-  width: auto;
-  display: inline;
-}
-
 #login .container #login-row #login-column #login-box #login-form {
   padding: 20px;
 }
@@ -132,6 +126,10 @@
   border-color: #37393a;
 }
 
+.completed {
+  background-color: #0ab45f !important;
+  color: #e5e5e5 !important;
+}
 
 .btn-success:hover {
   background-color: #a2c3a4 !important;
@@ -144,11 +142,17 @@
   margin-top: 50px;
   margin-left: auto;
   margin-right: auto;
-  width: 500px;
-  height: 200px;
+  width: 600px;
+  height: 230px;
   border: 5px solid #a2c3a4;
   border-radius: 5px;
   background-color: #e5e5e5;
+}
+
+.display-content {
+  position: relative;
+  margin-top: 5%;
+  margin-bottom: 5%;
 }
 
 #main-text {
@@ -161,16 +165,20 @@
 
 #ya-bull {
   position: relative;
-  top: 25px;
+  margin-top: 5%;
   font-size: 18px;
+  margin-left: 15%;
+  margin-right: 15%;
   list-style-type: none;
-  left: 70px;
+  display: inline-block;
+  word-break: break-word;
 }
 
 .buttons {
   position: relative;
-  top: 25px;
-  left: 70px;
+  margin-top: 1%;
+  margin-left: 15%;
+  margin-right: 15%;
 }
 
 #btn_account {

@@ -3,11 +3,17 @@
     margin-top: 50px;
     margin-left: auto;
     margin-right:auto;
-    width: 500px;
-    height: 200px;
+    width: 600px;
+    height: 230px;
     border: 5px solid $secondaryClr;
     border-radius: 5px;
     background-color: $primaryClr;
+}
+
+.display-content {
+    position:relative;
+    margin-top:5%;
+    margin-bottom:5%
 }
 
 #main-text {
@@ -20,17 +26,21 @@
 
 #ya-bull {
     position:relative;
-    top:25px;
+    margin-top:5%;
     font-size:18px;
+    margin-left:15%;
+    margin-right: 15%;
     list-style-type: none;
-    left: 70px;
+    display: inline-block;
+    word-break: break-word;
 }
 
 
 .buttons {
     position:relative;
-    top:25px;
-    left: 70px;
+    margin-top:1%;
+    margin-left:15%;
+    margin-right:15%
 }
 
 #btn_account {

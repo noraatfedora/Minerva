@@ -63,11 +63,12 @@
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item disabled" href="#">Logged in as {{g.user['email']}}</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sign Out</a>
+                            
                             {% if g.user and g.user['role'].lower() == "volunteer" %}
                                 <a class="dropdown-item" href="{{ url_for('dashboard.dashboard') }}" id = "navtext">Volunteer Dashboard</a>
                             {% endif %}
                             <a class="dropdown-item" href="{{ url_for('auth.your_account') }}">Your Account</a>
+                            <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sign Out</a>
                         </div>
                     </div>
                 {% else %}
