@@ -1,4 +1,4 @@
 #!/bin/bash
 export FLASK_APP=application.py
 export FLASK_ENV=development
-flask run
+FLASK_DEBUG=1 flask run
