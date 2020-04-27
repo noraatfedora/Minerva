@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
 
+    <!-- https redirect-->
+    <script>
+        if (location.protocol !== 'https:' && String(window.location).includes("minervagroceries.org")){ 
+            location.replace(`https:${location.href.substring(location.protocol.length)}`);
+        }
+    </script>
+    
     {% if title %}
         <title>Minerva — {{ title }}</title>
     {% else %}
@@ -19,6 +26,10 @@
 </head>
 
 <body>
+    <noscript>
+        You're blocking JavaScript. You may notice that certain parts of the site don't work, such as the dropdown menu or https redirection.
+        You can view our <a href="https://github.com/jaredgoodman03/minerva">source code</a> on Github - we don't do anything nasty, we promise!
+    </noscript>
     <header>
         <nav class="navbar navbar-expand-lg navbar navbar-dark">
             <a class="navbar-brand" href="{{ url_for('home') }}" id="logo">Minerva</a>
