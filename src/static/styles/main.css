@@ -39,16 +39,26 @@
 
 #navbar-button {
   position: relative;
-  background-color: #e5e5e5 !important;
-  border-color: #37393a !important;
-  color: #37393a !important;
-  top: 5px;
+  background-color: #0ab45f;
+  top: 3px;
+  color: white;
+  background-color: #37393a;
+  font-weight: 600;
+  padding-left: 20px;
+  padding-right: 20px;
+  transition: 0.3s;
+}
+
+#navbar-button:hover {
+  color: #37393a;
+  background-color: white;
 }
 
 #logo {
   font-family: var(--logo-font);
   color: #37393a;
   font-size: 40px;
+  margin-top: -12.5px;
 }
 
 #login .container #login-row #login-column #login-box {
@@ -202,13 +212,14 @@ html, body {
 }
 
 #jumbohome {
+  background-color: var(--nav-color);
+  height:650px;
   background-color: #77b6ea;
-  background-size: cover;
-  height: 650px;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  height: calc(100vh - 86px);
+  height: calc(100vh - 74px);
+  border-radius: 0px;
 }
 
 #jumbomain {
@@ -267,6 +278,11 @@ input {
   color: #37393a !important;
 }
 
+#email {
+  cursor: default;
+  pointer-events: none;
+}
+
 footer {
   background-color: #a2c3a4;
   color: #37393a;
@@ -276,6 +292,10 @@ footer {
   padding: 40px;
   height: 100px;
   clear: both;
+}
+
+.dropdown-item:hover {
+  background-color: #a2c3a4;
 }
 
 #scrolldown:hover {
@@ -294,7 +314,7 @@ footer {
 
 #scrolldown span {
   position: absolute;
-  top: 75vh;
+  bottom: 100px;
   left: 50%;
   width: 24px;
   height: 24px;
