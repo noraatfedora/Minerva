@@ -6,14 +6,39 @@
   <section class="jumbotron">
     <div class="container">
       <h1 class="text-center">Send a request</h1>
-      <p class="big-boy-body">
+      <div class="big-boy-body">
         <ul class="big-boy-body">
           <li>Use this form to request goods.</li>
           <li>Expect about a week for items.</li>
           <li>If you want to change this later, simply request a new order.</li>
         </ul>
-      </p>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Filter
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
+          {% for category in categories %}
+            <a class="dropdown-item" onclick="updateFilter('{{category}}')">{{category[0]|upper}}{{category[1:]}}</a>
+          {% endfor %}
+        </div>
+      </div>
     </div>
+    <script>
+      function updateFilter(filter) {
+        filter = filter.toUpperCase()
+        let elements = document.getElementsByClassName('item')
+        for (let i = 0; i < elements.length; i++) {
+          let element = elements[i];
+          if (element.getAttribute('category').toUpperCase() != filter && filter != '') {
+            element.style.display = 'none';
+          } else {
+            element.style.display = 'block';
+          }
+        }
+      }
+    </script>
   </section>
   
     <h1>{{category}}</h1>
@@ -22,7 +47,7 @@
         <form id="request-form" class="form" action="" method="post">
         <div class="row">
           {% for item in items %}
-              <div class="col-md-4">
+              <div class="col-md-4 item" category={{item.subcategory}}>
                 <div class="card mb-4 shadow-sm">
                   <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt="..." id = "img">
                   <div class="card-body">
