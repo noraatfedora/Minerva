@@ -2,6 +2,7 @@
 
 {% block content %}
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/request.css') }}">
+  <script type=text/javascript src="{{url_for('static', filename='js/filter.js') }}"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <section class="jumbotron">
     <div class="container">
@@ -14,8 +15,8 @@
         </ul>
       </div>
       <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Filter
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Add Filter
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
@@ -24,21 +25,9 @@
           {% endfor %}
         </div>
       </div>
+      <!-- <p id = "currentFilters">Current Filters: </p>
+      <p id = "filter-text">All</p> -->
     </div>
-    <script>
-      function updateFilter(filter) {
-        filter = filter.toUpperCase()
-        let elements = document.getElementsByClassName('item')
-        for (let i = 0; i < elements.length; i++) {
-          let element = elements[i];
-          if (element.getAttribute('category').toUpperCase() != filter && filter != '') {
-            element.style.display = 'none';
-          } else {
-            element.style.display = 'block';
-          }
-        }
-      }
-    </script>
   </section>
   
     <h1>{{category}}</h1>
