@@ -66,7 +66,7 @@
                 <a class="nav-item nav-link" href="#" id = "navtext"><strong>Donate</strong></a>
               </div>
               <div class="navbar-nav ml-auto">
-                <a class="nav-item nav-link" href="https://github.com/jaredgoodman03/Minerva" style="font-size: 20px;"><i class="fab fa-github" id="Git"></i></a>
+                <!-- <a class="nav-item nav-link" href="https://github.com/jaredgoodman03/Minerva" style="font-size: 20px;"><i class="fab fa-github" id="Git"></i></a> -->
                 {% if g.user %}
                     <div class="btn-group">
                         <a class="dropdown-toggle" data-toggle="dropdown" 
@@ -74,22 +74,22 @@
                             <i class="fas fa-user-circle" id = "user-icon"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item disabled" href="#">Logged in as {{g.user['email']}}</a>
+                            <a class="dropdown-item disabled" id="email" href="" onclick="return true" >Logged in as {{g.user['email']}}</a>
                             <div class="dropdown-divider"></div>
                             
                             {% if g.user and g.user['role'].lower() == "volunteer" %}
-                                <a class="dropdown-item" href="{{ url_for('dashboard.dashboard') }}" id = "navtext">Volunteer Dashboard</a>
+                                <a class="dropdown-item" href="{{ url_for('dashboard.dashboard') }}" >Volunteer Dashboard</a>
                             {% endif %}
                             <a class="dropdown-item" href="{{ url_for('auth.your_account') }}">Your Account</a>
                             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sign Out</a>
                         </div>
+                        {% else %}
+                        <a href="{{ url_for('auth.login') }}" style="text-decoration: none;" id="navtext">
+                            <button class="btn" id="navbar-button" type="submit">
+                                Sign In 
+                            <i class="fas fa-sign-in-alt"></i></button></a>
+                        {% endif %}
                     </div>
-                {% else %}
-                <a href="{{ url_for('auth.login') }}" style="text-decoration: none;" id="navtext">
-                    <button class="btn btn-outline-light bg-light my-2 my-sm-0" id="navbar-button" type="submit">
-                        Sign In 
-                    <i class="fas fa-sign-in-alt"></i></button></a>
-                {% endif %}
               </div>
             </div>
           </nav>
