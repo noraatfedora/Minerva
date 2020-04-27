@@ -7,13 +7,13 @@ function updateFilter(filter) {
       document.getElementById("dropdownMenuButton").innerHTML = "Filter"; 
     }
 
-    if(filter == '') {
-        clearAll();
-        document.getElementById("filter-text").innerHTML = "All";  
-    } else {
-        add(filter);
-        document.getElementById("filter-text").innerHTML = filterList;  
-    }
+    // if(filter == '') {
+    //     clearAll();
+    //     document.getElementById("filter-text").innerHTML = "All";  
+    // } else {
+    //     add(filter);
+    //     document.getElementById("filter-text").innerHTML = filterList;  
+    // }
 
     
     console.log(filterList);
