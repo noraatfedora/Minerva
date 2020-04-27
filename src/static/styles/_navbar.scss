@@ -39,17 +39,3 @@
     min-height: 40px;
     background-color: $navClr;
 }
-  
-#navbar-button {
-    position: relative;
-    background-color: $primaryClr !important;
-    border-color: $textClr !important;
-    color: $textClr !important;
-    top: 5px;
-}
-  
-#logo {
-    font-family: var(--logo-font);
-    color: $textClr;
-    font-size: 40px;
-}
