@@ -1,0 +1,11 @@
+:root {
+    --logo-font: 'Pacifico', cursive;
+}
+
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
