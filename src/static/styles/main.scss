@@ -5,6 +5,7 @@
 @import "./colors";
 @import "./navbar";
 @import "./register";
+@import "./youraccount";
 
 
 * {
@@ -22,10 +23,6 @@ html, body {
     background-color: $navClr;
     background-size: cover;
     height:650px;
-}
-
-#jumbotext {
-    
 }
 
 .big-boy-body {
@@ -83,4 +80,6 @@ footer {
     height: 100px;
     clear:both;
 }
+
+
 

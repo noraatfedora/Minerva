@@ -3,6 +3,14 @@ body {
   background-color: #f8f9fa;
 }
 
+#dropdownMenuButton {
+  position: relative;
+  background-color: #77b6ea;
+  border: none;
+  left: 40%;
+  margin-top: 30px;
+}
+
 #card {
     width: 400px !important;
     height: 500px !important;
