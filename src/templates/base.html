@@ -85,10 +85,6 @@
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item disabled" id="dropdown-email-text" href="" onclick="return true" >Logged in as {{g.user['email']}}</a>
                             <div class="dropdown-divider"></div>
-                            
-                            {% if g.user and g.user['role'].lower() == "volunteer" %}
-                                <a class="dropdown-item" href="{{ url_for('dashboard.dashboard') }}" >Volunteer Dashboard</a>
-                            {% endif %}
                             <a class="dropdown-item" href="{{ url_for('auth.your_account') }}">Your Account</a>
                             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sign Out</a>
                         </div>
