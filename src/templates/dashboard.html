@@ -11,7 +11,7 @@
     </form>
     <br>
     {% for user in uncompletedUsers %}
-    <div class="card bg-primary text-white text-left w-25">
+    <div class="card bg-primary text-left">
         <div class="card-header">
             {{ user['email'] }}
         </div>
@@ -43,7 +43,7 @@
     {% endfor %}
 
     {% for user in completedUsers %}
-    <div class="card text-white bg-success w-25 text-left">
+    <div class="card bg-success text-left">
         <div class="card-header">
             {{ user['email'] }}
         </div>
