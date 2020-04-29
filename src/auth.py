@@ -131,7 +131,7 @@ def your_account():
 def change_info():
     # For security, we double check that the column we're inserting is in this list.
     attributesList = {
-        'email', 'address', 'cellPhone', 'instructions', 'homePhone'
+        'email', 'address', 'cellPhone', 'instructions', 'homePhone', "zipCode"
     }
     if request.method=='POST':
         for attribute in request.form:
