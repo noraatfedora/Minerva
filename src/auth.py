@@ -37,16 +37,18 @@ def login():
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
+        supportedZipCodes = open('supported_zip_codes', 'r').read()
+        print("Supported zip codes: " + str(supportedZipCodes))
         email = request.form['email']
         print(email)
         password = request.form['password']
         confirm = request.form['confirm']
         address = request.form['address']
         zipCode = request.form['zipCode']
+        print("First 5 digits: " + zipCode[0:5])
         instructions = request.form['instructions']
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
-
         error = "" 
         
         if not email:
@@ -59,6 +61,8 @@ def register():
             error += "Home address is required.\n"
         elif not cellPhone:
             error += "Cell phone is required."
+        elif zipCode[0:5] not in supportedZipCodes:
+            error += "Sorry, but your zip code is not supported at this time. Please contact your local food banks."
         elif conn.execute(users.select().where(users.c.email==email)).fetchone() is not None:
             error = 'User {} is already registered.'.format(email)
         
