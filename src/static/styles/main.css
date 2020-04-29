@@ -245,19 +245,33 @@ html, body {
   text-align: center;
 }
 
-h2, h3, h4, h5, h6 {
-  color: #77b6ea;
-  font-family: 'Lilita One', cursive;
+h4 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+#faq p {
+  font-size: 20px;
+  color: #5b6061;
 }
 
 .body-header {
-  text-align: center !important;
+  text-align: center;
+  font-size: 3.5rem;
 }
 
 .normal-body {
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 25%;
+  margin-right: 25%;
   font-family: 'Open Sans', sans-serif;
+  transition: 0.4s;
+}
+
+@media only screen and (max-width: 700px) {
+  .normal-body {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
 }
 
 input {
@@ -344,7 +358,21 @@ footer {
   box-sizing: border-box;
   -webkit-animation: sda 2s infinite;
   animation: sda 2s infinite;
+  transition: 0.4s;
 }
+
+@media only screen and (max-height: 580px) {
+  #scrolldown span {
+    bottom: calc(50px - 5vh);
+  }
+}
+
+@media only screen and (max-height: 524px) {
+  #scrolldown span {
+    display: none;
+  }
+}
+
 
 #scrolldown span::after {
   position: absolute;
@@ -381,6 +409,32 @@ footer {
   }
   40% {
     transform: translate(0, 0);
+  }
+}
+
+@media (max-width: 380px) {
+  #jumbomain {
+    font-size: 4rem;
+  }
+
+  #jumbosubtext {
+    font-size: 2.5rem;
+  }
+
+  #lead {
+    font-size: 1.5rem;
+  }
+
+  .body-header {
+    font-size: 40px;
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+  
+  #faq p {
+    font-size: 14px;
   }
 }
 
