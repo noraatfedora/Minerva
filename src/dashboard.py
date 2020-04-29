@@ -85,7 +85,7 @@ def generate_optimap(completedUsers):
     print("owo")
     for user in completedUsers:
        addresses.append(user['address']) 
-    link = "http://gebweb.net/optimap/index.php?loc0=2640 134th ave ne Bellevue, WA 98005"
+    link = "http://gebweb.net/optimap/index.php?loc0=" + g.user['address'] # Starts at volunteer's address, we might want to change this
     for x in range(0, len(addresses)):
         link += "&loc" + str(x+1) + "=" + addresses[x]
     return link.replace(" ", "%20")
