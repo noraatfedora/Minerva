@@ -358,7 +358,21 @@ footer {
   box-sizing: border-box;
   -webkit-animation: sda 2s infinite;
   animation: sda 2s infinite;
+  transition: 0.4s;
 }
+
+@media only screen and (max-height: 580px) {
+  #scrolldown span {
+    bottom: calc(50px - 5vh);
+  }
+}
+
+@media only screen and (max-height: 524px) {
+  #scrolldown span {
+    display: none;
+  }
+}
+
 
 #scrolldown span::after {
   position: absolute;
@@ -395,6 +409,32 @@ footer {
   }
   40% {
     transform: translate(0, 0);
+  }
+}
+
+@media (max-width: 380px) {
+  #jumbomain {
+    font-size: 4rem;
+  }
+
+  #jumbosubtext {
+    font-size: 2.5rem;
+  }
+
+  #lead {
+    font-size: 1.5rem;
+  }
+
+  .body-header {
+    font-size: 40px;
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+  
+  #faq p {
+    font-size: 14px;
   }
 }
 
