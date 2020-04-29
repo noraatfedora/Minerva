@@ -245,19 +245,33 @@ html, body {
   text-align: center;
 }
 
-h2, h3, h4, h5, h6 {
-  color: #77b6ea;
-  font-family: 'Lilita One', cursive;
+h4 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+#faq p {
+  font-size: 20px;
+  color: #5b6061;
 }
 
 .body-header {
-  text-align: center !important;
+  text-align: center;
+  font-size: 3.5rem;
 }
 
 .normal-body {
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 25%;
+  margin-right: 25%;
   font-family: 'Open Sans', sans-serif;
+  transition: 0.4s;
+}
+
+@media only screen and (max-width: 700px) {
+  .normal-body {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
 }
 
 input {
