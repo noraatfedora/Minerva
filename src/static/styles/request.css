@@ -22,14 +22,9 @@ h1 {
    text-align:50%; 
 }
 
-#img {
-    height: 300px !important;
-}
-
-.card-columns {
-    @include media-breakpoint-only(sm) {
-        column-count: 1;
-      }
+img {
+    height: 300px;
+    object-fit: cover;
 }
 
 .jumbotron {
