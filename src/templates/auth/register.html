@@ -1,15 +1,5 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!------ Include the above in your HEAD tag ---------->
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/variables.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
-</head>
+{% extends "head.html" %}
+{% block html %}
 
 <body id="register-body">
     {% block content %}
@@ -75,5 +65,4 @@
         <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in.</a></p>
     </div>
 </body>
-
-</html>
+{% endblock %}
