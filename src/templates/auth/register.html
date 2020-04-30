@@ -22,7 +22,7 @@
                 <form id="register-form-text" class="form" action="" method="post">
                     <div class="form-group">
                         <!-- <label for="email" class="text-info">Email</label><br> -->
-                        <input type="text" name="email" id="email" class="form-control" placeholder="Email">
+                        <input type="text" name="email" id="email" class="form-control" value="{{ data['email'] }}" placeholder="Email">
                     </div>
                     <div class="form-group">
                         <!-- <label for="password" class="text-info">Password</label><br> -->
@@ -36,27 +36,27 @@
                     </div>
                     <div class="form-group">
                         <!-- <label for="address" class="text-info">Home Address</label><br> -->
-                        <input type="address" name="address" id="address" class="form-control"
+                        <input type="address" name="address" id="address" class="form-control" value="{{ data['address'] }}"
                             placeholder="Full Address Example: 1234 Elm Street, Kirkland, WA 98083 ">
                     </div>
                     <div class="form-group">
                         <!-- <label for="zip" class="text-info" id="zip">Zip Code</label> -->
-                        <input type="number" name="zipCode" id="zipCode" class="form-control"
+                        <input type="number" name="zipCode" id="zipCode" class="form-control" value="{{ data['zipCode'] }}"
                             placeholder="Zip Code"></label>
                     </div>
                     <div class="form-group">
                         <!-- <label for="cell" class="text-info">Phone Number (Cell)</label><br> -->
-                        <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)">
+                        <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)" value="{{ data['cellPhone'] }}">
                     </div>
                     <div class="form-group">
                         <!-- <label for="cell" class="text-info">Phone Number (Landline, Optional)</label><br> -->
                         <input type="text" name="homePhone" id="homePhone" class="form-control"
-                            placeholder="Landline (Optional)">
+                            placeholder="Landline (Optional)" value="{{ data['homePhone'] }}">
                     </div>
                     <div class="form-group">
                         <!-- <label for="cell" class="text-info">Special Instructions (Optional)</label><br> -->
                         <textarea type="text" name="instructions" id="instructions" class="form-control"
-                            placeholder="Special Instructions (Optional)"></textarea>
+                            placeholder="Special Instructions (Optional)" value="{{ data['instructions'] }}"></textarea>
                     </div>
                     <div class="form-group">
                         <button class="btn bw-btn center-block blue-hover" type="submit">
