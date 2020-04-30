@@ -2,8 +2,11 @@ import click
 import json
 from flask import current_app, g, Flask
 from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData
+from sqlalchemy.orm import session, sessionmaker
 from flask.cli import with_appcontext
 import os
+
+Session = sessionmaker(autocommit=True)
 
 if ('RDS_HOSTNAME' in os.environ):
     user = os.environ['RDS_USERNAME']
@@ -13,10 +16,14 @@ if ('RDS_HOSTNAME' in os.environ):
 
     url = 'mysql+mysqldb://' + user + ':' + password + '@' + host + ':' + port + "/ebdb"
     engine = create_engine(url)
+    Session.configure(bind=engine)
+    sess = Session()
     print("DB URL: " + url)
 else:
     engine = create_engine(
         'sqlite:///instance/requests.sqlite?check_same_thread=False')
+    Session.configure(bind=engine)
+    sess = Session()
 
 
 meta = MetaData()
