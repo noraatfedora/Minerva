@@ -3,7 +3,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from db import users, conn
+from db import users, conn, meta
 from sqlalchemy import select, update 
 from json import loads
 
@@ -70,6 +70,7 @@ def register():
             print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
             conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, zipCode=zipCode, completed=0)
+            meta.commit()
             return redirect(url_for('auth.login'))
         else:
             flash(error)
