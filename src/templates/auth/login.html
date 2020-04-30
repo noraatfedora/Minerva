@@ -1,45 +1,39 @@
-<!doctype html>
-    <html lang="en">
-    <head>
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <!------ Include the above in your HEAD tag ---------->
-        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/variables.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
-    </head>
-    <body style="margin-top: 50px;">
+{% extends "head.html" %}
+{% block html %}
+
+<body style="margin-top: 50px;">
     {% block content %}
     <p class="intro-text">Sign in to</p>
     <h1 id="jumbomain">Minerva</h1>
     {% endblock %}
-        <div id="login">
-            <div class="container">
-                <div id="login-row" class="row justify-content-center align-items-center">
-                    <div id="login-column" class="col-md-6">
-                        <div id="login-box" class="col-md-12">
-                            <form id="login-form" class="form" action="" method="post">
-                                <div class="form-group">
-                                    <input type="email" name="email" id="email" class="form-control" placeholder="Email">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" name="password" id="password" class="form-control" placeholder="Password">
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Sign in</button>
-                                </div>
-                            </form>
-                        </div>
+    <div id="login">
+        <div class="container">
+            <div id="login-row" class="row justify-content-center align-items-center">
+                <div id="login-column" class="col-md-6">
+                    <div id="login-box" class="col-md-12">
+                        <form id="login-form" class="form" action="" method="post">
+                            <div class="form-group">
+                                <input type="email" name="email" id="email" class="form-control" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="password" id="password" class="form-control"
+                                    placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Sign
+                                    in</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        {% for message in get_flashed_messages() %}
-            <div class="flash">{{ message }}</div>
-        {% endfor %}
-        <div class="register-text">
+    </div>
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
+    <div class="register-text">
         <p>New to Minerva? <a href="{{ url_for('auth.register') }}">Create an account.</a></p>
-        </div>
-    </body>
-</html>
+    </div>
+</body>
+{% endblock %}

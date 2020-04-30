@@ -38,7 +38,7 @@
           {% for item in items %}
               <div class="col-md-4 item" category={{item.subcategory}}>
                 <div class="card mb-4 shadow-sm">
-                  <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt="..." id = "img">
+                  <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt={{item.name}}>
                   <div class="card-body">
                     <p class="card-text">
                       <div id = "item-name"> {{item.name}} </div>
