@@ -8,3 +8,4 @@ instance/requests.sqlite
 src/__pycache__/*
 *.pyc
 requests.sqlite
+.vscode/*
