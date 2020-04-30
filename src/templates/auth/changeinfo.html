@@ -11,29 +11,32 @@
                         <form id="register-form-text" class="form" action="" method="post">
                             <div class="form-group">
                                 <label for="email" class="text-info">Email</label><br>
-                                <input type="text" name="email" id="email" class="form-control" placeholder={{ user['email'] }}>
+                                <input type="text" name="email" id="email" class="form-control"
+                                    placeholder="{{ user['email'] }}">
                             </div>
                             <div class="form-group">
                                 <label for="address" class="text-info">Home Address</label><br>
-                                <input type="text" name="address" id="address" class="form-control" placeholder={{ user['address'] }}>
+                                <input type="text" name="address" id="address" class="form-control"
+                                    placeholder="{{ user['address'] }}">
                             </div>
                             <div class="form-group">
                                 <label for="cell" class="text-info">Phone Number (Cell)</label><br>
-                                <input type="text" name="cell" id="cell" class="form-control" placeholder={{ user['cellPhone'] }}>
+                                <input type="text" name="cell" id="cell" class="form-control"
+                                    placeholder="{{ user['cellPhone'] }}">
                             </div>
                             <div class="form-group">
                                 <label for="cell" class="text-info">Phone Number (Landline, Optional)</label><br>
                                 <input type="text" name="homePhone" id="homePhone" class="form-control"
-                                    placeholder={{ user['homePhone'] }}>
+                                    placeholder="{{ user['homePhone'] }}">
                             </div>
                             <div class="form-group">
                                 <label for="cell" class="text-info">Special Instructions (Optional)</label><br>
                                 <textarea type="text" name="instructions" id="instructions" class="form-control"
-                                    placeholder={{ user['instructions'] }}></textarea>
+                                    placeholder="{{ user['instructions'] }}"></textarea>
                             </div>
                             <div class="form-group">
-                                <input type="submit" name="submit" class="btn btn-success btn-md btn-block"
-                                    value="Save changes">
+                                <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Save
+                                    Changes</button>
                             </div>
                         </form>
                     </div>
@@ -44,8 +47,5 @@
     {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
     {% endfor %}
-    <div class="register-text">
-        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in.</a></p>
-    </div>
 </body>
 {% endblock content %}
