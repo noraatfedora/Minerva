@@ -3,12 +3,11 @@
 
     <h1 id= "main-text"> Your Account </h1>
     <div class="ya-display">
-        <div class = "display-content">
             <div class = "display-text">
                 <ul id = "ya-bull">
                     {% for attribute in attributes.keys() if user[attribute] %}
                     <li>
-                        <strong>Your {{ attributes[attribute] }}: </strong>
+                        <strong>{{ attributes[attribute][0]|upper }}{{ attributes[attribute][1:] }}: </strong>
                             {{ user[attribute]}}
                     </li>
                     {% endfor %}
@@ -17,12 +16,11 @@
 
         <div class = "buttons">
             <form action="/changeinfo">
-                <button type="submit" class="btn" id = "btn_account" >Change account info</button>
+                <button type="submit" class="btn bw-btn-np blue-hover" id = "btn_account" >Change account info</button>
             </form>
             <form action="/changepass">
-                <button type="submit" class="btn" id = "btn_password">Change your password</button>
+                <button type="submit" class="btn bw-btn-np blue-hover" id = "btn_password">Change your password</button>
             </form>
         </div>
     </div>
-</div>
 {% endblock content %}
