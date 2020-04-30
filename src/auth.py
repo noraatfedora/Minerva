@@ -71,9 +71,19 @@ def register():
             password_hash = generate_password_hash(password)
             conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, zipCode=zipCode, completed=0)
             return redirect(url_for('auth.login'))
-        
-        flash(error)
-    return render_template('auth/register.html', title = 'Register')
+        else:
+            flash(error)
+            data = {
+                    'email': email,
+                    'address': address,
+                    'cellPhone': cellPhone,
+                    'homePhone': homePhone,
+                    'zipCode': zipCode,
+                    'instructions': instructions
+                    }
+            return render_template('auth/register.html', title='Register', data=data)
+    data = {'email': '', 'address': '', 'homePhone': '', 'zipCode': '', 'instructions': ''}
+    return render_template('auth/register.html', title = 'Register', data=data)
 
 @bp.before_app_request
 def load_logged_in_user():
