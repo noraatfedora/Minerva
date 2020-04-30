@@ -1,6 +1,11 @@
 :root {
     --logo-font: 'Pacifico', cursive;
     --nav-color: #77b6ea;
+    --primary-color: #e5e5e5;
+    --seconday-color: #a2c3a4;
+    --text-color: #37393a;
+    --error-color: #EE0000;
+    --success-color: #0ab45f;
 }
 
 * {

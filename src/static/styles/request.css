@@ -15,7 +15,6 @@ body {
     width: 400px !important;
     height: 500px !important;
     margin-left: 25%;
-
 }
 
 h1 {
@@ -24,12 +23,6 @@ h1 {
 
 #img {
     height: 300px !important;
-}
-
-.card-columns {
-    @include media-breakpoint-only(sm) {
-        column-count: 1;
-      }
 }
 
 .jumbotron {
