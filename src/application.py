@@ -2,6 +2,7 @@ import os
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
+from flask_debugtoolbar import DebugToolbarExtension
 
 def create_app(test_config=None):
     # create and configure the app
@@ -54,7 +55,7 @@ def create_app(test_config=None):
 
     return app
 
-if __name__ == '__main__':
-    create_app()
-
+# Uncomment the below lines if you want debugging tools
+# toolbar = DebugToolbarExtension()
 app = create_app()
+# toolbar.init_app(app)
