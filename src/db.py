@@ -8,13 +8,8 @@ import os
 
 Session = sessionmaker(autocommit=True)
 
-if ('RDS_HOSTNAME' in os.environ):
-    user = os.environ['RDS_USERNAME']
-    password = os.environ['RDS_PASSWORD']
-    host = os.environ['RDS_HOSTNAME']
-    port = os.environ['RDS_PORT']
-
-    url = 'mysql+mysqldb://' + user + ':' + password + '@' + host + ':' + port + "/ebdb"
+if os.environ.get('RDS_CONNECT') is not None:
+    url = os.environ.get('RDS_CONNECT')
     engine = create_engine(url)
     Session.configure(bind=engine)
     sess = Session()
