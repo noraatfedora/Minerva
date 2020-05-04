@@ -70,7 +70,6 @@ def register():
             print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
             conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, zipCode=zipCode, completed=0)
-            meta.commit()
             return redirect(url_for('auth.login'))
         else:
             flash(error)
