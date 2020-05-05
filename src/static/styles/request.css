@@ -51,14 +51,6 @@ img {
 .jumbotron .container {
    max-width: 40rem;
 }
- 
-#submit-button {
-    text-align:center;
-    margin-left: 50%;
-    margin-right: 50%;
-    margin-top: 50px;
-    margin-bottom: 40px;
-}
 
 #item-name {
     position: relative;

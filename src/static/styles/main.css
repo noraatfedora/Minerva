@@ -194,7 +194,7 @@ html, body {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  height: calc(100vh - 74px);
+  height: max(calc(100vh - 74px), 400px);
   border-radius: 0px;
 }
 
@@ -289,6 +289,12 @@ footer {
 
 .dropdown-item:hover {
   background-color: #a2c3a4;
+  color: white;
+}
+
+a:not([href]):not([tabindex]):hover {
+  color: white;
+  cursor: pointer;
 }
 
 .btn-primary {
