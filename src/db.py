@@ -41,7 +41,10 @@ users = Table(
 )
 conn = engine.connect()
 print("Initializing db!")
-meta.create_all(engine)
+try:
+    meta.create_all(engine)
+except:
+    print("Database exists!")
 
 def get_db():
     return conn
