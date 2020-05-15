@@ -5,9 +5,9 @@
     Find the best route by clicking <a href="{{ optimap }}"> here</a>, selecting "Calculate!", and then hit "Export".
     <form action="" method="GET" width="20rem;">
         Zip code (separate with commas for multiple):
-        <input type="text" value="{{ zipDefault }}" name="zipCode"
-            class="form-control" id="zipcode-input" placeholder="Enter Zip Codes Here">
-        <input type="submit" value="Submit" name="zipCodeButton" class="btn btn-primary" style="margin: 0 auto; width: 15rem;">
+        <input type="text" value="{{ zipDefault }}" name="zipCode" class="form-control" id="zipcode-input"
+            placeholder="Enter Zip Codes Here">
+        <button type="submit" name="zipCodeButton" class="btn bw-btn center-block blue-hover">Submit</button>
     </form>
     <br>
     {% for user in uncompletedUsers %}
@@ -35,7 +35,8 @@
         </table>
         <div class="card-body">
             <form action="" method="POST">
-                <button type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn bw-btn">Mark As Complete</button>
+                <button type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn bw-btn">Mark As
+                    Complete</button>
             </form>
         </div>
     </div>
@@ -43,7 +44,7 @@
     {% endfor %}
 
     {% for user in completedUsers %}
-    <div class="card bg-success text-left task-complete">
+    <div class="card text-left task-complete">
         <div class="card-header">
             {{ user['email'] }}
         </div>
