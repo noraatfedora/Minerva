@@ -6,7 +6,7 @@ from auth import login_required, volunteer_required
 from json import loads
 from db import users, conn
 from sqlalchemy import and_, select
-from send_conformation import send_recieved_notification
+from send_confirmation import send_recieved_notification
 
 bp = Blueprint('dashboard', __name__)
 
@@ -38,7 +38,7 @@ def dashboard():
         query = select([users.c.completed]).where(users.c.id==userId)
         completed = conn.execute(query).fetchone()[0]
         print("completeedddsf: " + str(completed))
-        # If you refresh the page and resend data, it'll send 2 conformation emails. This prevents that.
+        # If you refresh the page and resend data, it'll send 2 confirmation emails. This prevents that.
         if (completed == 0):
             email = conn.execute(select([users.c.email]).where(users.c.id==userId)).fetchone()[0]
             send_recieved_notification(email)
