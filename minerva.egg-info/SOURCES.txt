@@ -12,4 +12,4 @@ src/auth.py
 src/dashboard.py
 src/db.py
 src/request_items.py
-src/send_conformation.py
+src/send_confirmation.py
