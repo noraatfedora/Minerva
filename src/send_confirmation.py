@@ -13,7 +13,7 @@ sender_email = "contactusminerva@gmail.com"
 def send_email(reciever_email, html, subject):
 	context = ssl.create_default_context()
 	message = MIMEMultipart("alternative")
-	message["Subject"] = "Minerva order conformation"
+	message["Subject"] = "Minerva order confirmation"
 	message["From"] = sender_email
 	message["To"] = reciever_email
 
@@ -25,7 +25,7 @@ def send_email(reciever_email, html, subject):
 			server.sendmail(sender_email, reciever_email, message.as_string())
 
 
-def send_request_conformation(reciever_email, items):
+def send_request_confirmation(reciever_email, items):
 	html = """\
 	<html>
 		<body>
@@ -41,7 +41,7 @@ def send_request_conformation(reciever_email, items):
 		</body>
 	</html>
 	"""
-	send_email(reciever_email, html, "Your Minerva Order Conformation")
+	send_email(reciever_email, html, "Your Minerva Order confirmation")
 
 def send_recieved_notification(reciever_email):
 	html = """
