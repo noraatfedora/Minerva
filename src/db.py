@@ -27,6 +27,8 @@ users = Table(
     Column('id', Integer, primary_key=True),
     Column('email', String(60)),
     Column('password', String(255)),
+    # Either RECIEVER, VOLUNTEER, or ADMIN
+    # yes I know reciever is spelled wrong but it's too late to change that
     Column('role', String(10)),
     Column('cellPhone', String(15)),
     Column('instructions', String(255)),
@@ -35,6 +37,8 @@ users = Table(
     Column('zipCode', Integer),
     # for volunteers
     Column('assignedZipCodes', String(255)),
+    Column('assignedOrders', String(255)), # JSON of user id's
+    Column('foodBank', Integer, default=-1), # id of the user of their food bank
     # Stored as a JSON because g.db doesn't support adding Columns
     Column('order', String(255)),
     Column('completed', Integer)  # either 0 or 1
