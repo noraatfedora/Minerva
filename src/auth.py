@@ -3,7 +3,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from db import users, conn, meta
+from db import users, conn
 from sqlalchemy import select, update 
 from json import loads
 
