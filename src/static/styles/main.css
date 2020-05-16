@@ -1,5 +1,9 @@
+@font-face{
+  font-family: Helvetica-rounded-bold;
+  src: url(/static/helvetica-rounded-bold.otf);
+}
 #navtext {
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--logo-font);
   font-size: 15px;
   text-decoration: none;
   color: #37393a;
@@ -31,6 +35,7 @@
 
 .navbar {
   min-height: 40px;
+  font-family: var(--logo-font) !important;
   background-color: #77b6ea;
 }
 
