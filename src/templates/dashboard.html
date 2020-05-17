@@ -11,7 +11,7 @@
     </form>
     <br>
     {% for user in uncompletedUsers %}
-    <div class="card bg-primary text-left task-incomplete">
+    <div class="card text-left task-incomplete">
         <div class="card-header">
             {{ user['email'] }}
         </div>
@@ -21,21 +21,16 @@
         <div class="card-header">
             {{ user['cellPhone']}}
         </div>
-        <table class="table table-striped">
-            <tbody>
-                {% for item in items %}
-                {% if user['itemsDict'][item] != '0' %}
-                <tr>
-                    <td style="border: none;">{{ item }}</td>
-                    <td style="border: none;">{{ user['itemsDict'][item] }} </td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="card-body">
+        {% for item in items %}
+        {% if user['itemsDict'][item] != '0' %}
+        <div class="card-header">
+            {{ item }} <span>{{ user['itemsDict'][item] }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div class="card-header">
             <form action="" method="POST">
-                <button type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn bw-btn">Mark As
+                <button type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn bw-btn blue-hover">Mark As
                     Complete</button>
             </form>
         </div>
@@ -54,19 +49,13 @@
         <div class="card-header">
             {{ user['cellPhone']}}
         </div>
-        <table class="table table-striped">
-            <tbody>
-                {% for item in items %}
-                {% if user['itemsDict'][item] != '0' %}
-                <tr>
-                    <td style="border: none;">{{ item }}</td>
-                    <td style="border: none;">{{ user['itemsDict'][item] }} </td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <!-- <input type="submit" value="Completed" name="{{ user['id'] }}" class="btn btn-primary bg-light"></input> -->
+        {% for item in items %}
+        {% if user['itemsDict'][item] != '0' %}
+        <div class="card-header">
+            {{ item }} <span>{{ user['itemsDict'][item] }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
     </div>
     <br>
     {% endfor %}

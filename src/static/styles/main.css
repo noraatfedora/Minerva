@@ -293,8 +293,7 @@ a:not([href]):not([tabindex]):hover {
 }
 
 .task-complete {
-  color: #37393a;
-  background-color: #89c08d;
+  border: none;
 }
 
 #scrolldown:hover {
@@ -407,4 +406,29 @@ a:not([href]):not([tabindex]):hover {
   max-width: 600px;
   margin-top: 5px;
   margin-bottom: 10px
+}
+
+.card {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  border-radius: 10px;
+  overflow: hidden;
+  color: #000;
+  border: none;
+}
+
+.card-header {
+  background-color: white;
+}
+
+.card-header span {
+  position: absolute;
+  right: 24px;
+}
+
+.card-header:last-child {
+  border-bottom: none;
+}
+
+h2 {
+  margin-top: 12px;
 }
