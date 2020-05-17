@@ -5,13 +5,13 @@
     Find the best route by clicking <a href="{{ optimap }}"> here</a>, selecting "Calculate!", and then hit "Export".
     <form action="" method="GET" width="20rem;">
         Zip code (separate with commas for multiple):
-        <input type="text" value="{{ zipDefault }}" name="zipCode"
-            class="form-control" id="zipcode-input" placeholder="Enter Zip Codes Here">
-        <input type="submit" value="Submit" name="zipCodeButton" class="btn btn-primary" style="margin: 0 auto; width: 15rem;">
+        <input type="text" value="{{ zipDefault }}" name="zipCode" class="form-control" id="zipcode-input"
+            placeholder="Enter Zip Codes Here">
+        <button type="submit" name="zipCodeButton" class="btn bw-btn center-block blue-hover">Submit</button>
     </form>
     <br>
     {% for user in uncompletedUsers %}
-    <div class="card bg-primary text-left task-incomplete">
+    <div class="card text-left task-incomplete">
         <div class="card-header">
             {{ user['email'] }}
         </div>
@@ -21,21 +21,17 @@
         <div class="card-header">
             {{ user['cellPhone']}}
         </div>
-        <table class="table table-striped">
-            <tbody>
-                {% for item in items %}
-                {% if user['itemsDict'][item] != '0' %}
-                <tr>
-                    <td style="border: none;">{{ item }}</td>
-                    <td style="border: none;">{{ user['itemsDict'][item] }} </td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="card-body">
+        {% for item in items %}
+        {% if user['itemsDict'][item] != '0' %}
+        <div class="card-header">
+            {{ item }} <span>{{ user['itemsDict'][item] }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div class="card-header">
             <form action="" method="POST">
-                <button type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn bw-btn">Mark As Complete</button>
+                <button type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn bw-btn blue-hover">Mark As
+                    Complete</button>
             </form>
         </div>
     </div>
@@ -43,7 +39,7 @@
     {% endfor %}
 
     {% for user in completedUsers %}
-    <div class="card bg-success text-left task-complete">
+    <div class="card text-left task-complete">
         <div class="card-header">
             {{ user['email'] }}
         </div>
@@ -53,19 +49,13 @@
         <div class="card-header">
             {{ user['cellPhone']}}
         </div>
-        <table class="table table-striped">
-            <tbody>
-                {% for item in items %}
-                {% if user['itemsDict'][item] != '0' %}
-                <tr>
-                    <td style="border: none;">{{ item }}</td>
-                    <td style="border: none;">{{ user['itemsDict'][item] }} </td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-        <!-- <input type="submit" value="Completed" name="{{ user['id'] }}" class="btn btn-primary bg-light"></input> -->
+        {% for item in items %}
+        {% if user['itemsDict'][item] != '0' %}
+        <div class="card-header">
+            {{ item }} <span>{{ user['itemsDict'][item] }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
     </div>
     <br>
     {% endfor %}
