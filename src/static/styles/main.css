@@ -1,91 +1,103 @@
-@font-face{
-  font-family: Helvetica-rounded-bold;
-  src: url(/static/helvetica-rounded-bold.otf);
+@-webkit-keyframes sda {
+  0%,40% {
+      -webkit-transform: translate(0,0)
+  }
+
+  20% {
+      -webkit-transform: translate(0,15px)
+  }
 }
-#navtext {
-  font-family: var(--logo-font);
-  font-size: 15px;
-  text-decoration: none;
+
+@keyframes sda {
+  0%,40% {
+      transform: translate(0,0)
+  }
+
+  20% {
+      transform: translate(0,15px)
+  }
+}
+
+#Git,#navtext {
   color: #37393a;
-  transition: all 0.4s;
-  -webkit-transition: all 0.4s;
-  -moz-transition: all 0.4s;
+  transition: all .4s;
+  -webkit-transition: all .4s;
+  -moz-transition: all .4s
+}
+
+#navtext {
+  font-family: 'Open Sans',sans-serif;
+  font-size: 15px;
+  text-decoration: none
 }
 
 #Git {
-  position: relative;
-  color: #37393a;
-  font-size: 25px;
-  transition: all 0.4s;
-  -webkit-transition: all 0.4s;
-  -moz-transition: all 0.4s;
+  position: relative
 }
 
-#Git:hover {
-  color: white;
+#Git:hover,#navtext:hover {
+  color: #fff
 }
 
-#navtext:hover {
-  color: white;
-}
-
-#user-icon {
-  font-size: 25px;
+#Git,#user-icon {
+  font-size: 25px
 }
 
 .navbar {
   min-height: 40px;
-  font-family: var(--logo-font) !important;
-  background-color: #77b6ea;
+  background-color: #77b6ea
 }
 
 .bw-btn {
   top: 3px;
-  color: white;
+  color: #fff;
   background-color: #37393a;
-  font-weight: 600;
   padding-left: 20px;
   padding-right: 20px;
-  transition: 0.3s;
+  transition: .3s
+}
+
+.bw-btn,.bw-btn-np,h4 {
+  font-weight: 600
 }
 
 .bw-btn-np {
-  color: white;
+  color: #fff;
   background-color: #37393a;
-  font-weight: 600;
-  transition: 0.3s;
+  transition: .3s
 }
 
 .center-block {
   display: block;
-  margin: auto;
+  margin: auto
 }
 
 .bw-btn:hover {
   color: #37393a;
-  background-color: white;
+  background-color: #fff
 }
 
 .blue-hover:hover {
-  color: white;
-  background-color: #77b6ea;
+  color: #fff;
+  background-color: #77b6ea
+}
+
+#logo,#logo-login {
+  font-family: var(--logo-font);
+  color: #37393a
 }
 
 #logo {
-  font-family: var(--logo-font);
-  color: #37393a;
   font-size: 40px;
-  margin-top: -12.5px;
+  margin-top: -12.5px
 }
 
 #logo-login {
   position: relative;
-  font-family: var(--logo-font);
   font-size: 50px;
   text-align: center;
-  top: 0px;
-  text-decoration: none;
-  color: #37393a;
+  top: 0;
+  text-decoration: none
 }
 
 #logged-in {
@@ -93,192 +105,171 @@
   top: 7px;
   left: 8px;
   -webkit-columns: #37393a;
-          columns: #37393a;
-  font-size: 20px;
+  columns: #37393a;
+  font-size: 20px
 }
 
 #register-box {
   max-width: 650px;
   margin-left: auto;
   margin-right: auto;
-  border-radius: 5px;
+  border-radius: 5px
 }
 
 .form-control {
-  background-color: rgb(240, 242, 245) !important;
-  border: none;
+  background-color: #f0f2f5;
+  border: 0;
   border-radius: 5px;
   padding-top: 10px;
   padding-bottom: 10px;
-  width: 100%;
+  width: 100%
 }
 
-.register-text {
-  text-align: center;
+.form-control:focus {
+  background-color: #f0f2f5;
 }
 
-.btn-success {
+#main-text,.register-text {
+  text-align: center
+}
+
+.btn-success,.btn-success:hover {
   color: #37393a;
-  background-color: #77b6ea !important;
-  border-color: #37393a;
-}
-
-.completed {
-  background-color: #0ab45f !important;
-  color: #e5e5e5 !important;
-}
-
-.btn-success:hover {
-  background-color: #a2c3a4 !important;
-  color: #37393a;
-  border-color: #37393a;
+  background-color: #77b6ea;
+  border-color: #37393a
 }
 
 .ya-display {
   margin-top: 50px;
   margin-left: auto;
   margin-right: auto;
-  max-width: 600px;
+  max-width: 600px
 }
 
 .display-content {
   position: relative;
   margin-top: 5%;
-  margin-bottom: 5%;
+  margin-bottom: 5%
 }
 
 #main-text {
   position: relative;
-  text-align: center;
   top: 40px;
   font-family: var(--logo-font);
-  font-size: 50px;
+  font-size: 50px
+}
+
+#ya-bull,.buttons {
+  position: relative;
+  margin-left: 15%;
+  margin-right: 15%
 }
 
 #ya-bull {
-  position: relative;
   margin-top: 5%;
   font-size: 18px;
-  margin-left: 15%;
-  margin-right: 15%;
   list-style-type: none;
   display: inline-block;
-  word-break: break-word;
+  word-break: break-word
 }
 
 .buttons {
-  position: relative;
-  margin-top: 1%;
-  margin-left: 15%;
-  margin-right: 15%;
+  margin-top: 1%
 }
 
 #btn_account {
   float: left;
-  margin-right: 3%;
+  margin-right: 3%
 }
 
 #btn_password {
-  float: left;
+  float: left
 }
 
 * {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0
 }
 
-html, body {
+body,html {
   height: 100%;
-  color: #37393a !important;
+  color: #37393a;
 }
 
 #jumbohome {
   background-color: var(--nav-color);
-  height:650px;
+  height: 650px;
   background-color: #77b6ea;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  height: max(calc(100vh - 74px), 400px);
-  border-radius: 0px;
+  min-height: max(calc(100vh - 74px),400px);
+  border-radius: 0
 }
 
 #jumbomain {
   text-align: center;
   font-family: var(--logo-font);
-  font-size: 8rem;
+  font-size: 8rem
 }
 
-@media (max-width: 768px) {
+@media (max-width:768px) {
   #jumbomain {
-    font-size: 6rem;
+      font-size: 6rem
   }
 }
 
 .big-boy-body {
   color: #37393a;
   font-size: x-large;
-  margin-right: 0px;
+  margin-right: 0
 }
 
-.flash {
-  color: #EE0000;
-  text-align: center;
+.flash,footer {
+  color: #e00;
+  text-align: center
 }
 
 h4 {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 24px
 }
 
 #faq p {
   font-size: 20px;
-  color: #5b6061;
+  color: #5b6061
 }
 
 .body-header {
   text-align: center;
-  font-size: 3.5rem;
+  font-size: 3.5rem
 }
 
 .normal-body {
   margin-left: 25%;
   margin-right: 25%;
-  font-family: 'Open Sans', sans-serif;
-  transition: 0.4s;
+  font-family: 'Open Sans',sans-serif;
+  transition: .4s
 }
 
-.task-incomplete, .task-complete {
-  max-width: 500px;
+.task-complete,.task-incomplete {
+  max-width: 500px
 }
 
-@media only screen and (max-width: 700px) {
-  .normal-body {
-    margin-left: 10%;
-    margin-right: 10%;
+@media only screen and (max-width:700px) {
+  .normal-body,.task-complete,.task-incomplete {
+      margin-left: 10%;
+      margin-right: 10%
   }
-  .task-incomplete, .task-complete {
-    margin-left: 10%;
-    margin-right: 10%;
-  }
-}
-
-#container {
-  min-height: 100%;
 }
 
 #main {
   overflow: auto;
-  padding-bottom: 50px;
-}
-
-.text-info {
-  color: #37393a !important;
+  padding-bottom: 50px
 }
 
 #dropdown-email-text {
   cursor: default;
-  pointer-events: none;
+  pointer-events: none
 }
 
 footer {
@@ -286,88 +277,72 @@ footer {
   color: #37393a;
   min-width: 300px;
   position: relative;
-  text-align: center;
   padding: 40px;
   height: 100px;
-  clear: both;
+  clear: both
 }
 
 .dropdown-item:hover {
   background-color: #a2c3a4;
-  color: white;
+  color: #fff
 }
 
 a:not([href]):not([tabindex]):hover {
-  color: white;
-  cursor: pointer;
+  color: #fff;
+  cursor: pointer
 }
 
-.btn-primary {
-  background-color: #a2c3a4 !important;
-  border: #a2c3a4 !important;
-}
-.btn-primary:hover {
-  background-color: #77b6ea !important;
-}
-.bg-success {
-  background-color: #a2c3a4 !important;
-}
-
-.bg-dark {
-  background-color: #37393a !important;
-}
-
-.bg-primary {
-  background-color: #77b6ea !important;
+.task-complete {
+  border: none;
 }
 
 #scrolldown:hover {
   cursor: pointer;
-  color: white;
+  color: #fff
 }
 
 #scrolldown {
   margin-top: 200px;
   display: inline-block;
-  transition: 0.3s;
+  transition: .3s;
   color: #37393a;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 500
+}
+
+#scrolldown span,#scrolldown span::after {
+  position: absolute;
+  left: 50%;
+  box-sizing: border-box
 }
 
 #scrolldown span {
-  position: absolute;
   bottom: 100px;
-  left: 50%;
   width: 72px;
   height: 72px;
   margin-left: -36px;
   border: 3px solid #37393a;
   background-color: #37393a;
   border-radius: 100%;
-  box-sizing: border-box;
   -webkit-animation: sda 2s infinite;
   animation: sda 2s infinite;
-  transition: 0.4s;
+  transition: .4s
 }
 
-@media only screen and (max-height: 580px) {
+@media only screen and (max-height:580px) {
   #scrolldown span {
-    bottom: calc(50px - 5vh);
+      bottom: calc(50px - 5vh)
   }
 }
 
-@media only screen and (max-height: 524px) {
+@media only screen and (max-height:524px) {
   #scrolldown span {
-    display: none;
+      display: none
   }
 }
-
 
 #scrolldown span::after {
-  position: absolute;
   top: 50%;
-  left: 50%;
   content: '';
   width: 32px;
   height: 32px;
@@ -375,85 +350,85 @@ a:not([href]):not([tabindex]):hover {
   border-left: 5px solid #fff;
   border-bottom: 5px solid #fff;
   -webkit-transform: rotate(-45deg);
-  transform: rotate(-45deg);
-  box-sizing: border-box;
+  transform: rotate(-45deg)
 }
-
-@-webkit-keyframes sda {
-  0% {
-    -webkit-transform: translate(0, 0);
-  }
-  20% {
-    -webkit-transform: translate(0px, 15px);
-  }
-  40% {
-    -webkit-transform: translate(0, 0);
-  }
-}
-@keyframes sda {
-  0% {
-    transform: translate(0, 0);
-  }
-  20% {
-    transform: translate(0px, 15px);
-  }
-  40% {
-    transform: translate(0, 0);
-  }
-}
-
 
 .intro-text {
   text-align: center;
   font-size: 24px;
   margin-bottom: -24px;
-  font-weight: 600;
+  font-weight: 600
 }
 
-@media (max-width: 380px) {
+@media (max-width:380px) {
   #jumbomain {
-    font-size: 4rem;
+      font-size: 4rem
   }
 
   #jumbosubtext {
-    font-size: 2.5rem;
+      font-size: 2.5rem
   }
 
   #lead {
-    font-size: 1.5rem;
+      font-size: 1.5rem
   }
 
   .body-header {
-    font-size: 40px;
+      font-size: 40px
   }
 
   h4 {
-    font-size: 16px;
+      font-size: 16px
   }
-  
+
   #faq p {
-    font-size: 14px;
+      font-size: 14px
   }
 
   .intro-text {
-    font-size: 20px;
-    margin-bottom: 0px;
+      font-size: 20px;
+      margin-bottom: 0
   }
 }
 
 #register-form-text {
-  width: min(75vw, 700px);
-  padding: 20px;
+  width: min(75vw,700px);
+  padding: 20px
 }
 
 #register-body {
   padding-top: 50px;
-  background-color: white;
-  overflow-x: hidden;
+  background-color: #fff;
+  overflow-x: hidden
 }
 
 #zipcode-input {
   max-width: 600px;
   margin-top: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 10px
+}
+
+.card {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  border-radius: 10px;
+  overflow: hidden;
+  color: #000;
+  border: none;
+}
+
+.card-header {
+  background-color: white;
+}
+
+.card-header span {
+  position: absolute;
+  right: 24px;
+}
+
+.card-header:last-child {
+  border-bottom: none;
+}
+
+h2 {
+  margin-top: 12px;
 }

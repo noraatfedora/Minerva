@@ -50,4 +50,3 @@ def request_items():
         return redirect("/success")
     
     return render_template("request_items.html", items = itemsList.values(), categories=categories)
-
