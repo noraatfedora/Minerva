@@ -56,6 +56,9 @@ def create_app(test_config=None):
     import modify_volunteers
     app.register_blueprint(modify_volunteers.bp)
 
+    import view_all_orders
+    app.register_blueprint(view_all_orders.bp)
+
     return app
 
 # Uncomment the below lines if you want debugging tools
