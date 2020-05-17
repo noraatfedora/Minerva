@@ -14,7 +14,6 @@ def login():
     redirect_url = request.args.get('redirect_url')
     if redirect_url is None:
         redirect_url = 'index'
-    print("Redirect url: " + redirect_url)
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -38,30 +37,17 @@ def login():
 def register():
     if request.method == "POST":
         supportedZipCodes = open('supported_zip_codes', 'r').read()
-        print("Supported zip codes: " + str(supportedZipCodes))
         email = request.form['email']
-        print(email)
         password = request.form['password']
         confirm = request.form['confirm']
         address = request.form['address']
         zipCode = request.form['zipCode']
-        print("First 5 digits: " + zipCode[0:5])
         instructions = request.form['instructions']
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
         error = "" 
         
-        if not email:
-            error += "Email is required.\n"
-        elif not password:
-            error += "Password is required.\n"
-        elif password != confirm:
-            error += "Passwords do not match.\n"
-        elif not address:
-            error += "Home address is required.\n"
-        elif not cellPhone:
-            error += "Cell phone is required."
-        elif zipCode[0:5] not in supportedZipCodes:
+        if zipCode[0:5] not in supportedZipCodes:
             error += "Sorry, but your zip code is not supported at this time. Please contact your local food banks."
         elif conn.execute(users.select().where(users.c.email==email)).fetchone() is not None:
             error = 'User {} is already registered.'.format(email)

@@ -2,6 +2,7 @@
 {% block html %}
 
 <body id="register-body">
+    <script defer type=text/javascript src="{{url_for('static', filename='js/register.js') }}"></script>
     {% block content %}
     <p class="intro-text">Welcome to</p>
     <h1 id="jumbomain">Minerva</h1>
@@ -9,42 +10,50 @@
     <div id="login">
         <div id="login-column" class="register-form-text justify-content-center align-items-center row">
             <div id="login-box" class="register-form-text">
-                <form id="register-form-text" class="form" action="" method="post">
+                <form name="register" id="register-form-text" class="form" action="" method="post"
+                    onsubmit="return verifyForm()">
                     <div class="form-group">
-                        <!-- <label for="email" class="text-info">Email</label><br> -->
-                        <input type="text" name="email" id="email" class="form-control" value="{{ data['email'] }}" placeholder="Email">
+                        <input type="text" name="email" id="email" class="form-control" value="{{ data['email'] }}"
+                            placeholder="Email">
+                            <small>Error message</small>
+
                     </div>
                     <div class="form-group">
-                        <!-- <label for="password" class="text-info">Password</label><br> -->
                         <input type="password" name="password" id="password" class="form-control"
                             placeholder="Password">
+                            <small>Error message</small>
+
                     </div>
                     <div class="form-group">
-                        <!-- <label for="password" class="text-info">Confirm Password</label><br> -->
                         <input type="password" name="confirm" id="confirm" class="form-control"
                             placeholder="Confirm Password">
+                            <small>Error message</small>
+
                     </div>
                     <div class="form-group">
-                        <!-- <label for="address" class="text-info">Home Address</label><br> -->
-                        <input type="address" name="address" id="address" class="form-control" value="{{ data['address'] }}"
+                        <input type="address" name="address" id="address" class="form-control"
+                            value="{{ data['address'] }}"
                             placeholder="Full Address Example: 1234 Elm Street, Kirkland, WA 98083 ">
+                            <small>Error message</small>
+
                     </div>
                     <div class="form-group">
-                        <!-- <label for="zip" class="text-info" id="zip">Zip Code</label> -->
-                        <input type="number" name="zipCode" id="zipCode" class="form-control" value="{{ data['zipCode'] }}"
-                            placeholder="Zip Code"></label>
+                        <input type="number" name="zipCode" id="zipCode" class="form-control"
+                            value="{{ data['zipCode'] }}" placeholder="Zip Code"></label>
+                            <small>Error message</small>
+
                     </div>
                     <div class="form-group">
-                        <!-- <label for="cell" class="text-info">Phone Number (Cell)</label><br> -->
-                        <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)" value="{{ data['cellPhone'] }}">
+                        <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)"
+                            value="{{ data['cellPhone'] }}">
+                            <small>Error message</small>
+
                     </div>
                     <div class="form-group">
-                        <!-- <label for="cell" class="text-info">Phone Number (Landline, Optional)</label><br> -->
                         <input type="text" name="homePhone" id="homePhone" class="form-control"
                             placeholder="Landline (Optional)" value="{{ data['homePhone'] }}">
                     </div>
                     <div class="form-group">
-                        <!-- <label for="cell" class="text-info">Special Instructions (Optional)</label><br> -->
                         <textarea type="text" name="instructions" id="instructions" class="form-control"
                             placeholder="Special Instructions (Optional)" value="{{ data['instructions'] }}"></textarea>
                     </div>

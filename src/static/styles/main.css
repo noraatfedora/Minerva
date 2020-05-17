@@ -203,7 +203,7 @@ body,html {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  min-height: max(calc(100vh - 74px),400px);
+  min-height: max(calc(100vh - 74px), 400px);
   border-radius: 0
 }
 
@@ -431,4 +431,13 @@ a:not([href]):not([tabindex]):hover {
 
 h2 {
   margin-top: 12px;
+}
+
+.form-group small {
+  color: #e74c3c;
+  display: none;
+}
+
+.form-control.error {
+  border: 2px solid #e74c3c;
 }
