@@ -6,7 +6,7 @@ from auth import login_required
 from db import users, conn, orders
 from send_conformation import send_request_conformation
 from json import loads, dumps
-from sqlalchemy import select
+from sqlalchemy import select, and_
 
 itemsList = loads(open("items.json", "r").read())
 categories = set()
@@ -27,8 +27,20 @@ def request_items():
             itemsDict[name] = quantity
 
         send_request_conformation(g.user['email'], itemsDict)
+
+        # Make sure that the user only orders once per week by marking all their
+        # old orders as completed and removing them from their volunteer's lists
+        oldOrders = conn.execute(orders.select().where(orders.c.userId==g.user.id)).fetchall()
+        for oldOrder in oldOrders:
+            volunteer = conn.execute(users.select().where(users.c.id==oldOrder.volunteerId)).fetchone()
+            if volunteer != None:
+                volunteerOrders = loads(str(volunteer.assignedOrders))
+                volunteerOrders.remove(oldOrder.id)
+                conn.execute(users.update().where(users.c.id==volunteer.id).values(assignedOrders=dumps(volunteerOrders)))
+
+        conn.execute(orders.update().where(orders.c.userId==g.user.id).values(completed=1))
         # insert new order into the orders table
-        orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, userId=g.user.id, foodBankId=g.user.foodBankId).inserted_primary_key[0]
+        orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, userId=g.user.id, volunteerId=2, foodBankId=g.user.foodBankId).inserted_primary_key[0]
         # TODO: remove this code when we finish page that lets you assign orders to volunteers
         # Right now, we assign the order to volunteer example
         exampleOrders = loads(conn.execute(select([users.c.assignedOrders]).where(users.c.email=="volunteerexample@mailinator.com")).fetchone()[0])

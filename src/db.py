@@ -55,6 +55,7 @@ orders = Table(
     Column('volunteerId', Integer),
     Column('foodBankId', Integer),
     Column('contents', String(255)), # json
+    Column('bagged', Integer),
     Column('completed', Integer)  # either 0 or 1
 )
 

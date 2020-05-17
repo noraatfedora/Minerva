@@ -74,24 +74,6 @@ def getOrders(volunteerId):
 def getAddresses(orders):
     #TODO 
     return []
-# A list of dicts, where each dict contains a dict.
-def dictList(rows):
-    toReturn = []
-    for row in rows:
-        user = {}
-        print("asdf" + str(row))
-        for column in conn.execute(users.select()).keys():
-            user[str(column)] = str(getattr(row, str(column)))
-            print(str(column) + ": " + user[str(column)])
-        orderUnparsed = conn.execute(orders.select().where(and_(orders.c.completed==0, orders.c.userId==user['id']))).fetchone()
-        if (orderUnparsed != None):
-            user['itemsDict'] = loads(str(orderUnparsed))
-            toReturn.append(user)
-    for user in toReturn:
-        user['itemsDict'] = loads(user['order'])
-
-    return toReturn
-    
 
 def generate_optimap(addresses):
     link = "http://gebweb.net/optimap/index.php?loc0=" + g.user['address'] # Starts at volunteer's address, we might want to change this
