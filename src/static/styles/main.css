@@ -417,7 +417,7 @@ a:not([href]):not([tabindex]):hover {
 }
 
 .card-header {
-  background-color: #007bff;
+  background-color: white;
 }
 
 .card-header span {
@@ -433,10 +433,6 @@ h2 {
   margin-top: 12px;
 }
 
-h3 {
-  margin-top: 24px;
-}
-
 .form-group small {
   color: #e74c3c;
   display: none;
@@ -444,4 +440,8 @@ h3 {
 
 .form-control.error {
   border: 2px solid #e74c3c;
+}
+
+.spacer {
+  height: 24px;
 }
