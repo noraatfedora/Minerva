@@ -69,7 +69,7 @@ def register():
         if error == "":
             print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
-            conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, zipCode=zipCode, completed=0)
+            conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, zipCode=zipCode, completed=0, foodBank=-1)
             return redirect(url_for('auth.login'))
         else:
             flash(error)
@@ -121,6 +121,16 @@ def volunteer_required(view):
 
         return view(**kwargs)
 
+    return wrapped_view
+
+def admin_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        role = g.user['role'].lower()
+        if role != "admin":
+            print("Invalid authentication!")
+            print(role)
+            return redirect('/')
     return wrapped_view
 
 @bp.route('/youraccount')
