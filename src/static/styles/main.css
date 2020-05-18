@@ -433,6 +433,10 @@ h2 {
   margin-top: 12px;
 }
 
+h3 {
+  margin-top: 24px;
+}
+
 .form-group small {
   color: #e74c3c;
   display: none;
