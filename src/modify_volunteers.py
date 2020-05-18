@@ -6,7 +6,7 @@ from auth import login_required, volunteer_required
 from json import loads
 from db import users, conn
 from sqlalchemy import and_, select
-from send_conformation import send_recieved_notification
+from send_confirmation import send_recieved_notification
 
 bp = Blueprint('modify', __name__)
 

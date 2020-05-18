@@ -6,7 +6,7 @@ from auth import login_required, admin_required
 from json import loads, dumps
 from db import users, conn, orders
 from sqlalchemy import and_, select
-from send_conformation import send_recieved_notification
+from send_confirmation import send_recieved_notification
 
 bp = Blueprint('view_all_orders', __name__)
 
