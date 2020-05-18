@@ -4,7 +4,7 @@ from flask import (
 from werkzeug.exceptions import abort
 from auth import login_required
 from db import users, conn, orders
-from send_conformation import send_request_conformation
+from send_confirmation import send_request_confirmation
 from json import loads, dumps
 from sqlalchemy import select, and_
 
@@ -26,7 +26,7 @@ def request_items():
             quantity = request.form[name + "-quantity"]
             itemsDict[name] = quantity
 
-        send_request_conformation(g.user['email'], itemsDict)
+        send_request_confirmation(g.user['email'], itemsDict)
 
         # Make sure that the user only orders once per week by marking all their
         # old orders as completed and removing them from their volunteer's lists
@@ -35,8 +35,9 @@ def request_items():
             volunteer = conn.execute(users.select().where(users.c.id==oldOrder.volunteerId)).fetchone()
             if volunteer != None:
                 volunteerOrders = loads(str(volunteer.assignedOrders))
-                volunteerOrders.remove(oldOrder.id)
-                conn.execute(users.update().where(users.c.id==volunteer.id).values(assignedOrders=dumps(volunteerOrders)))
+                if oldOrder.id in volunteerOrders:
+                    volunteerOrders.remove(oldOrder.id)
+                    conn.execute(users.update().where(users.c.id==volunteer.id).values(assignedOrders=dumps(volunteerOrders)))
 
         conn.execute(orders.update().where(orders.c.userId==g.user.id).values(completed=1))
         # insert new order into the orders table
