@@ -2,20 +2,18 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
     request, session, url_for, Flask
 )
 from werkzeug.exceptions import abort
-from auth import login_required, volunteer_required
+from auth import login_required, admin_required 
 from json import loads, dumps
 from db import users, conn, orders
 from sqlalchemy import and_, select
 from send_confirmation import send_recieved_notification
 
-bp = Blueprint('dashboard', __name__)
+bp = Blueprint('view_all_orders', __name__)
 
-# request seems like it's a reserved word somewhere or something,
-# so use request_items instead everywhere.
-@bp.route('/dashboard', methods=('GET', 'POST'))
 @login_required
-@volunteer_required
-def dashboard():
+@admin_required
+@bp.route('/allorders', methods=('GET', 'POST'))
+def allOrders():
     itemsList = loads(open("items.json", "r").read()).keys()
 
     ordersDict = getOrders(g.user.id)
@@ -29,29 +27,22 @@ def dashboard():
         if (completed == 0):
             email = ordersDict[orderId]['email']
             send_recieved_notification(email)
-            conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
-            # Remove the order from the volunteer's list
-            orderList = loads(str(conn.execute(select([users.c.assignedOrders]).where(users.c.id==g.user.id)).fetchone()[0]))
-            orderList.remove(orderId)
-            conn.execute(users.update().where(users.c.id==g.user.id).values(assignedOrders=dumps(orderList)))
+            conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
             ordersDict = getOrders(g.user.id)
     
     print("orders: " + str(orders))
-    return render_template("dashboard.html", orders=ordersDict, items=itemsList, optimap=generate_optimap(getAddresses(orders)))
+    return render_template("view_all_orders.html", orders=ordersDict, items=itemsList)
 
 # Returns a dictionary where the keys are the order ID's,
 # and the values are dicts with attributes about that order (contents, email, etc.)
 # All of these should be uncompleted orders, since an order is removed from a volunteer's
 # list when it's completed.
-def getOrders(volunteerId):
+def getOrders(adminId):
     # Get the ID's that our volunteer is assigned to
-    query = select([users.c.assignedOrders]).where(users.c.id==volunteerId)
-    output = conn.execute(query).fetchone()[0]
-    print("Output: " + str(output))
-    orderIdList = loads(output)
-
+    orderIdList = conn.execute(select([orders.c.id]).where(and_(orders.c.foodBankId==g.user.id, orders.c.completed==0))).fetchall()
     toReturn = {} # We'll return this later
-    for orderId in orderIdList:
+    for orderIdProxy in orderIdList:
+        orderId = orderIdProxy[0]
         toReturn[orderId] = {}
         order = conn.execute(orders.select().where(orders.c.id==orderId)).fetchone()
         print("Order: " + str(order))
@@ -70,13 +61,3 @@ def getOrders(volunteerId):
 
     print("toReturn: " + str(toReturn)) 
     return toReturn 
-
-def getAddresses(orders):
-    #TODO 
-    return []
-
-def generate_optimap(addresses):
-    link = "http://gebweb.net/optimap/index.php?loc0=" + g.user['address'] # Starts at volunteer's address, we might want to change this
-    for x in range(0, len(addresses)):
-        link += "&loc" + str(x+1) + "=" + addresses[x]
-    return link.replace(" ", "%20")

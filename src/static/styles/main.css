@@ -417,7 +417,7 @@ a:not([href]):not([tabindex]):hover {
 }
 
 .card-header {
-  background-color: white;
+  background-color: #007bff;
 }
 
 .card-header span {
