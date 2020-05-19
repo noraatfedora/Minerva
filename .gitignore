@@ -10,3 +10,5 @@ src/__pycache__/
 requests.sqlite
 .vscode/settings.json
 env/
+src/ERROR_LOG
+src/LOG
