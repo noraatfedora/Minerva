@@ -27,6 +27,8 @@ users = Table(
     Column('id', Integer, primary_key=True),
     Column('email', String(60)),
     Column('password', String(255)),
+    # Either RECIEVER, VOLUNTEER, or ADMIN
+    # yes I know reciever is spelled wrong but it's too late to change that
     Column('role', String(10)),
     Column('cellPhone', String(15)),
     Column('instructions', String(255)),
@@ -35,10 +37,28 @@ users = Table(
     Column('zipCode', Integer),
     # for volunteers
     Column('assignedZipCodes', String(255)),
-    # Stored as a JSON because g.db doesn't support adding Columns
-    Column('order', String(255)),
+    Column('assignedOrders', String(255), default='[]'), # JSON of order id's
+    # for both users and volunteers
+    # this will be determined automatically
+    # when the user registers, but the food bank
+    # can change which volunteers they control
+    Column('foodBankId', Integer) # id of the user of their food bank
+)
+
+orders = Table(
+    'orders', meta,
+    Column('id', Integer, primary_key=True),
+    Column('userId', Integer),
+    # This is probably redundant, but just in case
+    # we need to track who delivered an order after it's 
+    # removed from a volunteer's list
+    Column('volunteerId', Integer),
+    Column('foodBankId', Integer),
+    Column('contents', String(255)), # json
+    Column('bagged', Integer),
     Column('completed', Integer)  # either 0 or 1
 )
+
 conn = engine.connect()
 print("Initializing db!")
 try:

@@ -1,14 +1,13 @@
 email_password
 .vscode/
-instance/requests.sqlite
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 src/__pycache__/
 *.pyc
-requests.sqlite
 .vscode/settings.json
 env/
+.vs/
 src/ERROR_LOG
 src/LOG

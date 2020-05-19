@@ -3,9 +3,10 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from auth import login_required
-from db import users, conn
-from send_conformation import send_request_conformation
+from db import users, conn, orders
+from send_confirmation import send_request_confirmation
 from json import loads, dumps
+from sqlalchemy import select, and_
 
 itemsList = loads(open("items.json", "r").read())
 categories = set()
@@ -25,9 +26,28 @@ def request_items():
             quantity = request.form[name + "-quantity"]
             itemsDict[name] = quantity
 
-        send_request_conformation(g.user['email'], itemsDict)
-        conn.execute(users.update().where(users.c.id==g.user['id'])
-            .values(order=dumps(itemsDict), completed=0))
+        send_request_confirmation(g.user['email'], itemsDict)
+
+        # Make sure that the user only orders once per week by marking all their
+        # old orders as completed and removing them from their volunteer's lists
+        oldOrders = conn.execute(orders.select().where(orders.c.userId==g.user.id)).fetchall()
+        for oldOrder in oldOrders:
+            volunteer = conn.execute(users.select().where(users.c.id==oldOrder.volunteerId)).fetchone()
+            if volunteer != None:
+                volunteerOrders = loads(str(volunteer.assignedOrders))
+                if oldOrder.id in volunteerOrders:
+                    volunteerOrders.remove(oldOrder.id)
+                    conn.execute(users.update().where(users.c.id==volunteer.id).values(assignedOrders=dumps(volunteerOrders)))
+
+        conn.execute(orders.update().where(orders.c.userId==g.user.id).values(completed=1))
+        # insert new order into the orders table
+        orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, userId=g.user.id, volunteerId=2, foodBankId=g.user.foodBankId).inserted_primary_key[0]
+        # TODO: remove this code when we finish page that lets you assign orders to volunteers
+        # Right now, we assign the order to volunteer example
+        exampleOrders = loads(conn.execute(select([users.c.assignedOrders]).where(users.c.email=="volunteerexample@mailinator.com")).fetchone()[0])
+        exampleOrders.append(orderId)
+        print(exampleOrders)
+        conn.execute(users.update().where(users.c.email=="volunteerexample@mailinator.com").values(assignedOrders=dumps(exampleOrders))) 
         return redirect("/success")
     
     return render_template("request_items.html", items = itemsList.values(), categories=categories)
