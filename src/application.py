@@ -53,6 +53,12 @@ def create_app(test_config=None):
     app.register_blueprint(request_items.bp)
     app.add_url_rule('/', endpoint='index')
 
+    import modify_volunteers
+    app.register_blueprint(modify_volunteers.bp)
+
+    import view_all_orders
+    app.register_blueprint(view_all_orders.bp)
+
     return app
 
 # Uncomment the below lines if you want debugging tools

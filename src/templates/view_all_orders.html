@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<center>
+    <h2>All orders</h2>
+    <br>
+    {% for order in orders %}
+    {% if orders[order]['bagged']=='1' %}
+    <div class="card bg-success text-left task-incomplete">
+        bagged uwu
+        {% else %}
+        <div class="card text-left task-incomplete">
+            {% endif %}
+            <div class="card-header">
+                {{ orders[order]['email'] }}
+            </div>
+            <div class="card-header">
+                {{ orders[order]['address']}}
+            </div>
+            <div class="card-header">
+                {{ orders[order]['cellPhone']}}
+            </div>
+            <div class="card-header">
+                Assigned to {{ orders[order]['volunteer'] }}
+            </div>
+            <table class="table table-striped">
+                <tbody>
+                    {% for item in items %}
+                    {% if orders[order]['itemsDict'][item] != '0' %}
+                    <tr>
+                        <td style="border: none;">{{ item }}</td>
+                        <td style="border: none;">{{ orders[order]['itemsDict'][item] }} </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if orders[order]['bagged']=='0' %}
+            <div class="card-body">
+                <form action="" method="POST">
+                    <button type="submit" value="Mark as completed" name="{{ orders[order]['id'] }}"
+                        class="btn bw-btn">Mark As Complete</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        <br>
+        {% endfor %}
+</center>
+{% endblock content %}
