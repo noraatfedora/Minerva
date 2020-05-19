@@ -10,7 +10,7 @@ Session = sessionmaker(autocommit=True)
 
 if os.environ.get('RDS_CONNECT') is not None:
     url = os.environ.get('RDS_CONNECT')
-    engine = create_engine(url)
+    engine = create_engine(url, pool_recycle=28700)
     Session.configure(bind=engine)
     sess = Session()
     print("DB URL: " + url)
