@@ -69,6 +69,7 @@ def dictList(rows):
                     orderDict[column] = str(getattr(user, str(column)))
                 else:
                     print("skipping " + column)
+            orderDict['contents'] = loads(orderDict['contents'])
 
             assignedOrdersDictList.append(orderDict)
         volunteer['orders'] = assignedOrdersDictList

@@ -13,21 +13,57 @@
                 Show orders
             </a>
         </div>
-        <div id="collapse-{{ user['id'] }}" class=" collapse">
-            <table class="table table-striped">
+        <div id="collapse-{{ user['id'] }}" class="collapse">
+            <div id="accordion-{{ user['id'] }}">
                 <tbody>
                     {% for order in user['orders'] %}
-                    <tr>
-                        <td style="border: none;">
+                    <div class="card bg-light" id="order-header-{{ order['id'] }}">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-{{ order['id'] }}"
+                            role="button" aria-controls="collapse-{{ order['id'] }}">
+                            {{ order['address'] }}
+                        </button>
+                        <div id="collapse-{{ order['id'] }}" class="collapse"
+                            aria-labelledby="order-header-{{ order['id'] }}" data-parent="accordion-{{ user['id'] }}">
+                            <table>
+                                <tr>
+                                    <th>
+                                        Email:
+                                    </th>
+                                    <th>
+                                        {{ order['email'] }}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Cell Phone:
+                                    </th>
+                                    <th>
+                                        {{ order['cellPhone'] }}
+                                    </th>
+                                </tr>
+                                {% for item in order['contents'] %}
+                                {% if order['contents'][item] != "0"%}
+                                <tr>
+                                    <th>
+                                        {{ item }}:
+                                    </th>
+                                    <th>
+                                        {{ order['contents'][item] }}
+                                    </th>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
                             <form action="" method="POST"">
-                            <button type=" submit" value="reassign-{{ order }}" name="{{ user['id'] }}"
-                                class="btn bw-btn">Reassign order</button>
+                            <button type=" submit" value="Unassign-{{ order }}" name="{{ user['id'] }}"
+                                class="btn bw-btn">Unassign order</button>
                             </form>
-                        </td>
-                    </tr>
+
+                        </div>
+                    </div>
                     {% endfor %}
                 </tbody>
-            </table>
+            </div>
         </div>
         <div class="card-body">
             <form action="" method="POST">
