@@ -7,21 +7,28 @@
         <div class="card-header">
             {{ user['email'] }}
         </div>
-        <table class="table table-striped">
-            <tbody>
-                {% for order in user['orders'] %}
-                <tr>
-                    <td style="border: none;">{{ order['email'] }}</td>
-                    <td style="border: none;">
-                        <form action="" method="POST"">
-                            <button type="submit" value="reassign-{{ order }}" name="{{ user['id'] }}"
+        <div class="card-header">
+            <a class="btn bw-btn" data-toggle="collapse" href="#collapse-{{ user['id'] }}" role="button"
+                aria-expanded="false" aria-controls="collapse-{{ user['id'] }}">
+                Show orders
+            </a>
+        </div>
+        <div id="collapse-{{ user['id'] }}" class=" collapse">
+            <table class="table table-striped">
+                <tbody>
+                    {% for order in user['orders'] %}
+                    <tr>
+                        <td style="border: none;">
+                            <form action="" method="POST"">
+                            <button type=" submit" value="reassign-{{ order }}" name="{{ user['id'] }}"
                                 class="btn bw-btn">Reassign order</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <div class="card-body">
             <form action="" method="POST">
                 <button type="submit" value="remove" name="{{ user['id'] }}" class="btn bw-btn bg-danger">Remove
