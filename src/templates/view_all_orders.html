@@ -19,8 +19,12 @@
                 {{ orders[order]['cellPhone']}}
             </div>
             <div class="card-header">
-                {% if orders[order]['volunteerId'] %}
+                {% if orders[order]['volunteerId'] != 'None' %}
                 Assigned to {{ orders[order]['volunteerEmail'] }}
+                <form action="" method="POST">
+                    <button type="submit" value="unassign" name="unassign-{{ orders[order]['id'] }}"
+                        class="btn bw-btn">Change</button>
+                </form>
                 {% else %}
                 <button class="btn dropdown-toggle bw-btn" type="button" id="dropdown-{{orders[order]['id']}}"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">[choose volunteer]</button>
@@ -48,8 +52,8 @@
             {% if orders[order]['bagged']=='0' %}
             <div class="card-body">
                 <form action="" method="POST">
-                    <button type="submit" value="Mark as completed" name="{{ orders[order]['id'] }}"
-                        class="btn bw-btn">Mark As Complete</button>
+                    <button type="submit" value="Mark as bagged" name="{{ orders[order]['id'] }}"
+                        class="btn bw-btn">Mark as bagged</button>
                 </form>
             </div>
             {% endif %}

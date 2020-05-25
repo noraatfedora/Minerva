@@ -23,16 +23,21 @@ def allOrders():
         conn.execute(orders.update(whereclause=orders.c.id==orderId).values(volunteerId=volunteerId))
         return redirect("/allorders")
     if request.method == "POST":
-        orderId = int(next(request.form.keys()))
-        query = select([orders.c.completed]).where(orders.c.id==orderId)
-        completed = conn.execute(query).fetchone()[0]
-        print("completeedddsf: " + str(completed))
-        # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
-        if (completed == 0):
-            email = ordersDict[orderId]['email']
-            send_recieved_notification(email)
-            conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
+        key = next(request.form.keys())
+        if "unassign" in key:
+            orderId = int(key[len('unassign-'):])
+            conn.execute(orders.update(whereclause=(orders.c.id==orderId)).values(volunteerId=None))
             ordersDict = getOrders(g.user.id)
+        else:
+            orderId = int(key)
+            query = select([orders.c.bagged]).where(orders.c.id==orderId)
+            bagged = conn.execute(query).fetchone()[0]
+            # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
+            if (bagged == 0):
+                email = ordersDict[orderId]['email']
+                #send_recieved_notification(email)
+                conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
+                ordersDict = getOrders(g.user.id)
     
     print("orders: " + str(orders))
     volunteers = getVolunteers()
