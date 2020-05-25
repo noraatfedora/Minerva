@@ -3,15 +3,15 @@
 <center>
     <h2>Volunteer Settings</h2>
     {% for user in users %}
-    <div class="card text-left task-incomplete">
+    <div class="card text-left task-incomplete bg-primary">
         <div class="card-header">
             {{ user['email'] }}
         </div>
         <table class="table table-striped">
             <tbody>
-                {% for order in user.orders %}
+                {% for order in user['orders'] %}
                 <tr>
-                    <td style="border: none;">{{ order }}</td>
+                    <td style="border: none;">{{ order['email'] }}</td>
                     <td style="border: none;">
                         <form action="" method="POST"">
                             <button type="submit" value="reassign-{{ order }}" name="{{ user['id'] }}"
