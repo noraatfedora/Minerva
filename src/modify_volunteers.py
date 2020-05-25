@@ -59,7 +59,7 @@ def dictList(rows):
             volunteer[str(column)] = str(getattr(row, str(column)))
             print(str(column) + ": " + volunteer[str(column)])
         
-        assignedOrders = conn.execute(orders.select(orders.c.volunteerId==volunteer['id'])).fetchall()
+        assignedOrders = conn.execute(orders.select(and_(orders.c.volunteerId==volunteer['id'], orders.c.completed==0))).fetchall()
         assignedOrdersDictList = []
         for order in assignedOrders:
             orderDict = {}
@@ -68,7 +68,7 @@ def dictList(rows):
                 orderDict[column] = str(getattr(order, str(column)))
 
             userColumns = conn.execute(users.select()).keys()
-            user = conn.execute(users.select(users.c.id==order['id'])).fetchone()
+            user = conn.execute(users.select(users.c.id==order['userId'])).fetchone()
             for column in userColumns:
                 if column not in orderColumns:
                     orderDict[column] = str(getattr(user, str(column)))

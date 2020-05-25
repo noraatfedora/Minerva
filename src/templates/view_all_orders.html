@@ -49,13 +49,14 @@
                     {% endfor %}
                 </tbody>
             </table>
-            {% if orders[order]['bagged']=='0' %}
+            {% if orders[order]['bagged']!='1' %}
             <div class="card-body">
                 <form action="" method="POST">
-                    <button type="submit" value="Mark as bagged" name="{{ orders[order]['id'] }}"
+                    <button type="submit" value="Mark as bagged" name="bag-{{ orders[order]['id'] }}"
                         class="btn bw-btn">Mark as bagged</button>
                 </form>
             </div>
+            {% else %}
             {% endif %}
         </div>
         <br>
