@@ -49,6 +49,15 @@
                         {% endif %}
                     </a>
                     {% endif %}
+                    {% if g.user and g.user['role'].lower() == "admin" %}
+                    <a class="nav-item nav-link" href="{{ url_for('view_all_orders.allOrders') }}" id="navtext">
+                        {% if request.path == "/allorders" %}
+                        <strong style="color:white;">View orders</strong>
+                        {% else %}
+                        <strong>View orders</strong>
+                        {% endif %}
+                    </a>
+                    {% endif %}
                 </div>
                 <div class="navbar-nav ml-auto">
                     <!-- <a class="nav-item nav-link" href="https://github.com/jaredgoodman03/Minerva" style="font-size: 20px;"><i class="fab fa-github" id="Git"></i></a> -->

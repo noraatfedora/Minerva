@@ -14,6 +14,17 @@ def matrix(origins, destinations):
 
     return loads(requests.get(requestString).content)
 
+def directions(origin, destination, waypoints):
+    requestString = ("https://maps.googleapis.com/maps/api/directions/json?origin="
+        + origin
+        + "&destination="
+        + destination
+        + "&waypoints=optimize:true"
+        + addAdresses(waypoints)
+        + "&key="
+        + open('GOOGLE_API_KEY', 'r').read())
+    return loads(requests.get(requestString).content)
+
 def addAdresses(addresses):
     toReturn = ''
     for address in addresses:
