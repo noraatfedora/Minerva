@@ -28,12 +28,12 @@ def allOrders():
             orderId = int(key[len('unassign-'):])
             conn.execute(orders.update(whereclause=(orders.c.id==orderId)).values(volunteerId=None))
             ordersDict = getOrders(g.user.id)
-        else:
-            orderId = int(key)
+        elif "bag" in key:
+            orderId = int(key[len('bag-'):])
             query = select([orders.c.bagged]).where(orders.c.id==orderId)
             bagged = conn.execute(query).fetchone()[0]
             # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
-            if (bagged == 0):
+            if (bagged != 1):
                 email = ordersDict[orderId]['email']
                 #send_recieved_notification(email)
                 conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
@@ -49,7 +49,7 @@ def allOrders():
 # list when it's completed.
 def getOrders(adminId):
     # Get the ID's that our volunteer is assigned to
-    orderIdList = conn.execute(select([orders.c.id]).where(and_(orders.c.foodBankId==g.user.id))).fetchall()
+    orderIdList = conn.execute(select([orders.c.id]).where(and_(orders.c.foodBankId==g.user.id, orders.c.completed==0))).fetchall()
     toReturn = {} # We'll return this later
     for orderIdProxy in orderIdList:
         orderId = orderIdProxy[0]
