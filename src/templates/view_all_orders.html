@@ -4,7 +4,7 @@
     <h2>All orders</h2>
     <br>
     {% for order in orders %}
-    {% if orders[order]['bagged']=='1' %}
+    {% if orders[order]['bagged']=='1' and orders[order]['volunteerEmail'] %}
     <div class="card bg-success text-left task-incomplete">
         {% else %}
         <div class="card text-left task-incomplete">
@@ -19,7 +19,19 @@
                 {{ orders[order]['cellPhone']}}
             </div>
             <div class="card-header">
-                Assigned to {{ orders[order]['volunteer'] }}
+                {% if orders[order]['volunteerId'] %}
+                Assigned to {{ orders[order]['volunteerEmail'] }}
+                {% else %}
+                <button class="btn dropdown-toggle bw-btn" type="button" id="dropdown-{{orders[order]['id']}}"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">[choose volunteer]</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    {% for volunteer in volunteers %}
+                    <a class="dropdown-item" href="/allorders?volunteer={{ volunteer['id'] }}&order={{ orders[order]['id'] }}">
+                        {{ volunteer['email'] }} ({{ volunteer['numOrders'] }})
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
             <table class="table table-striped">
                 <tbody>
