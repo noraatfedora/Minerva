@@ -55,7 +55,9 @@ def register():
         if error == "":
             print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
-            conn.execute(users.insert(), email=email, password=password_hash, address=address, role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone, zipCode=zipCode, completed=0, foodBank=-1)
+            conn.execute(users.insert(), email=email, password=password_hash, address=address, 
+            role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
+            zipCode=zipCode, completed=0, foodBankId=getFoodBank(address))
             return redirect(url_for('auth.login'))
         else:
             flash(error)
@@ -172,3 +174,6 @@ def change_pass():
         else:
             flash("Your current password is incorrect.")
     return render_template("auth/changepass.html")
+
+def getFoodBank(address):
+    return conn.execute(select([users.c.id]).where(users.c.role=='ADMIN')).fetchone()[0]
