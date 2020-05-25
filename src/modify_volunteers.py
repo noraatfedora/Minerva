@@ -24,7 +24,7 @@ def dashboard():
 
     if request.method == "POST":
         key = next(request.form.keys())
-        print("Kesdfy: " + key)
+        print("Key: " + key)
         if "unassign" in key:
             orderId = key[len('unassign-'):]
             conn.execute(orders.update(orders.c.id==int(orderId)).values(volunteerId=None))
