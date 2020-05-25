@@ -52,9 +52,16 @@
                     {% if g.user and g.user['role'].lower() == "admin" %}
                     <a class="nav-item nav-link" href="{{ url_for('view_all_orders.allOrders') }}" id="navtext">
                         {% if request.path == "/allorders" %}
-                        <strong style="color:white;">View orders</strong>
+                        <strong style="color:white;">View Orders</strong>
                         {% else %}
                         <strong>View orders</strong>
+                        {% endif %}
+                    </a>
+                    <a class="nav-item nav-link" href="{{ url_for('modify.dashboard') }}" id="navtext">
+                        {% if request.path == "/modify" %}
+                        <strong style="color:white;">Volunteer Settings</strong>
+                        {% else %}
+                        <strong>Volunteer Settings</strong>
                         {% endif %}
                     </a>
                     {% endif %}
