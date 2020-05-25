@@ -45,28 +45,27 @@ def dashboard():
 # list when it's completed.
 def getOrders(volunteerId):
     # Get the ID's that our volunteer is assigned to
-    query = select([users.c.assignedOrders]).where(users.c.id==volunteerId)
-    output = conn.execute(query).fetchone()[0]
-    print("Output: " + str(output))
-    orderIdList = loads(output)
+    #query = select([users.c.assignedOrders]).where(users.c.id==volunteerId)
+    #output = conn.execute(query).fetchone()[0]
+    #print("Output: " + str(output))
+    orderList = conn.execute(orders.select(orders.c.volunteerId==g.user.id)).fetchall()
 
     toReturn = {} # We'll return this later
-    for orderId in orderIdList:
-        toReturn[orderId] = {}
-        order = conn.execute(orders.select().where(orders.c.id==orderId)).fetchone()
+    for order in orderList:
+        toReturn[order.id] = {}
         print("Order: " + str(order))
         user = conn.execute(users.select().where(users.c.id==order['userId'])).fetchone()
         # Add all our user's attributes to our order
         userColumns = conn.execute(users.select()).keys()
         userColumns.remove('id')
         for column in userColumns:
-            toReturn[orderId][str(column)] = str(getattr(user, str(column)))
+            toReturn[order.id][str(column)] = str(getattr(user, str(column)))
         # And all our order's attributes
         for column in conn.execute(orders.select()).keys():        
-            toReturn[orderId][str(column)] = str(getattr(order, str(column)))
+            toReturn[order.id][str(column)] = str(getattr(order, str(column)))
 
         #print("Keys: ", str(conn.execute(orders.select()).keys()))
-        toReturn[orderId]['itemsDict'] = loads(toReturn[orderId]['contents'])
+        toReturn[order.id]['itemsDict'] = loads(toReturn[order.id]['contents'])
 
     print("toReturn: " + str(toReturn)) 
     return toReturn 

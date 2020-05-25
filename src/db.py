@@ -37,7 +37,6 @@ users = Table(
     Column('zipCode', Integer),
     # for volunteers
     Column('assignedZipCodes', String(255)),
-    Column('assignedOrders', String(255), default='[]'), # JSON of order id's
     # for both users and volunteers
     # this will be determined automatically
     # when the user registers, but the food bank

@@ -17,21 +17,31 @@ def allOrders():
     itemsList = loads(open("items.json", "r").read()).keys()
 
     ordersDict = getOrders(g.user.id)
-
+    if request.method == "GET" and "volunteer" in request.args.keys():
+        volunteerId = int(request.args.get("volunteer"))
+        orderId = int(request.args.get("order"))
+        conn.execute(orders.update(whereclause=orders.c.id==orderId).values(volunteerId=volunteerId))
+        return redirect("/allorders")
     if request.method == "POST":
-        orderId = int(next(request.form.keys()))
-        query = select([orders.c.completed]).where(orders.c.id==orderId)
-        completed = conn.execute(query).fetchone()[0]
-        print("completeedddsf: " + str(completed))
-        # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
-        if (completed == 0):
-            email = ordersDict[orderId]['email']
-            send_recieved_notification(email)
-            conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
+        key = next(request.form.keys())
+        if "unassign" in key:
+            orderId = int(key[len('unassign-'):])
+            conn.execute(orders.update(whereclause=(orders.c.id==orderId)).values(volunteerId=None))
             ordersDict = getOrders(g.user.id)
+        elif "bag" in key:
+            orderId = int(key[len('bag-'):])
+            query = select([orders.c.bagged]).where(orders.c.id==orderId)
+            bagged = conn.execute(query).fetchone()[0]
+            # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
+            if (bagged != 1):
+                email = ordersDict[orderId]['email']
+                #send_recieved_notification(email)
+                conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
+                ordersDict = getOrders(g.user.id)
     
     print("orders: " + str(orders))
-    return render_template("view_all_orders.html", orders=ordersDict, items=itemsList)
+    volunteers = getVolunteers()
+    return render_template("view_all_orders.html", orders=ordersDict, items=itemsList, volunteers=volunteers)
 
 # Returns a dictionary where the keys are the order ID's,
 # and the values are dicts with attributes about that order (contents, email, etc.)
@@ -58,6 +68,22 @@ def getOrders(adminId):
 
         #print("Keys: ", str(conn.execute(orders.select()).keys()))
         toReturn[orderId]['itemsDict'] = loads(toReturn[orderId]['contents'])
+        volunteerEmail = conn.execute(select([users.c.email], users.c.id==order.volunteerId)).fetchone()
+        if not volunteerEmail is None:
+            toReturn[orderId]['volunteerEmail'] = volunteerEmail[0]
+            
 
     print("toReturn: " + str(toReturn)) 
     return toReturn 
+
+def getVolunteers():
+    proxy = conn.execute(users.select(users.c.role=="VOLUNTEER")).fetchall()
+    dictList = []
+    for volunteer in proxy:
+        volunteerDict = {}
+        columns = conn.execute(users.select()).keys()
+        for column in columns:
+            volunteerDict[column] = getattr(volunteer, column)
+        volunteerDict['numOrders'] = len(conn.execute(orders.select(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0))).fetchall())
+        dictList.append(volunteerDict)
+    return dictList

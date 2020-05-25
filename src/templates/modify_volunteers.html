@@ -3,25 +3,72 @@
 <center>
     <h2>Volunteer Settings</h2>
     {% for user in users %}
-    <div class="card text-left task-incomplete">
+    <div class="card text-left task-incomplete bg-primary">
         <div class="card-header">
             {{ user['email'] }}
         </div>
-        <table class="table table-striped">
-            <tbody>
-                {% for order in user.orders %}
-                <tr>
-                    <td style="border: none;">{{ order }}</td>
-                    <td style="border: none;">
-                        <form action="" method="POST"">
-                            <button type="submit" value="reassign-{{ order }}" name="{{ user['id'] }}"
-                                class="btn bw-btn">Reassign order</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="card-header">
+            <a class="btn bw-btn" data-toggle="collapse" href="#collapse-{{ user['id'] }}" role="button"
+                aria-expanded="false" aria-controls="collapse-{{ user['id'] }}">
+                {% if user['orders']|length==1 %}
+                Show 1 order
+                {% else %}
+                Show {{ user['orders']|length }} orders
+                {% endif %}
+            </a>
+        </div>
+        <div id="collapse-{{ user['id'] }}" class="collapse">
+            <div id="accordion-{{ user['id'] }}">
+                <tbody>
+                    {% for order in user['orders'] %}
+                    <div class="card bg-light" id="order-header-{{ order['id'] }}">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-{{ order['id'] }}"
+                            role="button" aria-controls="collapse-{{ order['id'] }}">
+                            {{ order['address'] }}
+                        </button>
+                        <div id="collapse-{{ order['id'] }}" class="collapse"
+                            aria-labelledby="order-header-{{ order['id'] }}" data-parent="accordion-{{ user['id'] }}">
+                            <table>
+                                <tr>
+                                    <th>
+                                        Email:
+                                    </th>
+                                    <th>
+                                        {{ order['email'] }}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Cell Phone:
+                                    </th>
+                                    <th>
+                                        {{ order['cellPhone'] }}
+                                    </th>
+                                </tr>
+                                {% for item in order['contents'] %}
+                                {% if order['contents'][item] != "0"%}
+                                <tr>
+                                    <th>
+                                        {{ item }}:
+                                    </th>
+                                    <th>
+                                        {{ order['contents'][item] }}
+                                    </th>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
+                            <form action="" method="POST"">
+                            <button type=" submit" value="unassign-{{ order['id'] }}" name="unassign-{{ order['id'] }}"
+                                class="btn bw-btn">Unassign order</button>
+                            </form>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </div>
+        </div>
         <div class="card-body">
             <form action="" method="POST">
                 <button type="submit" value="remove" name="{{ user['id'] }}" class="btn bw-btn bg-danger">Remove
