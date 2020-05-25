@@ -414,10 +414,11 @@ a:not([href]):not([tabindex]):hover {
   overflow: hidden;
   color: #000;
   border: none;
+  background-color: #77b6ea;
 }
 
-.card-header {
-  background-color: white;
+.bg-primary {
+  background-color: #77b6ea !important;
 }
 
 .card-header span {

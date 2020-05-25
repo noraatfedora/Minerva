@@ -4,7 +4,7 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 from werkzeug.exceptions import abort
 from auth import login_required, volunteer_required
 from json import loads
-from db import users, conn
+from db import users, conn, orders
 from sqlalchemy import and_, select
 from send_confirmation import send_recieved_notification
 
@@ -20,7 +20,7 @@ def dashboard():
 
 
     # Get all the volunteers that are assigned to our food bank
-    volunteers = conn.execute(users.select().where(users.c.foodBank == g.user.id))
+    volunteers = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role=="VOLUNTEER")))
 
     if request.method == "POST":
         '''
@@ -44,6 +44,8 @@ def dashboard():
 # Basically this method takes all our volunteers
 # and converts them into nice little dicts so that
 # jinja2 can access all their data.
+# This is a list of dicts of lists of dicts of dicts.
+# VolunteerLIst --> volunteer --> assignedOrders --> order --> contents
 def dictList(rows):
     toReturn = []
     for row in rows:
@@ -51,8 +53,25 @@ def dictList(rows):
         for column in conn.execute(users.select()).keys():
             volunteer[str(column)] = str(getattr(row, str(column)))
             print(str(column) + ": " + volunteer[str(column)])
-        if volunteer['assignedOrders'] != "None":
-            volunteer['ordersDict'] = loads(str(volunteer['assignedOrders']))
+        
+        assignedOrders = conn.execute(orders.select(orders.c.volunteerId==volunteer['id'])).fetchall()
+        assignedOrdersDictList = []
+        for order in assignedOrders:
+            orderDict = {}
+            orderColumns = conn.execute(orders.select()).keys()
+            for column in orderColumns:
+                orderDict[column] = str(getattr(order, str(column)))
+
+            userColumns = conn.execute(users.select()).keys()
+            user = conn.execute(users.select(users.c.id==order['id'])).fetchone()
+            for column in userColumns:
+                if column not in orderColumns:
+                    orderDict[column] = str(getattr(user, str(column)))
+                else:
+                    print("skipping " + column)
+
+            assignedOrdersDictList.append(orderDict)
+        volunteer['orders'] = assignedOrdersDictList
         toReturn.append(volunteer)
 
     return toReturn
