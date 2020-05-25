@@ -42,12 +42,6 @@ def request_items():
         conn.execute(orders.update().where(orders.c.userId==g.user.id).values(completed=1))
         # insert new order into the orders table
         orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, userId=g.user.id, volunteerId=2, foodBankId=g.user.foodBankId).inserted_primary_key[0]
-        # TODO: remove this code when we finish page that lets you assign orders to volunteers
-        # Right now, we assign the order to volunteer example
-        exampleOrders = loads(conn.execute(select([users.c.assignedOrders]).where(users.c.email=="volunteerexample@mailinator.com")).fetchone()[0])
-        exampleOrders.append(orderId)
-        print(exampleOrders)
-        conn.execute(users.update().where(users.c.email=="volunteerexample@mailinator.com").values(assignedOrders=dumps(exampleOrders))) 
         return redirect("/success")
     
     return render_template("request_items.html", items = itemsList.values(), categories=categories)
