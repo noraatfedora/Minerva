@@ -23,6 +23,11 @@ def dashboard():
     volunteers = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role=="VOLUNTEER")))
 
     if request.method == "POST":
+        key = next(request.form.keys())
+        print("Kesdfy: " + key)
+        if "unassign" in key:
+            orderId = key[len('unassign-'):]
+            conn.execute(orders.update(orders.c.id==int(orderId)).values(volunteerId=None))
         '''
         userId = next(request.form.keys())
         print(userId)

@@ -10,7 +10,11 @@
         <div class="card-header">
             <a class="btn bw-btn" data-toggle="collapse" href="#collapse-{{ user['id'] }}" role="button"
                 aria-expanded="false" aria-controls="collapse-{{ user['id'] }}">
-                Show orders
+                {% if user['orders']|length==1 %}
+                Show 1 order
+                {% else %}
+                Show {{ user['orders']|length }} orders
+                {% endif %}
             </a>
         </div>
         <div id="collapse-{{ user['id'] }}" class="collapse">
@@ -55,7 +59,7 @@
                                 {% endfor %}
                             </table>
                             <form action="" method="POST"">
-                            <button type=" submit" value="Unassign-{{ order }}" name="{{ user['id'] }}"
+                            <button type=" submit" value="unassign-{{ order['id'] }}" name="unassign-{{ order['id'] }}"
                                 class="btn bw-btn">Unassign order</button>
                             </form>
 
