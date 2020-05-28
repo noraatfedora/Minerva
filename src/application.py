@@ -2,6 +2,7 @@ import os
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
+from db import  conn, users
 from flask_debugtoolbar import DebugToolbarExtension
 
 def create_app(test_config=None):
@@ -38,6 +39,17 @@ def create_app(test_config=None):
     @app.route('/success')
     def success():
         return render_template('success.html', title = 'Request Submitted')
+
+    @app.route('/ping')
+    # This page is called with a cron job so that the database doesn't jam up every 8 hours.
+    def ping():
+        try:
+            conn.execute(users.select())
+            return "Success!"
+        except:
+            return "Fail!"
+
+        
 
     import db
     db.init_app(app)
