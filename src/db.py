@@ -1,7 +1,7 @@
 import click
 import json
 from flask import current_app, g, Flask
-from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData
+from sqlalchemy import create_engine, Table, Column, Date, Integer, String, MetaData
 from sqlalchemy.orm import session, sessionmaker
 from flask.cli import with_appcontext
 import os
@@ -55,9 +55,11 @@ orders = Table(
     Column('foodBankId', Integer),
     Column('contents', String(255)), # json
     Column('bagged', Integer),
+    Column('date', Date),
     Column('completed', Integer)  # either 0 or 1
 )
 
+print("Date type: " + str(Date.python_type))
 conn = engine.connect()
 print("Initializing db!")
 try:
