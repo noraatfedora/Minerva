@@ -87,7 +87,6 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
@@ -158,6 +157,51 @@ def change_info():
         return redirect('/youraccount')
     return render_template("auth/changeinfo.html", user=g.user)
 
+
+@bp.route('/volunteerregister', methods=('GET', 'POST'))
+def volunteerregister():
+    if request.method == "POST":
+        supportedZipCodes = open('supported_zip_codes', 'r').read()
+        email = request.form['email']
+        firstName = request.form['firstName']
+        lastName = request.form['lastName']
+        password = request.form['password']
+        confirm = request.form['confirm']
+        address = request.form['address']
+        zipCode = request.form['zipCode']
+        cellPhone = request.form['cell']
+        homePhone = request.form['homePhone']
+        error = "" 
+        
+        if zipCode[0:5] not in supportedZipCodes:
+            error += "Sorry, but your zip code is not supported at this time. Please contact your local food banks."
+        elif conn.execute(users.select().where(users.c.email==email)).fetchone() is not None:
+            error = 'User {} is already registered.'.format(email)
+        
+        if error == "":
+            print("poopdsfy poop!")
+            password_hash = generate_password_hash(password)
+            conn.execute(users.insert(), email=email, password=password_hash, address=address, 
+            role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
+            zipCode=zipCode, completed=0, foodBankId=getFoodBank(address))
+            return redirect(url_for('auth.login'))
+        else:
+            flash(error)
+            data = {
+                    'email': email,
+                    'address': address,
+                    'firstName': firstName, 
+                    'lastName': lastName,
+                    'cellPhone': cellPhone,
+                    'homePhone': homePhone,
+                    'zipCode': zipCode,
+                    'instructions': instructions
+                    }
+            return render_template('auth/volunteer-register.html', title='Register', data=data)
+    data = {'email': '', 'address': '', 'firstName': '', 'lastName': '','homePhone': '', 'zipCode': ''}
+    days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+    return render_template('auth/volunteer-register.html', title = 'Register', data=data, days=days)
+
 @bp.route('/changepass', methods=['GET', 'POST'])
 @login_required
 def change_pass():
@@ -177,3 +221,4 @@ def change_pass():
 
 def getFoodBank(address):
     return conn.execute(select([users.c.id]).where(users.c.role=='ADMIN')).fetchone()[0]
+
