@@ -83,6 +83,15 @@
               </div>
             </div>
         {% endfor %}
+        </div>
+    <div class="container">
+      {% for date in dates %}
+          <label class="radio-inline">
+            <input type="radio" name="date" value="{{ date }}">{{ date }}
+          </label>
+      {% endfor %}
+    </div>
+    
     <div class="w-100">
       <button type="submit" name="submit" class="btn bw-btn blue-hover center-block" id = "submit-button">Submit</button>
     </div>
