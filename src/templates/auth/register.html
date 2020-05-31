@@ -64,7 +64,10 @@
     <div class="flash">{{ message }}</div>
     {% endfor %}
     <div class="register-text">
-        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in.</a></p>
+        <p>Interested in becoming a volunteer? <a href="{{ url_for('auth.volunteerregister') }}">Create a volunteer account.</a></p>
     </div>
+    <div class="register-text">
+        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in.</a></p>
+    </div>   
 </body>
 {% endblock %}
