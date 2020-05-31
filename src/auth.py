@@ -199,7 +199,8 @@ def volunteerregister():
                     }
             return render_template('auth/volunteer-register.html', title='Register', data=data)
     data = {'email': '', 'address': '', 'firstName': '', 'lastName': '','homePhone': '', 'zipCode': ''}
-    return render_template('auth/volunteer-register.html', title = 'Register', data=data)
+    days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+    return render_template('auth/volunteer-register.html', title = 'Register', data=data, days=days)
 
 @bp.route('/changepass', methods=['GET', 'POST'])
 @login_required
