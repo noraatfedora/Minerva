@@ -45,18 +45,21 @@ def availableDates():
     numDays = 10 # number of available days to display
     toReturn = []
     currentDay = datetime.date.today() + datetime.timedelta(days=1)
+    print("Finding available dates...")
     while len(toReturn) < numDays:
+        print("loo[p")
         dayOfWeek = currentDay.strftime("%A").lower()
         #days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         whereClauses = {"sunday":users.c.sunday, "monday":users.c.monday,
                         "tuesday":users.c.tuesday, "wednesday":users.c.wednesday,
                         "thursday":users.c.wednesday, "friday":users.c.friday,
                         "saturday":users.c.saturday}
-        volunteers = conn.execute(users.select(whereclause=and_(whereClauses[dayOfWeek]==True, users.c.foodBankId==g.user.foodBankId))).fetchall()
+        volunteers = conn.execute(users.select(whereclause=and_(whereClauses[dayOfWeek]==True, users.c.foodBankId==g.user.foodBankId, users.c.approved==True))).fetchall()
+        print("Volunteers: " + str(volunteers))
         maxOrders = conn.execute(select([users.c.maxOrders]).where(users.c.id==g.user.foodBankId)).fetchone()[0]
         eligibleVolunteers = []
         for volunteer in volunteers:
-            ordersList = conn.execute(orders.select(whereclause=(orders.c.volunteerId==volunteer.id))).fetchall()
+            ordersList = conn.execute(orders.select(whereclause=(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0)))).fetchall()
             if len(ordersList) < maxOrders:
                 eligibleVolunteers.append(volunteer) 
         if len(eligibleVolunteers) > 0:
