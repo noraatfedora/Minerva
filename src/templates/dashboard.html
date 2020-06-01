@@ -12,13 +12,9 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
-            <a class="dropdown-item" onclick="updateFilter('Monday')">Monday</a>
-            <a class="dropdown-item" onclick="updateFilter('Tuesday')">Tuesday</a>
-            <a class="dropdown-item" onclick="updateFilter('Wednesday')">Wednesday</a>
-            <a class="dropdown-item" onclick="updateFilter('Thursday')">Thursday</a>
-            <a class="dropdown-item" onclick="updateFilter('Friday')">Friday</a>
-            <a class="dropdown-item" onclick="updateFilter('Saturday')">Saturday</a>
-            <a class="dropdown-item" onclick="updateFilter('Sunday')">Sunday</a>
+            {% for date in dates %}
+                <a class="dropdown-item" onclick="updateFilter('{{ date }}')">{{ date }}</a>
+            {% endfor %}
         </div>
     </div>
     <div class="spacer"></div>
