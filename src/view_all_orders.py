@@ -39,7 +39,6 @@ def allOrders():
                 conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
                 ordersDict = getOrders(g.user.id)
     
-    print("orders: " + str(orders))
     volunteers = getVolunteers()
     return render_template("view_all_orders.html", orders=ordersDict, items=itemsList, volunteers=volunteers)
 
@@ -55,7 +54,6 @@ def getOrders(adminId):
         orderId = orderIdProxy[0]
         toReturn[orderId] = {}
         order = conn.execute(orders.select().where(orders.c.id==orderId)).fetchone()
-        print("Order: " + str(order))
         user = conn.execute(users.select().where(users.c.id==order['userId'])).fetchone()
         # Add all our user's attributes to our order
         userColumns = conn.execute(users.select()).keys()
@@ -66,14 +64,12 @@ def getOrders(adminId):
         for column in conn.execute(orders.select()).keys():        
             toReturn[orderId][str(column)] = str(getattr(order, str(column)))
 
-        #print("Keys: ", str(conn.execute(orders.select()).keys()))
         toReturn[orderId]['itemsDict'] = loads(toReturn[orderId]['contents'])
+        toReturn[order.id]['date'] = order['date'].strftime('%A')
         volunteerEmail = conn.execute(select([users.c.email], users.c.id==order.volunteerId)).fetchone()
         if not volunteerEmail is None:
             toReturn[orderId]['volunteerEmail'] = volunteerEmail[0]
             
-
-    print("toReturn: " + str(toReturn)) 
     return toReturn 
 
 def getVolunteers():

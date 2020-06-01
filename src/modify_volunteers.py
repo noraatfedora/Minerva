@@ -57,7 +57,6 @@ def dictList(rows):
         volunteer = {}
         for column in conn.execute(users.select()).keys():
             volunteer[str(column)] = str(getattr(row, str(column)))
-            print(str(column) + ": " + volunteer[str(column)])
         
         assignedOrders = conn.execute(orders.select(and_(orders.c.volunteerId==volunteer['id'], orders.c.completed==0))).fetchall()
         assignedOrdersDictList = []

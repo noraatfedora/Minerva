@@ -10,6 +10,9 @@
         <div class="card text-left task-incomplete">
             {% endif %}
             <div class="card-header">
+                {{ orders[order]['date'] }}
+            </div>
+            <div class="card-header">
                 {{ orders[order]['email'] }}
             </div>
             <div class="card-header">
@@ -30,27 +33,22 @@
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">[choose volunteer]</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     {% for volunteer in volunteers %}
-                    <a class="dropdown-item" href="/allorders?volunteer={{ volunteer['id'] }}&order={{ orders[order]['id'] }}">
+                    <a class="dropdown-item {{'disabled' if not volunteer[orders[order]['date'].lower()] }}" href="/allorders?volunteer={{ volunteer['id'] }}&order={{ orders[order]['id'] }}">
                         {{ volunteer['email'] }} ({{ volunteer['numOrders'] }})
                     </a>
                     {% endfor %}
                 </div>
                 {% endif %}
             </div>
-            <table class="table table-striped">
-                <tbody>
-                    {% for item in items %}
-                    {% if orders[order]['itemsDict'][item] != '0' %}
-                    <tr>
-                        <td style="border: none;">{{ item }}</td>
-                        <td style="border: none;">{{ orders[order]['itemsDict'][item] }} </td>
-                    </tr>
-                    {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% for item in items %}
+            {% if orders[order]['itemsDict'][item] != '0' %}
+            <div class="card-header">
+                {{ item }}<span>{{ orders[order]['itemsDict'][item] }}</span>
+            </div>
+            {% endif %}
+            {% endfor %}
             {% if orders[order]['bagged']!='1' %}
-            <div class="card-body">
+            <div class="card-header">
                 <form action="" method="POST">
                     <button type="submit" value="Mark as bagged" name="bag-{{ orders[order]['id'] }}"
                         class="btn bw-btn">Mark as bagged</button>

@@ -7,6 +7,7 @@ from json import loads, dumps
 from db import users, conn, orders
 from sqlalchemy import and_, select
 from send_confirmation import send_recieved_notification
+from datetime import datetime
 
 bp = Blueprint('dashboard', __name__)
 
@@ -45,15 +46,11 @@ def dashboard():
 # list when it's completed.
 def getOrders(volunteerId):
     # Get the ID's that our volunteer is assigned to
-    #query = select([users.c.assignedOrders]).where(users.c.id==volunteerId)
-    #output = conn.execute(query).fetchone()[0]
-    #print("Output: " + str(output))
     orderList = conn.execute(orders.select(orders.c.volunteerId==g.user.id)).fetchall()
 
     toReturn = {} # We'll return this later
     for order in orderList:
         toReturn[order.id] = {}
-        print("Order: " + str(order))
         user = conn.execute(users.select().where(users.c.id==order['userId'])).fetchone()
         # Add all our user's attributes to our order
         userColumns = conn.execute(users.select()).keys()
@@ -64,10 +61,9 @@ def getOrders(volunteerId):
         for column in conn.execute(orders.select()).keys():        
             toReturn[order.id][str(column)] = str(getattr(order, str(column)))
 
-        #print("Keys: ", str(conn.execute(orders.select()).keys()))
         toReturn[order.id]['itemsDict'] = loads(toReturn[order.id]['contents'])
+        toReturn[order.id]['date'] = order['date'].strftime('%A')
 
-    print("toReturn: " + str(toReturn)) 
     return toReturn 
 
 def getAddresses(orders):

@@ -16,7 +16,7 @@
       </div>
       <div class="dropdown">
         <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Add Filter
+          Filter
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
@@ -36,7 +36,7 @@
         <form id="request-form" action="" method="post">
         <div class="row">
           {% for item in items %}
-              <div class="col-md-4 item" category={{item.subcategory}}>
+              <div class="col-md-4 item" filter={{item.subcategory}}>
                 <div class="card mb-4 shadow-sm">
                   <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt={{item.name}}>
                   <div class="card-body">
