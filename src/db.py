@@ -1,7 +1,7 @@
 import click
 import json
 from flask import current_app, g, Flask
-from sqlalchemy import create_engine, Table, Column, Date, Integer, String, MetaData
+from sqlalchemy import create_engine, Table, Column, Date, Integer, String, MetaData, Boolean
 from sqlalchemy.orm import session, sessionmaker
 from flask.cli import with_appcontext
 import os
@@ -25,6 +25,7 @@ meta = MetaData()
 users = Table(
     'users', meta,
     Column('id', Integer, primary_key=True),
+    Column('name', String(60)),
     Column('email', String(60)),
     Column('password', String(255)),
     # Either RECIEVER, VOLUNTEER, or ADMIN
@@ -36,6 +37,13 @@ users = Table(
     Column('address', String(40)),
     Column('zipCode', Integer),
     # for volunteers
+    Column('approved', Boolean),
+    Column('sunday', Boolean),
+    Column('monday', Boolean),
+    Column('tuesday', Boolean),
+    Column('wednesday', Boolean),
+    Column('thursday', Boolean),
+    Column('friday', Boolean),
     Column('assignedZipCodes', String(255)),
     # for both users and volunteers
     # this will be determined automatically
