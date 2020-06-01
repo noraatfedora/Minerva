@@ -4,8 +4,9 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 from werkzeug.exceptions import abort
 from auth import login_required, admin_required 
 from json import loads, dumps
+from collections import OrderedDict
 from db import users, conn, orders
-from sqlalchemy import and_, select
+from sqlalchemy import and_, select 
 from send_confirmation import send_recieved_notification
 
 bp = Blueprint('view_all_orders', __name__)
@@ -48,8 +49,8 @@ def allOrders():
 # list when it's completed.
 def getOrders(adminId):
     # Get the ID's that our volunteer is assigned to
-    orderIdList = conn.execute(select([orders.c.id]).where(and_(orders.c.foodBankId==g.user.id, orders.c.completed==0))).fetchall()
-    toReturn = {} # We'll return this later
+    orderIdList = conn.execute(select([orders.c.id]).where(and_(orders.c.foodBankId==g.user.id, orders.c.completed==0)).order_by(orders.c.date)).fetchall()
+    toReturn = OrderedDict() # Sorted by date
     for orderIdProxy in orderIdList:
         orderId = orderIdProxy[0]
         toReturn[orderId] = {}
@@ -65,7 +66,7 @@ def getOrders(adminId):
             toReturn[orderId][str(column)] = str(getattr(order, str(column)))
 
         toReturn[orderId]['itemsDict'] = loads(toReturn[orderId]['contents'])
-        toReturn[order.id]['date'] = order['date'].strftime('%A')
+        toReturn[order.id]['date'] = order['date'].strftime('%A, %B %d')
         volunteerEmail = conn.execute(select([users.c.email], users.c.id==order.volunteerId)).fetchone()
         if not volunteerEmail is None:
             toReturn[orderId]['volunteerEmail'] = volunteerEmail[0]
