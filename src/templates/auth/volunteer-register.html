@@ -13,22 +13,17 @@
                 <form name="register" id="register-form-text" class="form" action="" method="post"
                     onsubmit="return verifyForm()">
                     <div class="form-group">
-                        <input type="text" name="" id="first-name" class="form-control" value="{{ data['firstName'] }}"
-                            placeholder="First Name">
+                        <input type="text" name="name" id="name" class="form-control" value="{{ data['firstName'] }}"
+                            placeholder="Name">
                             <small>Error message</small>
                     </div>
-                    <div class="form-group">
-                        <input type="text" name="" id="last-name" class="form-control" value="{{ data['lastName'] }}"
-                            placeholder="Last Name">
-                            <small>Error message</small>
-                    </div>
-                    <div class="form-group">
+                    <div class="dropdown">
                         <div class="input-group">
                             <select class="form-control" id="inputGroupSelect">
                             <option selected>Organization</option>
-                            <option value="1">Test Foodbank 1</option>
-                            <option value="2">Test Foodbank 2</option>
-                            <option value="3">Test Foodbank 3</option>
+                            {% for foodBank in foodBanks %}
+                                <option value="{{ foodBank[0] }}">{{ foodBank[0] }}</option>
+                            {% endfor %}
                             </select>
                         </div>
                     </div>
@@ -68,13 +63,10 @@
                             placeholder="Landline (Optional)" value="{{ data['homePhone'] }}">
                     </div>
                    
-                        
+                    <b> Days Available: </b> 
                     {% for day in days %}
-                        {% if day == "Sunday" %}
-                            <b> Days Available:  </b> 
-                        {% endif %}
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="{{day}}" value="{{day}}">
+                        <div class="form-check form-group form-check-inline">
+                            <input class="form-check-input form-control" name="{{ day }}" type="checkbox" id="{{day}}" value="{{day}}">
                             <label class="form-check-label" for="{{day}}">{{day}}</label>
                         </div>
                     {% endfor %}
