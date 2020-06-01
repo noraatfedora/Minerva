@@ -20,8 +20,11 @@ def dashboard():
 
 
     # Get all the volunteers that are assigned to our food bank
-    volunteers = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role=="VOLUNTEER")))
-
+    volunteers = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role=="VOLUNTEER", users.c.approved==True)))
+    unassigned = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role=="VOLUNTEER", users.c.approved==False)))
+    if request.method == "GET" and "assign" in request.args.keys():
+        conn.execute(users.update(users.c.name==request.args['assign']).values(approved=True))
+        return redirect("/modify")
     if request.method == "POST":
         key = next(request.form.keys())
         print("Key: " + key)
@@ -44,7 +47,7 @@ def dashboard():
             for user in completedUsers:
                 print(user)
         '''
-    return render_template("modify_volunteers.html", users=dictList(volunteers))
+    return render_template("modify_volunteers.html", users=dictList(volunteers), unassigned=unassigned)
 
 # Basically this method takes all our volunteers
 # and converts them into nice little dicts so that

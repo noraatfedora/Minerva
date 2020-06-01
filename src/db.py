@@ -44,7 +44,12 @@ users = Table(
     Column('wednesday', Boolean),
     Column('thursday', Boolean),
     Column('friday', Boolean),
+    Column('saturday', Boolean),
     Column('assignedZipCodes', String(255)),
+
+    # Store for food banks, not volunteers
+    Column('maxOrders', Integer),
+    
     # for both users and volunteers
     # this will be determined automatically
     # when the user registers, but the food bank

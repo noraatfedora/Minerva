@@ -38,7 +38,7 @@ def dashboard():
             ordersDict = getOrders(g.user.id)
     
     print("orders: " + str(orders))
-    return render_template("dashboard.html", orders=ordersDict, items=itemsList, optimap=generate_optimap(getAddresses(orders)))
+    return render_template("dashboard.html", orders=ordersDict, items=itemsList, optimap=generate_optimap(getAddresses(orders)), dates=getDates())
 
 # Returns a dictionary where the keys are the order ID's,
 # and the values are dicts with attributes about that order (contents, email, etc.)
@@ -62,7 +62,7 @@ def getOrders(volunteerId):
             toReturn[order.id][str(column)] = str(getattr(order, str(column)))
 
         toReturn[order.id]['itemsDict'] = loads(toReturn[order.id]['contents'])
-        toReturn[order.id]['date'] = order['date'].strftime('%A')
+        toReturn[order.id]['date'] = order['date'].strftime('%A, %B %d')
 
     return toReturn 
 
@@ -75,3 +75,10 @@ def generate_optimap(addresses):
     for x in range(0, len(addresses)):
         link += "&loc" + str(x+1) + "=" + addresses[x]
     return link.replace(" ", "%20")
+
+def getDates():
+    ordersList = conn.execute(orders.select().where(orders.c.volunteerId==g.user.id)).fetchall()
+    datesList = []
+    for order in ordersList:
+        datesList.append(order.date.strftime('%A, %B %d'))
+    return datesList
