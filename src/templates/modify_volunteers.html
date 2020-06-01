@@ -2,6 +2,15 @@
 {% block content %}
 <center>
     <h2>Volunteer Settings</h2>
+    <button class="btn dropdown-toggle bw-btn" type="button" id="unassigned-dropdown"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">[add new volunteer]</button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        {% for volunteer in unassigned %}
+        <a class="dropdown-item" href="/modify?assign={{ volunteer['name'] }}">
+            {{ volunteer['name'] }} 
+        </a>
+        {% endfor %}
+    </div>
     {% for user in users %}
     <div class="card text-left task-incomplete bg-primary">
         <div class="card-header">

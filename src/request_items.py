@@ -14,7 +14,7 @@ categories = set()
 for item in itemsList.values():
     categories.add(item['subcategory'])
 bp = Blueprint('request_items', __name__)
-strf = "%B %d" # will output dates in the format like "May 31"
+strf = "%A, %B %d" # will output dates in the format like "May 31"
 
 # request seems like it's a reserved word somewhere or something,
 # so use request_items instead everywhere.
@@ -42,4 +42,28 @@ def request_items():
     return render_template("request_items.html", items = itemsList.values(), categories=categories, dates=availableDates())
 
 def availableDates():
-    return [datetime.date.today().strftime(strf)]
+    numDays = 10 # number of available days to display
+    toReturn = []
+    currentDay = datetime.date.today() + datetime.timedelta(days=1)
+    print("Finding available dates...")
+    while len(toReturn) < numDays:
+        print("loo[p")
+        dayOfWeek = currentDay.strftime("%A").lower()
+        #days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        whereClauses = {"sunday":users.c.sunday, "monday":users.c.monday,
+                        "tuesday":users.c.tuesday, "wednesday":users.c.wednesday,
+                        "thursday":users.c.wednesday, "friday":users.c.friday,
+                        "saturday":users.c.saturday}
+        volunteers = conn.execute(users.select(whereclause=and_(whereClauses[dayOfWeek]==True, users.c.foodBankId==g.user.foodBankId, users.c.approved==True))).fetchall()
+        print("Volunteers: " + str(volunteers))
+        maxOrders = conn.execute(select([users.c.maxOrders]).where(users.c.id==g.user.foodBankId)).fetchone()[0]
+        eligibleVolunteers = []
+        for volunteer in volunteers:
+            ordersList = conn.execute(orders.select(whereclause=(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0)))).fetchall()
+            if len(ordersList) < maxOrders:
+                eligibleVolunteers.append(volunteer) 
+        if len(eligibleVolunteers) > 0:
+            toReturn.append(currentDay.strftime(strf))
+        currentDay = currentDay + datetime.timedelta(days=1)
+
+    return toReturn
