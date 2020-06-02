@@ -1,101 +1,129 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/request.css') }}">
-  <script defer type=text/javascript src="{{url_for('static', filename='js/filter.js') }}"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <section class="jumbotron">
-    <div class="container">
-      <h1 class="text-center">Send a request</h1>
-      <div class="big-boy-body">
-        <ul class="big-boy-body">
-          <li>Use this form to request goods.</li>
-          <li>Expect about a week for items.</li>
-          <li>If you want to change this later, simply request a new order.</li>
-        </ul>
-      </div>
-      <div class="dropdown">
-        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Filter
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
-          {% for category in categories %}
-            <a class="dropdown-item" onclick="updateFilter('{{category}}')">{{category[0]|upper}}{{category[1:]}}</a>
-          {% endfor %}
-        </div>
-      </div>
-      <!-- <p id = "currentFilters">Current Filters: </p>
-      <p id = "filter-text">All</p> -->
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/js/main.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/request.css') }}">
+<script defer type=text/javascript src="{{url_for('static', filename='js/filter.js') }}"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<section class="jumbotron">
+  <div class="container">
+    <h1 class="text-center">Send a request</h1>
+    <div class="big-boy-body">
+      <ul class="big-boy-body">
+        <li>Use this form to request goods.</li>
+        <li>Expect about a week for items.</li>
+        <li>If you want to change this later, simply request a new order.</li>
+      </ul>
     </div>
-  </section>
-  
-    <h1>{{category}}</h1>
-    <div class="album py-5 bg-light">
-      <div class="container">
-        <form id="request-form" action="" method="post">
-        <div class="row">
-          {% for item in items %}
-              <div class="col-md-4 item" filter={{item.subcategory}}>
-                <div class="card mb-4 shadow-sm">
-                  <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt={{item.name}}>
-                  <div class="card-body">
-                    <p class="card-text">
-                      <div id = "item-name"> {{item.name}} </div>
-                      <div id = "badges" style="text-align:center"> 
-                        <p>
-                          {% if item.subcategory != null  %}
-                            {% if item.subcategory == "produce" %}
-                              <span class="badge badge-success">Produce</span>
-                            {% endif %}
-                            {% if item.subcategory == "dairy" %}
-                              <span class="badge badge-light">Dairy</span>
-                            {% endif %}
-                            {% if item.subcategory == "packaged" %}
-                              <span class="badge badge-warning">Packaged</span>
-                            {% endif %}
-                            {% if item.subcategory == "dental" %}
-                              <span class="badge badge-light">Dental</span>
-                            {% endif %}
-                          {% endif %}
-                      </p>
-                    </div>
-                    <div class="form-group form form-inline" style="margin-left:10%; margin-right:10%">
-                      <label for="customRange">Quantity:</label>
-                      <input type="number" class="form-control form-control-inline" size=2 name="{{ item.name }}-quantity" min="0" max='{{item.max}}' value="0" oninput="this.form.amountRange.value=this.value" size="2"/> 
-                      {% if item.units == null %}
-                        {% if item.category == "drink" %}
-                          gallons
-                        {% elif item.subcategory == "produce" %}
-                          lbs
-                        {% elif item.subcategory == "packaged" %}
-                          boxes
-                        {% else %}
-                          {{item.name}}
-                        {% endif %}
-                      {% else %}
-                        {{item.units}}
-                      {% endif %}
-                    </div>
-                   
-                  </p>
-                </div>
-              </div>
-            </div>
+    <div class="dropdown">
+      <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        Filter
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
+        {% for category in categories %}
+        <a class="dropdown-item" onclick="updateFilter('{{category}}')">{{category[0]|upper}}{{category[1:]}}</a>
         {% endfor %}
+      </div>
+    </div>
+    <!-- <p id = "currentFilters">Current Filters: </p>
+      <p id = "filter-text">All</p> -->
+  </div>
+</section>
+
+<h1>{{category}}</h1>
+<div class="album py-5 bg-light">
+  <div class="container">
+    <form id="request-form" action="" method="post">
+      <div class="row">
+        {% for item in items %}
+        <div class="col-md-4 item" filter={{item.subcategory}}>
+          <div class="card mb-4 shadow-sm">
+            <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt={{item.name}}>
+            <div class="card-body">
+              <p class="card-text">
+              <div id="item-name"> {{item.name}} </div>
+              <div id="badges" style="text-align:center">
+                <p>
+                  {% if item.subcategory != null  %}
+                  {% if item.subcategory == "produce" %}
+                  <span class="badge badge-success">Produce</span>
+                  {% endif %}
+                  {% if item.subcategory == "dairy" %}
+                  <span class="badge badge-light">Dairy</span>
+                  {% endif %}
+                  {% if item.subcategory == "packaged" %}
+                  <span class="badge badge-warning">Packaged</span>
+                  {% endif %}
+                  {% if item.subcategory == "dental" %}
+                  <span class="badge badge-light">Dental</span>
+                  {% endif %}
+                  {% endif %}
+                </p>
+              </div>
+              <div class="form-group form form-inline" style="margin-left:10%; margin-right:10%">
+                <label for="customRange">Quantity:</label>
+                <input type="number" class="form-control form-control-inline" size=2 name="{{ item.name }}-quantity"
+                  min="0" max='{{item.max}}' value="0" oninput="this.form.amountRange.value=this.value" size="2" />
+                {% if item.units == null %}
+                {% if item.category == "drink" %}
+                gallons
+                {% elif item.subcategory == "produce" %}
+                lbs
+                {% elif item.subcategory == "packaged" %}
+                boxes
+                {% else %}
+                {{item.name}}
+                {% endif %}
+                {% else %}
+                {{item.units}}
+                {% endif %}
+              </div>
+
+              </p>
+            </div>
+          </div>
         </div>
-    <b>Select your prefered delivery date.</b>
-    <div class="container">
-      {% for date in dates %}
-          <label class="radio-inline">
-            <input type="radio" name="date" value="{{ date }}">{{ date }}
-          </label>
-      {% endfor %}
-    </div>
-    
-    <div class="w-100">
-      <button type="submit" name="submit" class="btn bw-btn blue-hover center-block" id = "submit-button">Submit</button>
-    </div>
+        {% endfor %}
+      </div>
+      <div class="text-center">
+        <b>Select your prefered delivery date.</b>
+        <input id="date-picker" name="date" type="text"></input>
+      </div>
+      <div class="spacer"></div>
+      <div class="w-100">
+        <button type="submit" name="submit" class="btn bw-btn blue-hover center-block"
+          id="submit-button">Submit</button>
+      </div>
     </form>
- 
+  </div>
+</div>
+
+
+<script>
+  var dates = {{ dates | tojson }};
+
+  for (let index = 0; index < dates.length; index++) {
+    let d = new Date(dates[index]);
+    dates[index] = d.setDate(d.getDate() + 1);
+  }
+
+  var picker = new Litepicker({
+    element: document.getElementById('date-picker'),
+    lockDays: dates,
+    onRender: function (calendar) {
+      let days = calendar.querySelectorAll(".day-item");
+      for (let i = 0; i < days.length; i++) {
+        if (days[i].classList.contains('is-locked')) {
+          days[i].classList.remove('is-locked');
+        } else {
+          days[i].classList.add('is-locked');
+        }
+      }
+    },
+    inlineMode: true,
+  });
+</script>
+
 {% endblock %}

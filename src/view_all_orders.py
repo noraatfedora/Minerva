@@ -66,7 +66,7 @@ def getOrders(adminId):
             toReturn[orderId][str(column)] = str(getattr(order, str(column)))
 
         toReturn[orderId]['itemsDict'] = loads(toReturn[orderId]['contents'])
-        toReturn[order.id]['date'] = order['date'].strftime('%A, %B %d')
+        toReturn[order.id]['date'] = order['date']
         volunteerEmail = conn.execute(select([users.c.email], users.c.id==order.volunteerId)).fetchone()
         if not volunteerEmail is None:
             toReturn[orderId]['volunteerEmail'] = volunteerEmail[0]

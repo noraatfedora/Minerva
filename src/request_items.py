@@ -27,9 +27,7 @@ def request_items():
             name = item['name']
             quantity = request.form[name + "-quantity"]
             itemsDict[name] = quantity
-        print("Date: " + str(request.form['date']))
-        date = datetime.datetime.strptime(request.form['date'] + " 2020", strf + " %Y")
-        print("Processed date: " + str(date))
+        date = datetime.datetime.strptime(request.form['date'], "%Y-%m-%d")
         send_request_confirmation(g.user['email'], itemsDict)
 
         # Make sure that the user only orders once per week by marking all their
@@ -38,24 +36,20 @@ def request_items():
         # insert new order into the orders table
         orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId, date=date).inserted_primary_key[0]
         return redirect("/success")
-    
     return render_template("request_items.html", items = itemsList.values(), categories=categories, dates=availableDates())
 
 def availableDates():
     numDays = 10 # number of available days to display
     toReturn = []
     currentDay = datetime.date.today() + datetime.timedelta(days=1)
-    print("Finding available dates...")
+    whereClauses = {"sunday":users.c.sunday, "monday":users.c.monday,
+                "tuesday":users.c.tuesday, "wednesday":users.c.wednesday,
+                "thursday":users.c.wednesday, "friday":users.c.friday,
+                "saturday":users.c.saturday}
     while len(toReturn) < numDays:
-        print("loo[p")
         dayOfWeek = currentDay.strftime("%A").lower()
-        #days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
-        whereClauses = {"sunday":users.c.sunday, "monday":users.c.monday,
-                        "tuesday":users.c.tuesday, "wednesday":users.c.wednesday,
-                        "thursday":users.c.wednesday, "friday":users.c.friday,
-                        "saturday":users.c.saturday}
+        print(dayOfWeek)
         volunteers = conn.execute(users.select(whereclause=and_(whereClauses[dayOfWeek]==True, users.c.foodBankId==g.user.foodBankId, users.c.approved==True))).fetchall()
-        print("Volunteers: " + str(volunteers))
         maxOrders = conn.execute(select([users.c.maxOrders]).where(users.c.id==g.user.foodBankId)).fetchone()[0]
         eligibleVolunteers = []
         for volunteer in volunteers:
@@ -63,7 +57,7 @@ def availableDates():
             if len(ordersList) < maxOrders:
                 eligibleVolunteers.append(volunteer) 
         if len(eligibleVolunteers) > 0:
-            toReturn.append(currentDay.strftime(strf))
+            toReturn.append(currentDay)
         currentDay = currentDay + datetime.timedelta(days=1)
 
     return toReturn

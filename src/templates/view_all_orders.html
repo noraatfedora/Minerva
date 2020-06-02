@@ -10,7 +10,7 @@
         <div class="card text-left task-incomplete">
             {% endif %}
             <div class="card-header">
-                {{ orders[order]['date'] }}
+                {{ orders[order]['date'].strftime("%A, %B %d").lstrip("0").replace(" 0", " ") }}
             </div>
             <div class="card-header">
                 {{ orders[order]['email'] }}
@@ -33,7 +33,7 @@
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">[choose volunteer]</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     {% for volunteer in volunteers %}
-                    <a class="dropdown-item {{'disabled' if not volunteer[orders[order]['date'].lower()] }}" href="/allorders?volunteer={{ volunteer['id'] }}&order={{ orders[order]['id'] }}">
+                    <a class="dropdown-item {{'disabled' if not volunteer[orders[order]['date'].strftime('%A').lower()] }}" href="/allorders?volunteer={{ volunteer['id'] }}&order={{ orders[order]['id'] }}">
                         {{ volunteer['email'] }} ({{ volunteer['numOrders'] }})
                     </a>
                     {% endfor %}

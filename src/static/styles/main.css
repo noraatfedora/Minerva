@@ -264,7 +264,6 @@ h4 {
 
 #main {
   overflow: auto;
-  padding-bottom: 50px
 }
 
 #dropdown-email-text {
@@ -408,6 +407,14 @@ a:not([href]):not([tabindex]):hover {
   margin-bottom: 10px
 }
 
+#date-picker {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  margin: 12px auto 12px auto;
+  pointer-events: none;
+}
+
 .card {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   border-radius: 10px;
@@ -416,6 +423,10 @@ a:not([href]):not([tabindex]):hover {
   border: none;
   background-color: #77b6ea;
   overflow: visible;
+}
+
+.row div .card {
+  background-color: white;
 }
 
 .card.item {
