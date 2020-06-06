@@ -4,6 +4,7 @@ from flask import current_app, g, Flask
 from sqlalchemy import create_engine, Table, Column, Date, Integer, String, MetaData, Boolean
 from sqlalchemy.orm import session, sessionmaker
 from flask.cli import with_appcontext
+import sys
 import os
 
 Session = sessionmaker(autocommit=True)

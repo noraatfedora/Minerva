@@ -8,6 +8,7 @@ src/__pycache__/
 *.pyc
 .vscode/settings.json
 env/
+instance/
 .vs/
 src/ERROR_LOG
 src/LOG

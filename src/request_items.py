@@ -8,8 +8,9 @@ from send_confirmation import send_request_confirmation
 from json import loads, dumps
 import datetime
 from sqlalchemy import select, and_
+from sys import path
 
-itemsList = loads(open("items.json", "r").read())
+itemsList = loads(open(path[0] + "/../src/items.json", "r").read())
 categories = set()
 for item in itemsList.values():
     categories.add(item['subcategory'])
