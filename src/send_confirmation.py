@@ -4,9 +4,10 @@ import smtplib
 import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import sys
 
 port = 465
-password = open("email_password").read()
+password = open(sys.path[0] + "/../src/instance/email_password").read()
 sender_email = "contactusminerva@gmail.com"
 
 
