@@ -2,7 +2,7 @@ A service for free groceries delivery during the coronavirus pandemic
 
 https://minervagroceries.org/
 
-##Setup
+## Setup
 
 To install all required python packages, run `pip3 install -r requirements.txt`
 
