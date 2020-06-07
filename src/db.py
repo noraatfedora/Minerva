@@ -17,7 +17,7 @@ if os.environ.get('RDS_CONNECT') is not None:
     print("DB URL: " + url)
 else:
     engine = create_engine(
-        'sqlite:///instance/requests.sqlite?check_same_thread=False')
+        'sqlite://' + os.environ['INSTANCE_PATH'] + '/requests.sqlite?check_same_thread=False')
     Session.configure(bind=engine)
     sess = Session()
 
