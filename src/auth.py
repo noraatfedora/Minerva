@@ -6,6 +6,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from db import users, conn
 from sqlalchemy import select, update 
 from json import loads
+from os import environ
+from sys import path
 
 bp = Blueprint('auth', __name__)
 
@@ -36,7 +38,8 @@ def login():
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
-        supportedZipCodes = open('supported_zip_codes', 'r').read()
+        with open(path[0] + environ['INSTANCE_PATH'] + 'supported_zip_codes', 'r') as f:
+            supportedZipCodes = f.read()
         email = request.form['email']
         password = request.form['password']
         confirm = request.form['confirm']
@@ -199,7 +202,7 @@ def volunteerregister():
             data = {
                     'email': email,
                     'address': address,
-                    'name': name, 
+                    'name': name,
                     'cellPhone': cellPhone,
                     'homePhone': homePhone,
                     'zipCode': zipCode,
