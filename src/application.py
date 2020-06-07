@@ -48,7 +48,6 @@ def create_app(test_config=None):
         except:
             return "Fail!"
 
-        
 
     import db
     db.init_app(app)
