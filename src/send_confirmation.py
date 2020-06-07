@@ -5,10 +5,11 @@ import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import sys
+from os import environ
 
 port = 465
-password = open(sys.path[0] + "/../src/instance/email_password").read()
-sender_email = "contactusminerva@gmail.com"
+password = environ['EMAIL_PASSWORD']
+sender_email = environ['EMAIL_SENDER']
 
 
 def send_email(reciever_email, html, subject):
