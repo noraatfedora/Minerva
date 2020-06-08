@@ -18,11 +18,11 @@
                             <small>Error message</small>
                     </div>
                     <div class="dropdown">
-                        <div class="input-group">
-                            <select class="form-control" id="inputGroupSelect">
+                        <div class="form-group">
+                            <select class="form-control form-group" id="inputGroupSelect" name="organization">
                             <option selected>Organization</option>
                             {% for foodBank in foodBanks %}
-                                <option value="{{ foodBank[0] }}">{{ foodBank[0] }}</option>
+                                <option name="{{ foodBank[0] }}" value="{{ foodBank[0] }}" id="{{ foodBank[0] }}">{{ foodBank[0] }}</option>
                             {% endfor %}
                             </select>
                         </div>
