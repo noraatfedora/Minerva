@@ -38,7 +38,7 @@ def login():
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
-        with open(path[0] + environ['INSTANCE_PATH'] + 'supported_zip_codes', 'r') as f:
+        with open(environ['INSTANCE_PATH'] + 'supported_zip_codes', 'r') as f:
             supportedZipCodes = f.read()
         email = request.form['email']
         password = request.form['password']
@@ -166,7 +166,6 @@ def volunteerregister():
     days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
     foodBanks = conn.execute(select([users.c.name], whereclause=users.c.role=="ADMIN")).fetchall()
     if request.method == "POST":
-        supportedZipCodes = open('supported_zip_codes', 'r').read()
         email = request.form['email']
         name = request.form['name']
         password = request.form['password']
@@ -183,11 +182,6 @@ def volunteerregister():
                 dayValues[day] = False
         error = "" 
         print("dayValues: " + str(dayValues))
-        if zipCode[0:5] not in supportedZipCodes:
-            error += "Sorry, but your zip code is not supported at this time. Please contact your local food banks."
-        elif conn.execute(users.select().where(users.c.email==email)).fetchone() is not None:
-            error = 'User {} is already registered.'.format(email)
-        
         if error == "":
             print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
@@ -230,4 +224,3 @@ def change_pass():
 
 def getFoodBank(address):
     return conn.execute(select([users.c.id]).where(users.c.role=='ADMIN')).fetchone()[0]
-

@@ -1,5 +1,11 @@
-from os import environ
+from os import environ, remove
+from sys import path
 # Use all the normal environment variables
-exec(open('set_environment_variables.py').read())
+path.append(path[0] + '/../')
+import set_environment_variables
 # And then change the sqlite path to point to the testing database.
-environ['INSTANCE_PATH'] = '/instance/'
+environ['INSTANCE_PATH'] = '//home/jared/Minerva/src/tests/instance/'
+try:
+    remove(environ['INSTANCE_PATH'] + "/requests.sqlite")
+except:
+    pass
