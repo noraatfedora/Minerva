@@ -6,6 +6,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from db import users, conn
 from sqlalchemy import select, update 
 from json import loads
+from os import environ
+from sys import path
 
 bp = Blueprint('auth', __name__)
 
@@ -36,7 +38,8 @@ def login():
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
-        supportedZipCodes = open('supported_zip_codes', 'r').read()
+        with open(environ['INSTANCE_PATH'] + 'supported_zip_codes', 'r') as f:
+            supportedZipCodes = f.read()
         email = request.form['email']
         password = request.form['password']
         confirm = request.form['confirm']
@@ -163,7 +166,7 @@ def volunteerregister():
     days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
     foodBanks = conn.execute(select([users.c.name], whereclause=users.c.role=="ADMIN")).fetchall()
     if request.method == "POST":
-        supportedZipCodes = open('supported_zip_codes', 'r').read()
+        print("Data: " + str(request.form))
         email = request.form['email']
         name = request.form['name']
         password = request.form['password']
@@ -172,25 +175,22 @@ def volunteerregister():
         zipCode = request.form['zipCode']
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
+        foodBank = request.form['organization']
+        foodBankId = conn.execute(select([users.c.id]).where(users.c.name==foodBank)).fetchone()[0]
         dayValues = {}
         for day in days:
             if day in request.form.keys():
                 dayValues[day] = True
             else:
                 dayValues[day] = False
-        error = "" 
+        error = ""
         print("dayValues: " + str(dayValues))
-        if zipCode[0:5] not in supportedZipCodes:
-            error += "Sorry, but your zip code is not supported at this time. Please contact your local food banks."
-        elif conn.execute(users.select().where(users.c.email==email)).fetchone() is not None:
-            error = 'User {} is already registered.'.format(email)
-        
         if error == "":
             print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
             conn.execute(users.insert(), email=email, name=name, password=password_hash, address=address, 
             role="VOLUNTEER", cellPhone=cellPhone, homePhone=homePhone,
-            zipCode=zipCode, completed=0, approved=False, foodBankId=getFoodBank(address),
+            zipCode=zipCode, completed=0, approved=False, foodBankId=foodBankId,
             sunday=dayValues["Sunday"], monday=dayValues["Monday"], tuesday=dayValues["Tuesday"],
             wednesday=dayValues["Wednesday"], thursday=dayValues["Thursday"], friday=dayValues["Friday"], saturday=dayValues["Saturday"])
             return redirect(url_for('auth.login'))
@@ -199,7 +199,7 @@ def volunteerregister():
             data = {
                     'email': email,
                     'address': address,
-                    'name': name, 
+                    'name': name,
                     'cellPhone': cellPhone,
                     'homePhone': homePhone,
                     'zipCode': zipCode,
@@ -227,4 +227,3 @@ def change_pass():
 
 def getFoodBank(address):
     return conn.execute(select([users.c.id]).where(users.c.role=='ADMIN')).fetchone()[0]
-
