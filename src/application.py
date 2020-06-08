@@ -48,7 +48,6 @@ def create_app(test_config=None):
         except:
             return "Fail!"
 
-        
 
     import db
     db.init_app(app)
@@ -58,9 +57,8 @@ def create_app(test_config=None):
 
     import dashboard
     app.register_blueprint(dashboard.bp)
-    # request.py has blueprints for both requesting and displaying orders
-    # KARTHIK: That's the file where you put your cool google sheets stuff!
-    import request_items 
+
+    import request_items
     app.register_blueprint(request_items.bp)
     app.add_url_rule('/', endpoint='index')
 

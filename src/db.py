@@ -4,6 +4,7 @@ from flask import current_app, g, Flask
 from sqlalchemy import create_engine, Table, Column, Date, Integer, String, MetaData, Boolean
 from sqlalchemy.orm import session, sessionmaker
 from flask.cli import with_appcontext
+import sys
 import os
 
 Session = sessionmaker(autocommit=True)
@@ -15,8 +16,9 @@ if os.environ.get('RDS_CONNECT') is not None:
     sess = Session()
     print("DB URL: " + url)
 else:
-    engine = create_engine(
-        'sqlite:///instance/requests.sqlite?check_same_thread=False')
+    url = 'sqlite://' + os.environ['INSTANCE_PATH'] + '/requests.sqlite?check_same_thread=False'
+    print('URL: ' + url)
+    engine = create_engine(url)
     Session.configure(bind=engine)
     sess = Session()
 
