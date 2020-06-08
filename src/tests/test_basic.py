@@ -26,6 +26,7 @@ class BasicTests(unittest.TestCase):
                 address="1323 S Yakima Ave, Tacoma, WA 98405",
                 password=food_bank_pass,
                 role="ADMIN",
+                maxOrders=10,
                 zipCode=98405
             )
 
@@ -64,6 +65,7 @@ class BasicTests(unittest.TestCase):
                 address='volunteer address wheeee',
                 zipCode='98034',
                 cell = '0987654321',
+                organization = "Example food bank",
                 homePhone = '',
                 Sunday='Sunday',
                 Monday='',
@@ -73,9 +75,11 @@ class BasicTests(unittest.TestCase):
                 Friday='',
                 Saturday=''
             )
-            # Manually promote volunteer
-            conn.execute()
         )
+        # Manually promote volunteer
+        conn.execute(users.update().where(users.c.email=="volunteerexample@mailinator.com").values(
+            approved=True
+        ))
 
     def test_login(self):
         self.test_register_client()
