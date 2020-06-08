@@ -166,6 +166,7 @@ def volunteerregister():
     days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
     foodBanks = conn.execute(select([users.c.name], whereclause=users.c.role=="ADMIN")).fetchall()
     if request.method == "POST":
+        print("Data: " + str(request.form))
         email = request.form['email']
         name = request.form['name']
         password = request.form['password']
@@ -174,20 +175,22 @@ def volunteerregister():
         zipCode = request.form['zipCode']
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
+        foodBank = request.form['organization']
+        foodBankId = conn.execute(select([users.c.id]).where(users.c.name==foodBank)).fetchone()[0]
         dayValues = {}
         for day in days:
             if day in request.form.keys():
                 dayValues[day] = True
             else:
                 dayValues[day] = False
-        error = "" 
+        error = ""
         print("dayValues: " + str(dayValues))
         if error == "":
             print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
             conn.execute(users.insert(), email=email, name=name, password=password_hash, address=address, 
             role="VOLUNTEER", cellPhone=cellPhone, homePhone=homePhone,
-            zipCode=zipCode, completed=0, approved=False, foodBankId=getFoodBank(address),
+            zipCode=zipCode, completed=0, approved=False, foodBankId=foodBankId,
             sunday=dayValues["Sunday"], monday=dayValues["Monday"], tuesday=dayValues["Tuesday"],
             wednesday=dayValues["Wednesday"], thursday=dayValues["Thursday"], friday=dayValues["Friday"], saturday=dayValues["Saturday"])
             return redirect(url_for('auth.login'))
