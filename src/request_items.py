@@ -11,7 +11,7 @@ from sqlalchemy import select, and_
 from os import environ
 from sys import path
 
-itemsList = loads(open(path[0] + environ['INSTANCE_PATH'] + "items.json", "r").read())
+itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read())
 categories = set()
 for item in itemsList.values():
     categories.add(item['subcategory'])
@@ -57,7 +57,7 @@ def availableDates():
         for volunteer in volunteers:
             ordersList = conn.execute(orders.select(whereclause=(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0)))).fetchall()
             if len(ordersList) < maxOrders:
-                eligibleVolunteers.append(volunteer) 
+                eligibleVolunteers.append(volunteer)
         if len(eligibleVolunteers) > 0:
             toReturn.append(currentDay)
         currentDay = currentDay + datetime.timedelta(days=1)
