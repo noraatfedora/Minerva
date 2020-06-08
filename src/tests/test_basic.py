@@ -24,6 +24,7 @@ class BasicTests(unittest.TestCase):
                 email="foodbankexample@mailinator.com",
                 name="Example food bank",
                 address="1323 S Yakima Ave, Tacoma, WA 98405",
+                password=food_bank_pass,
                 role="ADMIN",
                 zipCode=98405
             )
@@ -72,6 +73,8 @@ class BasicTests(unittest.TestCase):
                 Friday='',
                 Saturday=''
             )
+            # Manually promote volunteer
+            conn.execute()
         )
 
     def test_login(self):
@@ -85,12 +88,7 @@ class BasicTests(unittest.TestCase):
 
     def test_request(self):
         with application.app.app_context():
-            self.check_response_code(
-                page='/login',
-                data=dict(
-                    email='johndoe@mailinator.com',
-                    password='asdf')
-            )
+            self.test_login()
             availableDates = request_items.availableDates()
             with open(environ['INSTANCE_PATH'] + "items.json", "r") as f:
                 itemsList = loads(f.read())
