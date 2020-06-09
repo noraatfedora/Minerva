@@ -4,6 +4,7 @@ import yagmail
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import sys
+from datetime import datetime
 from os import environ
 
 password = environ['EMAIL_PASSWORD']
@@ -56,9 +57,9 @@ def send_bagged_notification(reciever_email, orderId, address, date):
 		<html>
 			<body>
 				<h2>You have been assigned a new order!</h2> <ul>
-					<li> Order ID: """ + orderId + """ </li>
+					<li> Order ID: """ + str(orderId) + """ </li>
 					<li> Delivery address: """ + address + """ </li>
-					<li> Delivery date: """ + date + """ </li>
+					<li> Delivery date: """ + date.strftime("%A, %B %e") + """ </li>
 				</ul>
 				Please pick this up on the given delivery date.
 				Your food bank may have restrictions on when you can pick up your order from them. Make sure to be aware of

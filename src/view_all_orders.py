@@ -6,8 +6,9 @@ from auth import login_required, admin_required
 from json import loads, dumps
 from collections import OrderedDict
 from db import users, conn, orders
-from sqlalchemy import and_, select 
-from send_confirmation import send_recieved_notification
+from sqlalchemy import and_, select
+from os import environ
+from send_confirmation import send_recieved_notification, send_bagged_notification
 
 bp = Blueprint('view_all_orders', __name__)
 
@@ -15,13 +16,17 @@ bp = Blueprint('view_all_orders', __name__)
 @admin_required
 @bp.route('/allorders', methods=('GET', 'POST'))
 def allOrders():
-    itemsList = loads(open("items.json", "r").read()).keys()
+    itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
 
     ordersDict = getOrders(g.user.id)
     if request.method == "GET" and "volunteer" in request.args.keys():
         volunteerId = int(request.args.get("volunteer"))
         orderId = int(request.args.get("order"))
         conn.execute(orders.update(whereclause=orders.c.id==orderId).values(volunteerId=volunteerId))
+        volunteerEmail = conn.execute(select([users.c.email]).where(users.c.id==volunteerId)).fetchone()[0]
+        date, userId = tuple(conn.execute(select([orders.c.date, orders.c.userId]).where(orders.c.id==orderId)).fetchone())
+        address = conn.execute(select([users.c.address]).where(users.c.id==userId)).fetchone()[0]
+        send_bagged_notification(volunteerEmail, orderId, address, date)
         return redirect("/allorders")
     if request.method == "POST":
         key = next(request.form.keys())

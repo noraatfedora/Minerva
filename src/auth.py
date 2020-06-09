@@ -8,6 +8,7 @@ from sqlalchemy import select, update
 from json import loads
 from os import environ
 from sys import path
+from send_confirmation import send_new_volunteer_request_notification
 
 bp = Blueprint('auth', __name__)
 
@@ -176,7 +177,8 @@ def volunteerregister():
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
         foodBank = request.form['organization']
-        foodBankId = conn.execute(select([users.c.id]).where(users.c.name==foodBank)).fetchone()[0]
+        # kinda proud of how clean this line is ngl
+        foodBankId, foodBankEmail = tuple(conn.execute(select([users.c.id, users.c.email]).where(users.c.name==foodBank)).fetchone())
         dayValues = {}
         for day in days:
             if day in request.form.keys():
@@ -193,7 +195,10 @@ def volunteerregister():
             zipCode=zipCode, completed=0, approved=False, foodBankId=foodBankId,
             sunday=dayValues["Sunday"], monday=dayValues["Monday"], tuesday=dayValues["Tuesday"],
             wednesday=dayValues["Wednesday"], thursday=dayValues["Thursday"], friday=dayValues["Friday"], saturday=dayValues["Saturday"])
+
+            send_new_volunteer_request_notification(foodBankEmail, name)
             return redirect(url_for('auth.login'))
+
         else:
             flash(error)
             data = {

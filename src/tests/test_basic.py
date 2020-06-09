@@ -9,6 +9,7 @@ from json import loads
 from werkzeug.security import generate_password_hash
 from os import environ
 from db import users, conn, orders
+from sqlalchemy import select
 
 class BasicTests(unittest.TestCase):
     def setUp(self):
@@ -80,6 +81,57 @@ class BasicTests(unittest.TestCase):
         conn.execute(users.update().where(users.c.email=="volunteerexample@mailinator.com").values(
             approved=True
         ))
+
+    def test_promote_volunteer(self):
+        self.check_response_code(
+            page='/volunteerregister',
+            data=dict(
+                email='promotethis@mailinator.com',
+                name="Test volunteer promotion",
+                password='password',
+                confirm='password',
+                address='volunteer address wheeee',
+                zipCode='98034',
+                cell = '0987654321',
+                organization = "Example food bank",
+                homePhone = '',
+                Sunday='Sunday',
+                Monday='',
+                Tuesday='Tuesday',
+                Wednesday='',
+                Thursday='',
+                Friday='',
+                Saturday=''
+            )
+        )
+        self.check_response_code(
+            page='/login',
+            data=dict(
+                email='foodbankexample@mailinator.com',
+                password='password')
+        )
+        response = self.app.get('/modify?assign=Test volunteer promotion', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_marked_as_bagged(self):
+        self.test_promote_volunteer()
+        self.test_request()
+        with application.app.app_context():
+            self.check_response_code(
+                page='/login',
+                data=dict(
+                    email='foodbankexample@mailinator.com',
+                    password='password')
+            )
+            self.check_response_code(
+                page='/allorders',
+                data={
+                    'bag-1':'bag-1'
+                }
+            )
+            volunteerId = conn.execute(select([users.c.id]).where(users.c.email=="promotethis@mailinator.com")).fetchone()[0]
+            response = self.app.get('/allorders?volunteer=' + str(volunteerId) + "&order=1", follow_redirects=True)
+            self.assertEqual(response.status_code, 200)
 
     def test_login(self):
         self.test_register_client()
