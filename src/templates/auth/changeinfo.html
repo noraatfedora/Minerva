@@ -38,6 +38,19 @@
                                 <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Save
                                     Changes</button>
                             </div>
+                            {% if g.user.role=="VOLUNTEER" %}
+                                <b> Days Available: </b> 
+                                {% for day in days %}
+                                    <div class="form-check form-group form-check-inline">
+                                        {% if g.user[day.lower()] %}
+                                            <input class="form-check-input form-control" name="{{ day }}" type="checkbox" checked id="{{day}}" value="{{day}}">
+                                        {% else %}
+                                            <input class="form-check-input form-control" name="{{ day }}" type="checkbox" id="{{day}}" value="{{day}}">
+                                        {% endif %}
+                                        <label class="form-check-label" for="{{day}}">{{day}}</label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         </form>
                     </div>
                 </div>
