@@ -8,6 +8,7 @@ from db import users, conn, orders
 from sqlalchemy import and_, select
 from send_confirmation import send_recieved_notification
 from datetime import datetime
+from os import environ
 
 bp = Blueprint('dashboard', __name__)
 
@@ -17,7 +18,7 @@ bp = Blueprint('dashboard', __name__)
 @login_required
 @volunteer_required
 def dashboard():
-    itemsList = loads(open("items.json", "r").read()).keys()
+    itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
 
     ordersDict = getOrders(g.user.id)
 
@@ -31,10 +32,6 @@ def dashboard():
             email = ordersDict[orderId]['email']
             send_recieved_notification(email)
             conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
-            # Remove the order from the volunteer's list
-            orderList = loads(str(conn.execute(select([users.c.assignedOrders]).where(users.c.id==g.user.id)).fetchone()[0]))
-            orderList.remove(orderId)
-            conn.execute(users.update().where(users.c.id==g.user.id).values(assignedOrders=dumps(orderList)))
             ordersDict = getOrders(g.user.id)
     
     print("orders: " + str(orders))
@@ -46,7 +43,7 @@ def dashboard():
 # list when it's completed.
 def getOrders(volunteerId):
     # Get the ID's that our volunteer is assigned to
-    orderList = conn.execute(orders.select(orders.c.volunteerId==g.user.id)).fetchall()
+    orderList = conn.execute(orders.select(and_(orders.c.volunteerId==g.user.id, orders.c.completed==0, orders.c.bagged==1))).fetchall()
 
     toReturn = {} # We'll return this later
     for order in orderList:

@@ -8,6 +8,7 @@ from sqlalchemy import select, update
 from json import loads
 from os import environ
 from sys import path
+from send_confirmation import send_new_volunteer_request_notification
 
 bp = Blueprint('auth', __name__)
 
@@ -139,26 +140,31 @@ def your_account():
 @bp.route('/changeinfo', methods=['GET', 'POST'])
 @login_required
 def change_info():
-    # For security, we double check that the column we're inserting is in this list.
-    attributesList = {
-        'email', 'address', 'cellPhone', 'instructions', 'homePhone', "zipCode"
-    }
+    days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
     if request.method=='POST':
         for attribute in request.form:
             given = request.form[attribute]
-            if given != '' and attribute != 'submit' and attribute in attributesList:
-                print("about to generate query")
+            if (given != '' or given in days) and attribute != 'submit':
+                print("Given: " + str(given))
                 query = users.update().where(users.c.id==g.user['id'])
                 values = {
                     'email': query.values(email=given),
                     'address': query.values(address=given),
                     'cellPhone': query.values(cellPhone=given),
                     'instructions': query.values(instructions=given),
-                    'homePhone': query.values(homePhone=given)
+                    'homePhone': query.values(homePhone=given),
+                    'Sunday': query.values(sunday=(given!=None)),
+                    'Monday': query.values(monday=given!=None),
+                    'Tuesday': query.values(tuesday=given!=None),
+                    'Wednesday': query.values(wednesday=given!=None),
+                    'Thursday': query.values(thursday=given!=None),
+                    'Friday': query.values(friday=given!=None),
+                    'Saturday': query.values(saturday=given!=None),
                 }[attribute]
+                print("Values: " + str(values))
                 conn.execute(values)
         return redirect('/youraccount')
-    return render_template("auth/changeinfo.html", user=g.user)
+    return render_template("auth/changeinfo.html", user=g.user, days=days)
 
 
 @bp.route('/volunteerregister', methods=('GET', 'POST'))
@@ -176,7 +182,8 @@ def volunteerregister():
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
         foodBank = request.form['organization']
-        foodBankId = conn.execute(select([users.c.id]).where(users.c.name==foodBank)).fetchone()[0]
+        # kinda proud of how clean this line is ngl
+        foodBankId, foodBankEmail = tuple(conn.execute(select([users.c.id, users.c.email]).where(users.c.name==foodBank)).fetchone())
         dayValues = {}
         for day in days:
             if day in request.form.keys():
@@ -193,7 +200,10 @@ def volunteerregister():
             zipCode=zipCode, completed=0, approved=False, foodBankId=foodBankId,
             sunday=dayValues["Sunday"], monday=dayValues["Monday"], tuesday=dayValues["Tuesday"],
             wednesday=dayValues["Wednesday"], thursday=dayValues["Thursday"], friday=dayValues["Friday"], saturday=dayValues["Saturday"])
+
+            send_new_volunteer_request_notification(foodBankEmail, name)
             return redirect(url_for('auth.login'))
+
         else:
             flash(error)
             data = {
