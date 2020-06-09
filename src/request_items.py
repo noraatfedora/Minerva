@@ -46,7 +46,7 @@ def availableDates():
     currentDay = datetime.date.today() + datetime.timedelta(days=1)
     whereClauses = {"sunday":users.c.sunday, "monday":users.c.monday,
                 "tuesday":users.c.tuesday, "wednesday":users.c.wednesday,
-                "thursday":users.c.wednesday, "friday":users.c.friday,
+                "thursday":users.c.thursday, "friday":users.c.friday,
                 "saturday":users.c.saturday}
     while len(toReturn) < numDays:
         dayOfWeek = currentDay.strftime("%A").lower()

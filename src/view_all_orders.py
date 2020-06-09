@@ -23,7 +23,10 @@ def allOrders():
         volunteerId = int(request.args.get("volunteer"))
         orderId = int(request.args.get("order"))
         bagged = conn.execute(select([orders.c.bagged]).where(orders.c.id==orderId)).fetchall()[0]
+        conn.execute(orders.update(whereclause=orders.c.id==orderId).values(volunteerId=volunteerId))
+        print("out of the thinmg")
         if bagged == 1:
+            print("In the thing")
             conn.execute(orders.update(whereclause=orders.c.id==orderId).values(volunteerId=volunteerId))
             volunteerEmail = conn.execute(select([users.c.email]).where(users.c.id==volunteerId)).fetchone()[0]
             date, userId = tuple(conn.execute(select([orders.c.date, orders.c.userId]).where(orders.c.id==orderId)).fetchone())
@@ -91,5 +94,6 @@ def getVolunteers():
         for column in columns:
             volunteerDict[column] = getattr(volunteer, column)
         volunteerDict['numOrders'] = len(conn.execute(orders.select(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0))).fetchall())
+        print("Volunteer: " + str(volunteer.name) + " Orders: " + str(volunteerDict['numOrders']))
         dictList.append(volunteerDict)
     return dictList

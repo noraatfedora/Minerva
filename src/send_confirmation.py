@@ -12,10 +12,11 @@ sender_email = environ['EMAIL_SENDER']
 yag = yagmail.SMTP(sender_email, password)
 
 def send_email(subject, contents, to):
+	print("Address: " + to)
 	yag.send(to = to, subject= subject, contents = [contents])
 
 def send_request_confirmation(reciever_email, items, date):
-	html = """\
+	html = """
 	<html>
 		<body>
 			<p>You have requested the following items from Minerva:
