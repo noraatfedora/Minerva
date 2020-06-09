@@ -1,12 +1,12 @@
 from flask import ( Blueprint, flash, g, redirect, render_template,
-    request, session, url_for, Flask
-)
+    request, session, url_for, Flask)
 from werkzeug.exceptions import abort
 from auth import login_required, volunteer_required
 from json import loads
 from db import users, conn, orders
 from sqlalchemy import and_, select
-from send_confirmation import send_recieved_notification
+from os import environ
+from send_confirmation import send_volunteer_acceptance_notification
 
 bp = Blueprint('modify', __name__)
 
@@ -16,14 +16,15 @@ bp = Blueprint('modify', __name__)
 @login_required
 @volunteer_required
 def dashboard():
-    itemsList = loads(open("items.json", "r").read()).keys()
-
+    itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
 
     # Get all the volunteers that are assigned to our food bank
     volunteers = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role=="VOLUNTEER", users.c.approved==True)))
     unassigned = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role=="VOLUNTEER", users.c.approved==False)))
     if request.method == "GET" and "assign" in request.args.keys():
         conn.execute(users.update(users.c.name==request.args['assign']).values(approved=True))
+        volunteerEmail = conn.execute(select([users.c.email]).where(users.c.name==request.args['assign'])).fetchone()[0]
+        send_volunteer_acceptance_notification(volunteerEmail, g.user.name)
         return redirect("/modify")
     if request.method == "POST":
         key = next(request.form.keys())
