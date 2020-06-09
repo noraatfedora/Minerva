@@ -61,11 +61,8 @@ def send_bagged_notification(reciever_email, orderId, address, date):
 					<li> Delivery address: """ + address + """ </li>
 					<li> Delivery date: """ + date.strftime("%A, %B %e") + """ </li>
 				</ul>
-				Please pick this up on the given delivery date.
-				Your food bank may have restrictions on when you can pick up your order from them. Make sure to be aware of
-				their hours so you can pick up the order and deliver on time.
-				Thank you for volunteering! Reply with any questions
-				related to Minerva software, and contact your food bank for any questions about the order.
+				Please pick this up on the given delivery date. Your food bank may have restrictions on when you can pick up your order from them. Make sure to be aware of their hours so you can pick up the order and deliver on time.
+				Thank you for volunteering! Reply with any questions related to Minerva software, and contact your food bank for any questions about the order.
 			</body>
 		</html>
 				"""
