@@ -30,10 +30,10 @@ def request_items():
             quantity = request.form[name + "-quantity"]
             itemsDict[name] = quantity
         date = datetime.datetime.strptime(request.form['date'], "%Y-%m-%d")
-        send_request_confirmation(g.user['email'], itemsDict)
+        send_request_confirmation(g.user['email'], itemsDict, date.strftime("%A, %B %e"))
 
         # Make sure that the user only orders once per week by marking all their
-        # old orders as completed 
+        # old orders as completed
         conn.execute(orders.update(orders.c.userId==g.user.id).values(completed=1))
         # insert new order into the orders table
         orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId, date=date).inserted_primary_key[0]

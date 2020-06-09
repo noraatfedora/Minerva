@@ -1,49 +1,30 @@
 # Create a file called email_password with your email password in it for development.
 
-import smtplib
-import ssl
+import yagmail
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import sys
 from os import environ
 
-port = 465
 password = environ['EMAIL_PASSWORD']
 sender_email = environ['EMAIL_SENDER']
+yag = yagmail.SMTP(sender_email, password)
 
+def send_email(subject, contents, to):
+	yag.send(to = to, subject= subject, contents = [contents])
 
-def send_email(reciever_email, html, subject):
-	context = ssl.create_default_context()
-	message = MIMEMultipart("alternative")
-	message["Subject"] = "Minerva order confirmation"
-	message["From"] = sender_email
-	message["To"] = reciever_email
-
-	print(html)
-	message.attach(MIMEText(html, "html"))
-
-	with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-			server.login(sender_email, password)
-			server.sendmail(sender_email, reciever_email, message.as_string())
-
-
-def send_request_confirmation(reciever_email, items):
+def send_request_confirmation(reciever_email, items, date):
 	html = """\
 	<html>
 		<body>
-			<p>You have requested the following items from Minerva:<br>
+			<p>You have requested the following items from Minerva:
 			<ul>
 	"""
 	for item in items.keys():
 			if (int(items[item]) > 0):
 					html += "<li>" + items[item] + " orders of " + item + "</li>"
-			html += """
-			</ul>
-			</p>
-		</body>
-	</html>
-	"""
-	send_email(reciever_email, html, "Your Minerva Order confirmation")
+	html += "</ul> A volunteer should arrive on " + date + ". If you have any questions, respond to this email. </p> </body> </html>"
+	send_email(to = reciever_email, contents = html, subject = "Your Minerva Order confirmation")
 
 def send_recieved_notification(reciever_email):
 	html = """
@@ -53,4 +34,38 @@ def send_recieved_notification(reciever_email):
 			</body>
 		</html>
 	"""
-	send_email(reciever_email, html, "Your Minerva Order Is Here")
+	send_email(to = reciever_email, contents = html, subject = "Your Minerva order is here")
+
+def send_new_volunteer_request_notification(reciever_email, name):
+	html = """
+		<html>
+			<body>
+				<p>""" + name + """ has requested to join your organization. Visit the <a href="https://minervagroceries.org/modify">
+				volunteer settings dashboard</a> to aprove them."""
+	send_email(to = reciever_email, contents=html, subject="Minerva: " + name + " has requested to join your organization")
+
+def send_volunteer_acceptance_notification(reciever_email, food_bank_name):
+	html = """
+		<html>
+			<body>
+				<p> You have been accepted by """ + food_bank_name + """ for Minerva."""
+	send_email(to = reciever_email, contents=html, subject="Minerva: " + food_bank_name + " has accepted you into their organization")
+
+def send_bagged_notification(reciever_email, orderId, address, date):
+	html = """
+		<html>
+			<body>
+				<h2>You have been assigned a new order!</h2> <ul>
+					<li> Order ID: """ + orderId + """ </li>
+					<li> Delivery address: """ + address + """ </li>
+					<li> Delivery date: """ + date + """ </li>
+				</ul>
+				Please pick this up on the given delivery date.
+				Your food bank may have restrictions on when you can pick up your order from them. Make sure to be aware of
+				their hours so you can pick up the order and deliver on time.
+				Thank you for volunteering! Reply with any questions
+				related to Minerva software, and contact your food bank for any questions about the order.
+			</body>
+		</html>
+				"""
+	send_email(to = reciever_email, contents=html, subject="Minerva: You have been assigned a new order")
