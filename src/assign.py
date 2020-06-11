@@ -8,6 +8,7 @@ import urllib.request
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from os import environ
 import set_environment_variables
+from datetime import date
 from db import orders, users, conn
 from sqlalchemy import select, and_
 
@@ -160,7 +161,7 @@ def assignAllOrders(foodBankId):
     '''
     ordersList = conn.execute(orders.select().where(and_(orders.c.bagged==1, orders.c.completed==0))).fetchall()
     print("Orders List: " + str(ordersList))
-    volunteersList = conn.execute(users.select().where(and_(users.c.role=="VOLUNTEER", users.c.approved==True, users.c.foodBankId==foodBankId))).fetchall()
+    volunteersList = conn.execute(users.select().where(and_(users.c.role=="VOLUNTEER", users.c.approved==True, users.c.foodBankId==foodBankId, users.c.checkedIn==date.today()))).fetchall()
     foodBankAddr = conn.execute(select([users.c.address]).where(users.c.id==foodBankId)).fetchone()[0]
     assignments = get_order_assignments(ordersList, len(volunteersList), foodBankAddr)
     for i in range(len(assignments)):
@@ -178,4 +179,4 @@ def assignAllOrders(foodBankId):
     print("Volunteers: " + str(volunteersList))
 
 
-assignAllOrders(2)
+#assignAllOrders(2)
