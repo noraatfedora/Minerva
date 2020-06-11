@@ -8,6 +8,7 @@ from collections import OrderedDict
 from db import users, conn, orders
 from sqlalchemy import and_, select
 from os import environ
+import assign
 from send_confirmation import send_recieved_notification, send_bagged_notification
 
 bp = Blueprint('view_all_orders', __name__)
@@ -19,6 +20,9 @@ def allOrders():
     itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
 
     ordersDict = getOrders(g.user.id)
+    if request.method == "GET" and "assignall" in request.args.keys():
+        assign.assignAllOrders(g.user.id)
+        return redirect('/allorders')
     if request.method == "GET" and "volunteer" in request.args.keys():
         volunteerId = int(request.args.get("volunteer"))
         orderId = int(request.args.get("order"))

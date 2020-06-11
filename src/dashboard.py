@@ -7,7 +7,7 @@ from json import loads, dumps
 from db import users, conn, orders
 from sqlalchemy import and_, select
 from send_confirmation import send_recieved_notification
-from datetime import datetime
+from datetime import date
 from os import environ
 
 bp = Blueprint('dashboard', __name__)
@@ -18,6 +18,31 @@ bp = Blueprint('dashboard', __name__)
 @login_required
 @volunteer_required
 def dashboard():
+    itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
+
+    ordersDict = getOrders(g.user.id)
+    if request.method == "GET" and "checkin" in request.args.keys():
+        conn.execute(users.update().where(users.c.id==g.user.id).values(checkedIn=str(date.today())))
+        return redirect('/dashboard')
+    if request.method == "POST":
+        firstKey = next(request.form.keys())
+        orderId = int(firstKey)
+        query = select([orders.c.completed]).where(orders.c.id==orderId)
+        completed = conn.execute(query).fetchone()[0]
+        print("completeedddsf: " + str(completed))
+        # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
+        if (completed == 0):
+            email = ordersDict[orderId]['email']
+            send_recieved_notification(email)
+            conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
+            ordersDict = getOrders(g.user.id)
+    
+    print("orders: " + str(orders))
+    return render_template("dashboard.html", orders=ordersDict, items=itemsList)
+
+
+@bp.route('/driver_printout', methods=('GET', 'POST'))
+def driver_printout():
     itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
 
     ordersDict = getOrders(g.user.id)
@@ -35,7 +60,7 @@ def dashboard():
             ordersDict = getOrders(g.user.id)
     
     print("orders: " + str(orders))
-    return render_template("dashboard.html", orders=ordersDict, items=itemsList, optimap=generate_optimap(getAddresses(orders)), dates=getDates())
+    return render_template("driver_printout.html", orders=ordersDict, items=itemsList, volunteer=g.user)
 
 # Returns a dictionary where the keys are the order ID's,
 # and the values are dicts with attributes about that order (contents, email, etc.)
@@ -59,23 +84,9 @@ def getOrders(volunteerId):
             toReturn[order.id][str(column)] = str(getattr(order, str(column)))
 
         toReturn[order.id]['itemsDict'] = loads(toReturn[order.id]['contents'])
-        toReturn[order.id]['date'] = order['date'].strftime('%A, %B %d')
 
-    return toReturn 
+    return toReturn
 
 def getAddresses(orders):
     #TODO 
     return []
-
-def generate_optimap(addresses):
-    link = "http://gebweb.net/optimap/index.php?loc0=" + g.user['address'] # Starts at volunteer's address, we might want to change this
-    for x in range(0, len(addresses)):
-        link += "&loc" + str(x+1) + "=" + addresses[x]
-    return link.replace(" ", "%20")
-
-def getDates():
-    ordersList = conn.execute(orders.select().where(orders.c.volunteerId==g.user.id)).fetchall()
-    datesList = []
-    for order in ordersList:
-        datesList.append(order.date.strftime('%A, %B %d'))
-    return datesList

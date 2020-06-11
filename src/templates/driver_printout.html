@@ -1,0 +1,26 @@
+{% block content %}
+<center style="min-height: 500px;">
+    <script defer type=text/javascript src="{{url_for('static', filename='js/filter.js') }}"></script>
+    <h2>Summary for {{ volunteer.name }}</h2>
+    <img src="{{ url_for('static', filename='google_maps_qr.png') }}" height=100px>
+    {% for order in orders %}
+    <div class="card-header">
+        {{ orders[order]['email'] }}
+    </div>
+    <div class="card-header">
+        {{ orders[order]['address']}}
+    </div>
+    <div class="card-header">
+        {{ orders[order]['cellPhone']}}
+    </div>
+    {% for item in items %}
+    {% if orders[order]['itemsDict'][item] != '0' %}
+    <div class="card-header">
+        {{ item }}<span>{{ orders[order]['itemsDict'][item] }}</span>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <hr>
+    {% endfor %}
+</center>
+{% endblock %}

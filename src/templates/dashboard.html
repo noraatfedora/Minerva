@@ -1,28 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 <center style="min-height: 500px;">
-    <script defer type=text/javascript src="{{url_for('static', filename='js/filter.js') }}"></script>
     <h2>Volunteer Dashboard</h2>
-    Find the best route by clicking <a href="{{ optimap }}"> here</a>, selecting "Calculate!", and then hit "Export".
     <div class="spacer"></div>
-    <div class="dropdown">
-        <button class="btn btn-info dropdown-toggle" type="button" id="filter-button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            Filter
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
-            {% for date in dates %}
-                <a class="dropdown-item" onclick="updateFilter('{{ date }}')">{{ date }}</a>
-            {% endfor %}
-        </div>
-    </div>
+    <a href="/dashboard?checkin=1" name="check-in" class="btn bw-btn">Mark yourself as checked in today</a>
     <div class="spacer"></div>
     {% for order in orders %}
     <div class="card text-left task-incomplete item" filter="{{ orders[order]['date']}}">
-        <div class="card-header">
-            {{ orders[order]['date']}}
-        </div>
         <div class="card-header">
             {{ orders[order]['email'] }}
         </div>
