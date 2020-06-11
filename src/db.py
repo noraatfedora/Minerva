@@ -56,7 +56,8 @@ users = Table(
     # this will be determined automatically
     # when the user registers, but the food bank
     # can change which volunteers they control
-    Column('foodBankId', Integer) # id of the user of their food bank
+    Column('foodBankId', Integer), # id of the user of their food bank
+    Column('ordering', String(255)) # Stores their route as a JSON list of order IDs
 )
 
 orders = Table(

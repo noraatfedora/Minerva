@@ -159,11 +159,23 @@ def assignAllOrders(foodBankId):
                     ]
     '''
     ordersList = conn.execute(orders.select().where(and_(orders.c.bagged==1, orders.c.completed==0))).fetchall()
+    print("Orders List: " + str(ordersList))
     volunteersList = conn.execute(users.select().where(and_(users.c.role=="VOLUNTEER", users.c.approved==True, users.c.foodBankId==foodBankId))).fetchall()
     foodBankAddr = conn.execute(select([users.c.address]).where(users.c.id==foodBankId)).fetchone()[0]
     assignments = get_order_assignments(ordersList, len(volunteersList), foodBankAddr)
-    for i in len(assignments):
+    for i in range(len(assignments)):
         volunteer = volunteersList[i]
+        orderIdList = [] # sorted list to store as column with volunteer
         for addr in assignments[i]:
-            conn.execute(orders.update().values(volunteerId=volunteer.id))
+            addr = addr.replace('+', ' ')
+            userId = conn.execute(select([users.c.id]).where(users.c.address==addr)).fetchone()[0]
+            orderId = conn.execute(select([orders.c.id]).where(and_(orders.c.userId==userId, orders.c.completed==0, orders.c.bagged==1))).fetchone()[0]
+            print("Order id:" + str(orderId))
+            conn.execute(orders.update().where(orders.c.id==orderId).values(volunteerId=volunteer.id))
+            orderIdList.append(orderId)
+        print("Order id list: " + str(orderIdList))
+        conn.execute(users.update().where(users.c.id==volunteer.id).values(ordering=json.dumps(orderIdList)))
+    print("Volunteers: " + str(volunteersList))
 
+
+assignAllOrders(2)
