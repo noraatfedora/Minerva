@@ -8,33 +8,8 @@ import urllib.request
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from os import environ
 import set_environment_variables
-
-def create_data():
-    """Creates the data."""
-    data = {}
-    data['API_key'] = environ['GOOGLE_API']
-    data['addresses'] = ['3610+Hacks+Cross+Rd+Memphis+TN',  # depot
-                         '1921+Elvis+Presley+Blvd+Memphis+TN',
-                         '149+Union+Avenue+Memphis+TN',
-                         '1034+Audubon+Drive+Memphis+TN',
-                         '1532+Madison+Ave+Memphis+TN',
-                         '706+Union+Ave+Memphis+TN',
-                         '3641+Central+Ave+Memphis+TN',
-                         '926+E+McLemore+Ave+Memphis+TN',
-                         '4339+Park+Ave+Memphis+TN',
-                         '600+Goodwyn+St+Memphis+TN',
-                         '2000+North+Pkwy+Memphis+TN',
-                         '262+Danny+Thomas+Pl+Memphis+TN',
-                         '125+N+Front+St+Memphis+TN',
-                         '5959+Park+Ave+Memphis+TN',
-                         '814+Scott+St+Memphis+TN',
-                         '1005+Tillman+St+Memphis+TN'
-                         ]
-    data['distance_matrix'] = create_distance_matrix(data)
-    data['num_vehicles'] = 3
-    data['depot'] = 0
-    return data
-
+from db import orders, users, conn
+from sqlalchemy import select, and_
 
 def create_distance_matrix(data):
     addresses = data["addresses"]
@@ -51,8 +26,6 @@ def create_distance_matrix(data):
     # Send q requests, returning max_rows rows per request.
     for i in range(q):
         origin_addresses = addresses[i * max_rows: (i + 1) * max_rows]
-        response = send_request(origin_addresses, dest_addresses, API_key)
-        distance_matrix += build_distance_matrix(response)
 
     # Get the remaining remaining r rows, if necessary.
     if r > 0:
@@ -68,7 +41,7 @@ def send_request(origin_addresses, dest_addresses, API_key):
         # Build a pipe-separated string of addresses
         address_str = ''
         for i in range(len(addresses) - 1):
-            address_str += addresses[i] + '|'
+            address_str += addresses[i].replace(' ', '+') + '|'
         address_str += addresses[-1]
         return address_str
 
@@ -82,6 +55,7 @@ def send_request(origin_addresses, dest_addresses, API_key):
     return response
 
 
+
 def build_distance_matrix(response):
     distance_matrix = []
     for row in response['rows']:
@@ -90,34 +64,36 @@ def build_distance_matrix(response):
         distance_matrix.append(row_list)
     return distance_matrix
 
-def print_solution(data, manager, routing, solution):
+# Returns a 2D array of addresses
+def get_solution(data, manager, routing, solution):
     """Prints solution on console."""
     max_route_distance = 0
+    toReturn = []
     for vehicle_id in range(data['num_vehicles']):
+        toAppend = []
         index = routing.Start(vehicle_id)
-        plan_output = 'Route for vehicle {}:\n'.format(vehicle_id)
         route_distance = 0
         while not routing.IsEnd(index):
-            plan_output += ' {} -> '.format(manager.IndexToNode(index))
+            toAppend.append(data['addresses'][manager.IndexToNode(index)])
             previous_index = index
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(
                 previous_index, index, vehicle_id)
-        plan_output += '{}\n'.format(manager.IndexToNode(index))
-        plan_output += 'Distance of the route: {}m\n'.format(route_distance)
-        print(plan_output)
-        max_route_distance = max(route_distance, max_route_distance)
-    print('Maximum of the route distances: {}m'.format(max_route_distance))
+        toAppend.append(data['addresses'][manager.IndexToNode(index)])
+        toReturn.append(toAppend)
+    return toReturn
 
-########
-# Main #
-########
-
-def main():
+def get_order_assignments(orders, num_vehicles, foodBankAddress):
     """Solve the CVRP problem."""
     # Instantiate the data problem.
-    data = create_data()
-    print(data['distance_matrix'])
+    data = {}
+    data['addresses'] = []
+    for order in orders:
+        data['addresses'].append(conn.execute(select([users.c.address]).where(users.c.id==order.userId)).fetchone()[0].replace(' ', '+'))
+    data['API_key'] = environ['GOOGLE_API']
+    data['distance_matrix'] = create_distance_matrix(data)
+    data['depot'] = 0
+    data['num_vehicles'] = num_vehicles
 
     # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
@@ -159,12 +135,35 @@ def main():
     # Solve the problem.
     solution = routing.SolveWithParameters(search_parameters)
 
-    # Print solution on console.
-    if solution:
-        print_solution(data, manager, routing, solution)
-    else:
-        print("adsfsfdsklfkj")
+    return get_solution(data, manager, routing, solution)
 
+# this is the one
+def assignAllOrders(foodBankId):
+    '''
+    addresses = ['3610+Hacks+Cross+Rd+Memphis+TN', # depot
+                     '1921 Elvis+Presley Blvd Memphis TN',
+                     '149+Union+Avenue+Memphis+TN',
+                     '1034+Audubon+Drive+Memphis+TN',
+                     '1532+Madison+Ave+Memphis+TN',
+                     '706+Union+Ave+Memphis+TN',
+                     '3641+Central+Ave+Memphis+TN',
+                     '926+E+McLemore+Ave+Memphis+TN',
+                     '4339+Park+Ave+Memphis+TN',
+                     '600+Goodwyn+St+Memphis+TN',
+                     '2000+North+Pkwy+Memphis+TN',
+                     '262+Danny+Thomas+Pl+Memphis+TN',
+                     '125+N+Front+St+Memphis+TN',
+                     '5959+Park+Ave+Memphis+TN',
+                     '814+Scott+St+Memphis+TN',
+                     '1005+Tillman+St+Memphis+TN'
+                    ]
+    '''
+    ordersList = conn.execute(orders.select().where(and_(orders.c.bagged==1, orders.c.completed==0))).fetchall()
+    volunteersList = conn.execute(users.select().where(and_(users.c.role=="VOLUNTEER", users.c.approved==True, users.c.foodBankId==foodBankId))).fetchall()
+    foodBankAddr = conn.execute(select([users.c.address]).where(users.c.id==foodBankId)).fetchone()[0]
+    assignments = get_order_assignments(ordersList, len(volunteersList), foodBankAddr)
+    for i in len(assignments):
+        volunteer = volunteersList[i]
+        for addr in assignments[i]:
+            conn.execute(orders.update().values(volunteerId=volunteer.id))
 
-if __name__ == '__main__':
-    main()
