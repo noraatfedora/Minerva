@@ -32,6 +32,7 @@
                         <strong>Volunteer</strong>
                         {% endif %}
                     </a>
+                    {% if g.user and g.user['role'].lower() == "volunteer" %}
                     <a class="nav-item nav-link" href="{{ url_for('request_items.request_items') }}" id="navtext">
                         {% if request.path == "/request_items" %}
                         <strong style="color:white;">Request</strong>
@@ -39,6 +40,7 @@
                         <strong>Request</strong>
                         {% endif %}
                     </a>
+                    {% endif %}
                     <a class="nav-item nav-link" href="#" id="navtext"><strong>Donate</strong></a>
                     {% if g.user and g.user['role'].lower() == "volunteer" %}
                     <a class="nav-item nav-link" href="{{ url_for('dashboard.dashboard') }}" id="navtext">

@@ -16,8 +16,7 @@ bp = Blueprint('view_all_orders', __name__)
 @admin_required
 @bp.route('/allorders', methods=('GET', 'POST'))
 def allOrders():
-    itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
-
+    itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
     ordersDict = getOrders(g.user.id)
     if request.method == "GET" and "volunteer" in request.args.keys():
         volunteerId = int(request.args.get("volunteer"))
@@ -94,6 +93,5 @@ def getVolunteers():
         for column in columns:
             volunteerDict[column] = getattr(volunteer, column)
         volunteerDict['numOrders'] = len(conn.execute(orders.select(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0))).fetchall())
-        print("Volunteer: " + str(volunteer.name) + " Orders: " + str(volunteerDict['numOrders']))
         dictList.append(volunteerDict)
     return dictList

@@ -12,10 +12,11 @@
       <ul class="big-boy-body">
         <li>Use this form to request goods.</li>
         <li>Expect about a week for items.</li>
-        <li>If you want to change this later, simply request a new order.</li>
+        <li>Meat products can only be ordered in quantities of 1.</li>
+        <li>Other products can be ordered with a quantity of 2.</li>
       </ul>
     </div>
-    <div class="dropdown">
+    <!-- <div class="dropdown">
       <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
         Filter
@@ -26,9 +27,7 @@
         <a class="dropdown-item" onclick="updateFilter('{{category}}')">{{category[0]|upper}}{{category[1:]}}</a>
         {% endfor %}
       </div>
-    </div>
-    <!-- <p id = "currentFilters">Current Filters: </p>
-      <p id = "filter-text">All</p> -->
+    </div> -->
   </div>
 </section>
 
@@ -38,50 +37,13 @@
     <form id="request-form" action="" method="post">
       <div class="row">
         {% for item in items %}
-        <div class="col-md-4 item" filter={{item.subcategory}}>
-          <div class="card mb-4 shadow-sm">
-            <img class="card-img-top" src="/static/pictures/{{item.picture}}" alt={{item.name}}>
-            <div class="card-body">
-              <p class="card-text">
-              <div id="item-name"> {{item.name}} </div>
-              <div id="badges" style="text-align:center">
-                <p>
-                  {% if item.subcategory != null  %}
-                  {% if item.subcategory == "produce" %}
-                  <span class="badge badge-success">Produce</span>
-                  {% endif %}
-                  {% if item.subcategory == "dairy" %}
-                  <span class="badge badge-light">Dairy</span>
-                  {% endif %}
-                  {% if item.subcategory == "packaged" %}
-                  <span class="badge badge-warning">Packaged</span>
-                  {% endif %}
-                  {% if item.subcategory == "dental" %}
-                  <span class="badge badge-light">Dental</span>
-                  {% endif %}
-                  {% endif %}
-                </p>
-              </div>
-              <div class="form-group form form-inline" style="margin-left:10%; margin-right:10%">
-                <label for="customRange">Quantity:</label>
-                <input type="number" class="form-control form-control-inline" size=2 name="{{ item.name }}-quantity"
-                  min="0" max='{{item.max}}' value="0" oninput="this.form.amountRange.value=this.value" size="2" />
-                {% if item.units == null %}
-                {% if item.category == "drink" %}
-                gallons
-                {% elif item.subcategory == "produce" %}
-                lbs
-                {% elif item.subcategory == "packaged" %}
-                boxes
-                {% else %}
-                {{item.name}}
-                {% endif %}
-                {% else %}
-                {{item.units}}
-                {% endif %}
-              </div>
-
-              </p>
+        <!-- <div class="col-md-4 item" filter={{item.subcategory}}> -->
+        <div class="item card mb-4 shadow-sm card-body">
+          <div class="form-group">
+            <label class="center-vertical" for="{{item.name}}"><b>{{item.name}}</b></label>
+            <div class="float-right">
+              <input type="number" class="form-control" name="{{item.name}}" min="0" max='{{item.max}}' value="0"
+                oninput="this.form.amountRange.value=this.value" />
             </div>
           </div>
         </div>

@@ -16,7 +16,7 @@ bp = Blueprint('modify', __name__)
 @login_required
 @volunteer_required
 def dashboard():
-    itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
+    # itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
 
     # Get all the volunteers that are assigned to our food bank
     volunteers = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role=="VOLUNTEER", users.c.approved==True)))

@@ -31,7 +31,6 @@ def login():
             session.clear()
             session['user_id'] = user['id']
             return redirect(url_for('index'))
-        print(error)
         flash(error)
     
     return render_template('auth/login.html', title = "Log In")
@@ -57,7 +56,6 @@ def register():
             error = 'User {} is already registered.'.format(email)
         
         if error == "":
-            print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
             conn.execute(users.insert(), email=email, password=password_hash, address=address, 
             role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
@@ -191,9 +189,7 @@ def volunteerregister():
             else:
                 dayValues[day] = False
         error = ""
-        print("dayValues: " + str(dayValues))
         if error == "":
-            print("poopdsfy poop!")
             password_hash = generate_password_hash(password)
             conn.execute(users.insert(), email=email, name=name, password=password_hash, address=address, 
             role="VOLUNTEER", cellPhone=cellPhone, homePhone=homePhone,

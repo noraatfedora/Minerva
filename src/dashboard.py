@@ -18,7 +18,7 @@ bp = Blueprint('dashboard', __name__)
 @login_required
 @volunteer_required
 def dashboard():
-    itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
+    itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
 
     ordersDict = getOrders(g.user.id)
 
