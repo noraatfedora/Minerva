@@ -3,6 +3,7 @@
 <center>
     <h2>All orders</h2>
     <br>
+    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn">Assign all routes automatically</a>
     {% for order in orders %}
     {% if orders[order]['bagged']=='1' and orders[order]['volunteerEmail'] %}
     <div class="card bg-success text-left task-incomplete">
