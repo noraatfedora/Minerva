@@ -60,7 +60,8 @@ users = Table(
     Column('foodBankId', Integer), # id of the user of their food bank
     Column('ordering', String(255)), # Stores their route as a JSON list of order IDs
     # String that holds the date of last checked in 
-    Column('checkedIn', String(15))
+    Column('checkedIn', String(15)),
+    Column('restrictions', String(255))
 )
 
 orders = Table(
