@@ -51,22 +51,12 @@
                         <textarea type="text" name="instructions" id="instructions" class="form-control"
                             placeholder="Special Instructions (Optional)" value="{{ data['instructions'] }}"></textarea>
                     </div>
+                    {% for restriction in data['dietaryRestrictions'] %}
                     <div class="custom-control custom-checkbox">
-                        <input name="lactose" type="checkbox" class="custom-control-input" id="lactose">
-                        <label class="custom-control-label" for="lactose">Lactose Intolerant</label>
+                        <input name="{{restriction}}" type="checkbox" class="custom-control-input" id="{{restriction}}">
+                        <label class="custom-control-label" for="{{restriction}}">{{restriction}}</label>
                     </div>
-                    <div class="custom-control custom-checkbox">
-                        <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
-                        <label class="custom-control-label" for="vegetarian">Vegetarian</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input name="peanut" type="checkbox" class="custom-control-input" id="peanut">
-                        <label class="custom-control-label" for="peanut">Peanut Allergy</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input name="gluten" type="checkbox" class="custom-control-input" id="gluten">
-                        <label class="custom-control-label" for="gluten">Gluten Free</label>
-                    </div>
+                    {% endfor %}
                     <div class="form-group">
                         <button class="btn bw-btn center-block blue-hover" type="submit">
                             Sign Up

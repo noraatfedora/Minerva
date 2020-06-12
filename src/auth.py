@@ -35,6 +35,8 @@ def login():
     
     return render_template('auth/login.html', title = "Log In")
 
+dietaryRestrictions = ["Lactose Intolerant", "Vegetarian", "Peanut Allergy", "Gluten Free"]
+
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
@@ -49,14 +51,10 @@ def register():
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
         restrictions = []
-        if "lactose" in request.form:
-            restrictions.append("lactose")
-        if "vegetarian" in request.form:
-            restrictions.append("vegetarian")
-        if "peanut" in request.form:
-            restrictions.append("peanut")
-        if "gluten" in request.form:
-            restrictions.append("gluten")  
+
+        for restriction in dietaryRestrictions:
+            if restriction in request.form:
+                restrictions.append(restriction)
         error = "" 
         
         if zipCode[0:5] not in supportedZipCodes:
@@ -79,10 +77,11 @@ def register():
                     'cellPhone': cellPhone,
                     'homePhone': homePhone,
                     'zipCode': zipCode,
-                    'instructions': instructions
+                    'instructions': instructions,
+                    'dietaryRestrictions': dietaryRestrictions
                     }
             return render_template('auth/register.html', title='Register', data=data)
-    data = {'email': '', 'address': '', 'homePhone': '', 'zipCode': '', 'instructions': ''}
+    data = {'email': '', 'address': '', 'homePhone': '', 'zipCode': '', 'instructions': '', 'dietaryRestrictions': dietaryRestrictions}
     return render_template('auth/register.html', title = 'Register', data=data)
 
 @bp.before_app_request
