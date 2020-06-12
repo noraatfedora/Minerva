@@ -2,7 +2,6 @@
 # It's under the Apache 2.0 license.
 from __future__ import division
 from __future__ import print_function
-import requests
 import json
 import urllib.request
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
