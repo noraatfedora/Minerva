@@ -5,7 +5,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from db import users, conn
 from sqlalchemy import select, update 
-from json import loads
+from json import loads, dumps
 from os import environ
 from sys import path
 from send_confirmation import send_new_volunteer_request_notification
@@ -38,7 +38,7 @@ def login():
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
-        with open(environ['INSTANCE_PATH'] + 'supported_zip_codes', 'r') as f:
+        with open("." + environ['INSTANCE_PATH'] + 'supported_zip_codes', 'r') as f:
             supportedZipCodes = f.read()
         email = request.form['email']
         password = request.form['password']
@@ -48,6 +48,15 @@ def register():
         instructions = request.form['instructions']
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
+        restrictions = []
+        if "lactose" in request.form:
+            restrictions.append("lactose")
+        if "vegetarian" in request.form:
+            restrictions.append("vegetarian")
+        if "peanut" in request.form:
+            restrictions.append("peanut")
+        if "gluten" in request.form:
+            restrictions.append("gluten")  
         error = "" 
         
         if zipCode[0:5] not in supportedZipCodes:
@@ -56,10 +65,11 @@ def register():
             error = 'User {} is already registered.'.format(email)
         
         if error == "":
+            print()
             password_hash = generate_password_hash(password)
             conn.execute(users.insert(), email=email, password=password_hash, address=address, 
             role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
-            zipCode=zipCode, completed=0, foodBankId=getFoodBank(address))
+            zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), restrictions=dumps(restrictions))
             return redirect(url_for('auth.login'))
         else:
             flash(error)
