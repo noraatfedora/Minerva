@@ -51,7 +51,8 @@ users = Table(
 
     # Store for food banks, not volunteers
     Column('maxOrders', Integer),
-    
+
+    Column('items', String()),
     # for both users and volunteers
     # this will be determined automatically
     # when the user registers, but the food bank

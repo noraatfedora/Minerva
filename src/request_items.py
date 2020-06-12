@@ -11,10 +11,6 @@ from sqlalchemy import select, and_
 from os import environ
 from sys import path
 
-itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read())
-categories = set()
-for item in itemsList.values():
-    categories.add(item['subcategory'])
 bp = Blueprint('request_items', __name__)
 strf = "%A, %B %d" # will output dates in the format like "May 31"
 
@@ -23,11 +19,12 @@ strf = "%A, %B %d" # will output dates in the format like "May 31"
 @bp.route('/request_items', methods=('GET', 'POST'))
 @login_required
 def request_items():
+    itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
     if request.method == "POST":
-        itemsDict = {} # Used for email conformation script
-        for item in itemsList.values():
+        itemsDict = {} # Used for email confirmation script
+        for item in itemsList:
             name = item['name']
-            quantity = request.form[name + "-quantity"]
+            quantity = request.form[name]
             itemsDict[name] = quantity
         date = datetime.datetime.strptime(request.form['date'], "%Y-%m-%d")
         send_request_confirmation(g.user['email'], itemsDict, date.strftime("%A, %B %e"))
@@ -38,7 +35,8 @@ def request_items():
         # insert new order into the orders table
         orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId, date=date).inserted_primary_key[0]
         return redirect("/success")
-    return render_template("request_items.html", items = itemsList.values(), categories=categories, dates=availableDates())
+    categories = []
+    return render_template("request_items.html", items=itemsList, categories=categories, dates=availableDates())
 
 def availableDates():
     numDays = 10 # number of available days to display
@@ -50,7 +48,6 @@ def availableDates():
                 "saturday":users.c.saturday}
     while len(toReturn) < numDays:
         dayOfWeek = currentDay.strftime("%A").lower()
-        print(dayOfWeek)
         volunteers = conn.execute(users.select(whereclause=and_(whereClauses[dayOfWeek]==True, users.c.foodBankId==g.user.foodBankId, users.c.approved==True))).fetchall()
         maxOrders = conn.execute(select([users.c.maxOrders]).where(users.c.id==g.user.foodBankId)).fetchone()[0]
         eligibleVolunteers = []
