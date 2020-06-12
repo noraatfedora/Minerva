@@ -26,17 +26,21 @@ def request_items():
             name = item['name']
             quantity = request.form[name]
             itemsDict[name] = quantity
-        date = datetime.datetime.strptime(request.form['date'], "%Y-%m-%d")
-        send_request_confirmation(g.user['email'], itemsDict, date.strftime("%A, %B %e"))
+
+
+        # date = datetime.datetime.strptime(request.form['date'], "%Y-%m-%d")
+        # date.strftime("%A, %B %e")
+
+        send_request_confirmation(g.user['email'], itemsDict, "date strftime would go here")
 
         # Make sure that the user only orders once per week by marking all their
         # old orders as completed
         conn.execute(orders.update(orders.c.userId==g.user.id).values(completed=1))
         # insert new order into the orders table
-        orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId, date=date).inserted_primary_key[0]
+        orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId, date="").inserted_primary_key[0]
         return redirect("/success")
     categories = []
-    return render_template("request_items.html", items=itemsList, categories=categories, dates=availableDates())
+    return render_template("request_items.html", items=itemsList, categories=categories, dates="availableDates() would go here")
 
 def availableDates():
     numDays = 10 # number of available days to display

@@ -24,7 +24,7 @@ def send_request_confirmation(reciever_email, items, date):
 	for item in items.keys():
 			if (int(items[item]) > 0):
 					html += "<li>" + items[item] + " orders of " + item + "</li>"
-	html += "</ul> A volunteer should arrive on " + date + ". If you have any questions, respond to this email. </p> </body> </html>"
+	html += "</ul> A volunteer should deliver within the next week or two. If you have any questions, respond to this email. </p> </body> </html>"
 	send_email(to = reciever_email, contents = html, subject = "Your Minerva Order confirmation")
 
 def send_recieved_notification(reciever_email):
@@ -59,9 +59,8 @@ def send_bagged_notification(reciever_email, orderId, address, date):
 				<h2>You have been assigned a new order!</h2> <ul>
 					<li> Order ID: """ + str(orderId) + """ </li>
 					<li> Delivery address: """ + address + """ </li>
-					<li> Delivery date: """ + date.strftime("%A, %B %e") + """ </li>
 				</ul>
-				Please pick this up on the given delivery date. Your food bank may have restrictions on when you can pick up your order from them. Make sure to be aware of their hours so you can pick up the order and deliver on time.
+				Please pick this up as soon as possible when available. Your food bank may have restrictions on when you can pick up your order from them. Make sure to be aware of their hours so you can pick up the order and deliver on time.
 				Thank you for volunteering! Reply with any questions related to Minerva software, and contact your food bank for any questions about the order.
 			</body>
 		</html>
