@@ -4,6 +4,8 @@
     <h2>All orders</h2>
     <br>
     <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn">Assign all routes automatically</a>
+    <a href="/shipping_labels" target="_blank" name="shipping_labels" class="btn bw-btn">Generate shipping labels</a>
+    <div class="spacer"></div>
     {% for order in orders %}
     {% if orders[order]['bagged']=='1' and orders[order]['volunteerEmail'] %}
     <div class="card bg-success text-left task-incomplete">
