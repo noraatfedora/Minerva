@@ -3,7 +3,11 @@
 <center style="min-height: 500px;">
     <h2>Volunteer Dashboard</h2>
     <div class="spacer"></div>
-    <a href="/dashboard?checkin=1" name="check-in" class="btn bw-btn blue-hover">Mark yourself as checked in today</a>
+    {% if checkedIn %}
+        You've checked in for today.
+    {% else %}
+        <a href="/dashboard?checkin=1" name="check-in" class="btn bw-btn blue-hover">Mark yourself as checked in today</a>
+    {% endif %}
     <div class="spacer"></div>
     <a href="{{ google_maps }}">Click to open Google Maps for an optimized route</a>
     <div class="spacer"></div>

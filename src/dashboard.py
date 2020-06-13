@@ -39,7 +39,8 @@ def dashboard():
             ordersDict = getOrders(g.user.id)
 
     print("orders: " + str(orders))
-    return render_template("dashboard.html", orders=ordersDict, items=itemsList, google_maps = google_maps_qr.make_url(loads(g.user.ordering)))
+    checkedIn = g.user.checkedIn == str(date.today())
+    return render_template("dashboard.html", orders=ordersDict, items=itemsList, google_maps = google_maps_qr.make_url(loads(g.user.ordering)), checkedIn=checkedIn)
 
 @login_required
 @volunteer_required

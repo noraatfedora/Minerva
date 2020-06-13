@@ -9,6 +9,7 @@ from db import users, conn, orders
 from sqlalchemy import and_, select
 from os import environ
 from barcode import Code128
+import datetime
 from barcode.writer import ImageWriter
 import assign
 import io
@@ -63,7 +64,9 @@ def allOrders():
                 ordersDict = getOrders(g.user.id)
     
     volunteers = getVolunteers()
-    return render_template("view_all_orders.html", orders=ordersDict, volunteers=volunteers)
+    today = datetime.date.today()
+    checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
+    return render_template("view_all_orders.html", orders=ordersDict, volunteers=volunteers, checkedIn=checkedInVolunteers)
 
 @login_required
 @admin_required
