@@ -37,7 +37,7 @@ def request_items():
         # old orders as completed
         conn.execute(orders.update(orders.c.userId==g.user.id).values(completed=1))
         # insert new order into the orders table
-        orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId, date="").inserted_primary_key[0]
+        orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId).inserted_primary_key[0]
         return redirect("/success")
     categories = []
     return render_template("request_items.html", items=itemsList, categories=categories, dates="availableDates() would go here")

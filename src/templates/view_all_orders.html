@@ -11,9 +11,6 @@
         <div class="card text-left task-incomplete">
             {% endif %}
             <div class="card-header">
-                {{ orders[order]['date'].strftime("%A, %B %d").lstrip("0").replace(" 0", " ") }}
-            </div>
-            <div class="card-header">
                 {{ orders[order]['email'] }}
             </div>
             <div class="card-header">
@@ -24,7 +21,7 @@
             </div>
             <div class="card-header">
                 {% if orders[order]['volunteerId'] != 'None' %}
-                Assigned to {{ orders[order]['volunteerEmail'] }}
+                Assigned to {{ orders[order]['volunteerName'] }}
                 <form action="" method="POST">
                     <button type="submit" value="unassign" name="unassign-{{ orders[order]['id'] }}"
                         class="btn bw-btn">Change</button>
@@ -34,14 +31,14 @@
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">[choose volunteer]</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     {% for volunteer in volunteers %}
-                    <a class="dropdown-item {{'disabled' if not volunteer[orders[order]['date'].strftime('%A').lower()] }}" href="/allorders?volunteer={{ volunteer['id'] }}&order={{ orders[order]['id'] }}">
+                    <a class="dropdown-item" href="/allorders?volunteer={{ volunteer['id'] }}&order={{ orders[order]['id'] }}">
                         {{ volunteer['email'] }} ({{ volunteer['numOrders'] }})
                     </a>
                     {% endfor %}
                 </div>
                 {% endif %}
             </div>
-            {% for item in items %}
+            {% for item in orders[order]['itemsDict'] %}
             {% if orders[order]['itemsDict'][item] != '0' %}
             <div class="card-header">
                 {{ item }}<span>{{ orders[order]['itemsDict'][item] }}</span>
