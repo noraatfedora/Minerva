@@ -32,7 +32,7 @@
                         <strong>Volunteer</strong>
                         {% endif %}
                     </a>
-                    {% if g.user and g.user['role'].lower() == "volunteer" %}
+                    {% if g.user and g.user['role'].lower() == "reciever" %}
                     <a class="nav-item nav-link" href="{{ url_for('request_items.request_items') }}" id="navtext">
                         {% if request.path == "/request_items" %}
                         <strong style="color:white;">Request</strong>

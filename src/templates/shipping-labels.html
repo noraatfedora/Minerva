@@ -1,0 +1,46 @@
+{% block content %}
+    <style>
+        .shipping-label {
+            border:2px solid black;
+        }
+    </style>
+    <br>
+    {% for order in orders %}
+    {% if not loop.last %}
+        <div class="shipping-label" style="page-break-after: always;">
+    {% else %}
+        <div class="shipping-label">
+    {% endif %}
+        <div class="card-header">
+            Email: {{ orders[order]['email'] }}
+        </div>
+        <div class="card-header">
+            Home Address: {{ orders[order]['address']}}
+        </div>
+        <div class="card-header">
+            Cell phone number: {{ orders[order]['cellPhone']}}
+        </div>
+        {% if orders[order]['instructions'] %}
+        <div class="card-header">
+            Special delivery instructions: {{ orders[order]['instructions']}}
+        </div>
+        {% endif %}
+        <div class="card-header">
+            {% if orders[order]['volunteerId'] != 'None' %}
+            Assigned to {{ orders[order]['volunteerName'] }}
+            {% endif %}
+        </div>
+        <hr>
+        <div class="card-header">
+            Items:
+        </div>
+        {% for item in orders[order]['itemsDict'] %}
+        {% if orders[order]['itemsDict'][item] != '0' %}
+        <div class="card-header">
+            {{ item }}: <span>{{ orders[order]['itemsDict'][item] }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+{% endblock content %}
