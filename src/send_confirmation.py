@@ -12,6 +12,7 @@ sender_email = environ['EMAIL_SENDER']
 yag = yagmail.SMTP(sender_email, password)
 
 def send_email(subject, contents, to):
+	print("To: " + str(to))
 	yag.send(to = to, subject= subject, contents = [contents])
 
 def send_request_confirmation(reciever_email, items, date):
@@ -52,7 +53,7 @@ def send_volunteer_acceptance_notification(reciever_email, food_bank_name):
 				<p> You have been accepted by """ + food_bank_name + """ for Minerva."""
 	send_email(to = reciever_email, contents=html, subject="Minerva: " + food_bank_name + " has accepted you into their organization")
 
-def send_bagged_notification(reciever_email, orderId, address, date):
+def send_bagged_notification(reciever_email, orderId, address):
 	html = """
 		<html>
 			<body>

@@ -4,17 +4,20 @@
 <body>
     <style>
         body,
-        table {
-            font-size: 30px;
-            line-height: 50px;
+        table.items {
+            font-size: 20px;
+            line-height: 40px;
         }
 
-        table,
-        th,
-        td {
+        table.items,
+        th.items,
+        td.items {
             border: 2px solid black;
             border-collapse: collapse;
             padding: 10px;
+        }
+        table.barcodes {
+            font-size: 20px;
         }
 
         .shipping-label {
@@ -58,20 +61,28 @@
                     {% endif %}
                 </div>
                 <hr>
-                <table>
+                <table class="items">
                     {% for item in orders[order]['itemsDict'] %}
                     {% if orders[order]['itemsDict'][item] != '0' %}
-                    <tr>
-                        <td><b>{{ item }}</b></td>
-                        <td>{{ orders[order]['itemsDict'][item] }}</td>
+                    <tr class="items">
+                        <td class="items"><b>{{ item }}</b></td>
+                        <td class="items">{{ orders[order]['itemsDict'][item] }}</td>
                     </tr>
                     {% endif %}
                     {% endfor %}
                 </table>
             </div>
             <hr>
-            <img src="data:;base64,{{ barcode_to_base64(orders[order]['id']) }}" height="300px" width="300px"/>
-            <img src="data:;base64,{{ qrcode_to_base64(orders[order]['id']) }}" height="300px" width="300px" />
+            <table class="barcodes">
+                <tr>
+                <td><img src="data:;base64,{{ barcode_to_base64(orders[order]['id']) }}" height="200px" width="200px"/></td>
+                <td><img src="data:;base64,{{ qrcode_to_base64(orders[order]['id']) }}" height="200px" width="200px" /></td>
+                </tr>
+                <tr>
+                <td>Use this barcode with a barcode scanner on the "all orders" page to mark this item as bagged.</td>
+                <td>Scan this QR code with your phone and open the link to mark that this item has been delivered successfully. Alternatively, use the "volunteer dashboard."</td>
+                </tr>
+            </table>
         </div>
         {% endfor %}
 </body>
