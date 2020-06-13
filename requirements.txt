@@ -12,3 +12,4 @@ gunicorn
 pytest
 yagmail
 ortools
+pdfkit

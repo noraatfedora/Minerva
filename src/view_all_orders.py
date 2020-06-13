@@ -1,5 +1,5 @@
 from flask import ( Blueprint, flash, g, redirect, render_template,
-    request, session, url_for, Flask
+    request, session, url_for, Flask, make_response
 )
 from werkzeug.exceptions import abort
 from auth import login_required, admin_required 
@@ -9,6 +9,7 @@ from db import users, conn, orders
 from sqlalchemy import and_, select
 from os import environ
 import assign
+import pdfkit
 from send_confirmation import send_recieved_notification, send_bagged_notification
 
 bp = Blueprint('view_all_orders', __name__)
@@ -56,7 +57,21 @@ def allOrders():
                 ordersDict = getOrders(g.user.id)
     
     volunteers = getVolunteers()
-    return render_template("view_all_orders.html", orders=ordersDict, items=itemsList, volunteers=volunteers)
+    return render_template("view_all_orders.html", orders=ordersDict, volunteers=volunteers)
+
+@login_required
+@admin_required
+@bp.route('/shipping_labels', methods=('GET', 'POST'))
+def generate_shipping_labels():
+    volunteers = getVolunteers()
+    ordersDict = getOrders(g.user.id)
+    itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
+    html = render_template("shipping-labels.html", orders=ordersDict, volunteers=volunteers)
+    pdf = pdfkit.from_string(html, False)
+    response = make_response(pdf)
+    response.headers['Content-type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline;'
+    return response
 
 # Returns a dictionary where the keys are the order ID's,
 # and the values are dicts with attributes about that order (contents, email, etc.)
@@ -82,9 +97,9 @@ def getOrders(adminId):
 
         toReturn[orderId]['itemsDict'] = loads(toReturn[orderId]['contents'])
         toReturn[order.id]['date'] = order['date']
-        volunteerEmail = conn.execute(select([users.c.email], users.c.id==order.volunteerId)).fetchone()
-        if not volunteerEmail is None:
-            toReturn[orderId]['volunteerEmail'] = volunteerEmail[0]
+        volunteerName = conn.execute(select([users.c.name], users.c.id==order.volunteerId)).fetchone()
+        if not volunteerName is None:
+            toReturn[orderId]['volunteerName'] = volunteerName[0]
             
     return toReturn 
 
