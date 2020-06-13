@@ -11,8 +11,10 @@ from os import environ
 from barcode import Code128
 from barcode.writer import ImageWriter
 import assign
+import io
 import pdfkit
 import base64
+import qrcode
 from send_confirmation import send_recieved_notification, send_bagged_notification
 
 bp = Blueprint('view_all_orders', __name__)
@@ -119,9 +121,13 @@ def getVolunteers():
     return dictList
 
 def barcode_to_base64(orderId):
-    print("Generating barcode...")
-    filepath = environ['INSTANCE_PATH'] + "/barcodes/" + str(orderId) + ".png"
-    with open(filepath, 'wb') as f:
-        Code128(orderId, writer=ImageWriter()).write(f)
-    with open(filepath, 'rb') as f:
-        return base64.b64encode(f.read()).decode()
+    imgByteArray = io.BytesIO()
+    Code128(orderId, writer=ImageWriter()).write(imgByteArray)
+    return base64.b64encode(imgByteArray.getvalue()).decode()
+
+def qrcode_to_base64(orderId):
+    urlString = request.base_url[:-len('shipping_labels')] + 'auto_complete?orderId=' + str(orderId)
+    imgByteArray = io.BytesIO()
+    code = qrcode.make(urlString)
+    code.save(imgByteArray, format="PNG")
+    return base64.b64encode(imgByteArray.getvalue()).decode()

@@ -69,7 +69,9 @@
                     {% endfor %}
                 </table>
             </div>
-            <img src="data:;base64,{{ barcode_to_base64(orders[order]['id']) }}" />
+            <hr>
+            <img src="data:;base64,{{ barcode_to_base64(orders[order]['id']) }}" height="300px" width="300px"/>
+            <img src="data:;base64,{{ qrcode_to_base64(orders[order]['id']) }}" height="300px" width="300px" />
         </div>
         {% endfor %}
 </body>

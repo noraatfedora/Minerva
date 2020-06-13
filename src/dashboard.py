@@ -41,6 +41,18 @@ def dashboard():
     print("orders: " + str(orders))
     return render_template("dashboard.html", orders=ordersDict, items=itemsList, google_maps = google_maps_qr.make_url(loads(g.user.ordering)))
 
+@login_required
+@volunteer_required
+@bp.route('/auto_complete', methods=(['GET']))
+def qr_mark_as_complete():
+    if "orderId" in request.args.keys():
+        orderId = int(request.args['orderId'])
+        order = conn.execute(orders.select().where(orders.c.id==orderId)).fetchone()
+        if order.completed == 0:
+            email = conn.execute(select([users.c.email]).where(users.c.id==order.userId)).fetchone()[0]
+            send_recieved_notification(email)
+            conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
+    return "Order " + str(orderId) + " has been marked as complete."
 @bp.route('/driver_printout', methods=('GET', 'POST'))
 def driver_printout():
     itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
