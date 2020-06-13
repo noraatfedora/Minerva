@@ -1,46 +1,80 @@
 {% block content %}
+<html>
+
+<body>
     <style>
+        body,
+        table {
+            font-size: 30px;
+            line-height: 50px;
+        }
+
+        table,
+        th,
+        td {
+            border: 2px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+
         .shipping-label {
-            border:2px solid black;
+            border: 2px solid black;
+        }
+
+        .container {
+            padding-left: 30px;
+            padding-top: 30px;
+            padding-bottom: 30px;
         }
     </style>
     <br>
     {% for order in orders %}
     {% if not loop.last %}
-        <div class="shipping-label" style="page-break-after: always;">
-    {% else %}
+    <div class="shipping-label" style="page-break-after: always;">
+        {% else %}
         <div class="shipping-label">
-    {% endif %}
-        <div class="card-header">
-            Email: {{ orders[order]['email'] }}
-        </div>
-        <div class="card-header">
-            Home Address: {{ orders[order]['address']}}
-        </div>
-        <div class="card-header">
-            Cell phone number: {{ orders[order]['cellPhone']}}
-        </div>
-        {% if orders[order]['instructions'] %}
-        <div class="card-header">
-            Special delivery instructions: {{ orders[order]['instructions']}}
-        </div>
-        {% endif %}
-        <div class="card-header">
-            {% if orders[order]['volunteerId'] != 'None' %}
-            Assigned to {{ orders[order]['volunteerName'] }}
             {% endif %}
+            <div class="container">
+                <div class="card-header">
+                    <b>Order ID:</b> {{ orders[order]['id'] }}
+                </div>
+                <div class="card-header">
+                    <b>Email:</b> {{ orders[order]['email'] }}
+                </div>
+                <div class="card-header">
+                    <b>Home Address:</b> {{ orders[order]['address']}}
+                </div>
+                <div class="card-header">
+                    <b>Cell phone number:</b> {{ orders[order]['cellPhone']}}
+                </div>
+                {% if orders[order]['instructions'] %}
+                <div class="card-header">
+                    <b>Special delivery instructions:</b> {{ orders[order]['instructions']}}
+                </div>
+                {% endif %}
+                <div class="card-header">
+                    {% if orders[order]['volunteerId'] != 'None' %}
+                    <b>Assigned to:</b> {{ orders[order]['volunteerName'] }}
+                    {% endif %}
+                </div>
+                <hr>
+                <table>
+                    {% for item in orders[order]['itemsDict'] %}
+                    {% if orders[order]['itemsDict'][item] != '0' %}
+                    <tr>
+                        <td><b>{{ item }}</b></td>
+                        <td>{{ orders[order]['itemsDict'][item] }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+            <hr>
+            <img src="data:;base64,{{ barcode_to_base64(orders[order]['id']) }}" height="300px" width="300px"/>
+            <img src="data:;base64,{{ qrcode_to_base64(orders[order]['id']) }}" height="300px" width="300px" />
         </div>
-        <hr>
-        <div class="card-header">
-            Items:
-        </div>
-        {% for item in orders[order]['itemsDict'] %}
-        {% if orders[order]['itemsDict'][item] != '0' %}
-        <div class="card-header">
-            {{ item }}: <span>{{ orders[order]['itemsDict'][item] }}</span>
-        </div>
-        {% endif %}
         {% endfor %}
-    </div>
-    {% endfor %}
+</body>
+
+</html>
 {% endblock content %}

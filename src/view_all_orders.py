@@ -8,8 +8,13 @@ from collections import OrderedDict
 from db import users, conn, orders
 from sqlalchemy import and_, select
 from os import environ
+from barcode import Code128
+from barcode.writer import ImageWriter
 import assign
+import io
 import pdfkit
+import base64
+import qrcode
 from send_confirmation import send_recieved_notification, send_bagged_notification
 
 bp = Blueprint('view_all_orders', __name__)
@@ -67,6 +72,8 @@ def generate_shipping_labels():
     ordersDict = getOrders(g.user.id)
     itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
     html = render_template("shipping-labels.html", orders=ordersDict, volunteers=volunteers)
+    # Uncomment this line for debugging
+    #return html
     pdf = pdfkit.from_string(html, False)
     response = make_response(pdf)
     response.headers['Content-type'] = 'application/pdf'
@@ -94,9 +101,7 @@ def getOrders(adminId):
         # And all our order's attributes
         for column in conn.execute(orders.select()).keys():        
             toReturn[orderId][str(column)] = str(getattr(order, str(column)))
-
         toReturn[orderId]['itemsDict'] = loads(toReturn[orderId]['contents'])
-        toReturn[order.id]['date'] = order['date']
         volunteerName = conn.execute(select([users.c.name], users.c.id==order.volunteerId)).fetchone()
         if not volunteerName is None:
             toReturn[orderId]['volunteerName'] = volunteerName[0]
@@ -114,3 +119,15 @@ def getVolunteers():
         volunteerDict['numOrders'] = len(conn.execute(orders.select(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0))).fetchall())
         dictList.append(volunteerDict)
     return dictList
+
+def barcode_to_base64(orderId):
+    imgByteArray = io.BytesIO()
+    Code128(orderId, writer=ImageWriter()).write(imgByteArray)
+    return base64.b64encode(imgByteArray.getvalue()).decode()
+
+def qrcode_to_base64(orderId):
+    urlString = request.base_url[:-len('shipping_labels')] + 'auto_complete?orderId=' + str(orderId)
+    imgByteArray = io.BytesIO()
+    code = qrcode.make(urlString)
+    code.save(imgByteArray, format="PNG")
+    return base64.b64encode(imgByteArray.getvalue()).decode()
