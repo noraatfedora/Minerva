@@ -68,6 +68,7 @@ def create_app(test_config=None):
     import view_all_orders
     app.register_blueprint(view_all_orders.bp)
     app.jinja_env.globals.update(barcode_to_base64=view_all_orders.barcode_to_base64)
+    app.jinja_env.globals.update(qrcode_to_base64=view_all_orders.qrcode_to_base64)
     return app
 
 # Uncomment the below lines if you want debugging tools
