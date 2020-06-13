@@ -9,6 +9,7 @@ from sqlalchemy import and_, select
 from send_confirmation import send_recieved_notification
 from datetime import date
 from os import environ
+import google_maps_qr
 
 bp = Blueprint('dashboard', __name__)
 
@@ -36,10 +37,9 @@ def dashboard():
             send_recieved_notification(email)
             conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
             ordersDict = getOrders(g.user.id)
-    
-    print("orders: " + str(orders))
-    return render_template("dashboard.html", orders=ordersDict, items=itemsList)
 
+    print("orders: " + str(orders))
+    return render_template("dashboard.html", orders=ordersDict, items=itemsList, google_maps = google_maps_qr.make_url(loads(g.user.ordering)))
 
 @bp.route('/driver_printout', methods=('GET', 'POST'))
 def driver_printout():
