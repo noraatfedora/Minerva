@@ -17,12 +17,24 @@
     <div class="spacer"> </div>
     <a href="/shipping_labels" target="_blank" name="shipping_labels" class="btn bw-btn">Generate shipping labels</a>
     <div class="spacer"></div>
+    <form method="POST" class="form" action="">
+        <div class="form-group">
+            <div class="col-xs-4">
+                <label for="barcodeTextInput">Bag with barcode scanner:</label>
+                <textarea type="text" class="form-control" rows="3" name="barcodes" id="barcodeTextInput" aria-describedby="barcode text input"></textarea>
+            </div>
+            <button type="submit" class="btn bw-btn">Submit bagged barcodes</button>
+        </div>
+    </form>
     {% for order in orders %}
     {% if orders[order]['bagged']=='1' and orders[order]['volunteerEmail'] %}
     <div class="card bg-success text-left task-incomplete">
         {% else %}
         <div class="card text-left task-incomplete">
             {% endif %}
+            <div class="card-header">
+                Order ID: {{ orders[order]['id'] }}
+            </div>
             <div class="card-header">
                 {{ orders[order]['email'] }}
             </div>

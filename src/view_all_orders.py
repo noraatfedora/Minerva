@@ -17,7 +17,6 @@ import pdfkit
 import base64
 import qrcode
 from send_confirmation import send_recieved_notification, send_bagged_notification
-
 bp = Blueprint('view_all_orders', __name__)
 
 @login_required
@@ -46,6 +45,7 @@ def allOrders():
         return redirect("/allorders")
     if request.method == "POST":
         key = next(request.form.keys())
+        print("Key: " + str(key))
         if "unassign" in key:
             orderId = int(key[len('unassign-'):])
             conn.execute(orders.update(whereclause=(orders.c.id==orderId)).values(volunteerId=None))
@@ -62,7 +62,11 @@ def allOrders():
                 address = conn.execute(select([users.c.address]).where(users.c.id==userId)).fetchone()[0]
                 send_bagged_notification(volunteerEmail[0], orderId, address)
                 ordersDict = getOrders(g.user.id)
-    
+        elif "barcode" in key:
+            print("Text: " + request.form[key])
+            baggedIds = request.form[key].split('\r\n')
+            for order in baggedIds:
+                conn.execute(orders.update().values(bagged=1).where(orders.c.id==order))
     volunteers = getVolunteers()
     today = datetime.date.today()
     checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
@@ -126,7 +130,7 @@ def getVolunteers():
 
 def barcode_to_base64(orderId):
     imgByteArray = io.BytesIO()
-    Code128(orderId, writer=ImageWriter()).write(imgByteArray)
+    Code128(str(orderId) + "\n", writer=ImageWriter()).write(imgByteArray)
     return base64.b64encode(imgByteArray.getvalue()).decode()
 
 def qrcode_to_base64(orderId):
