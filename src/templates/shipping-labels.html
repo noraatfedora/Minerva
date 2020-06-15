@@ -29,8 +29,10 @@
             padding-top: 30px;
             padding-bottom: 30px;
         }
+
     </style>
     <br>
+    
     {% for order in orders %}
     {% if not loop.last %}
     <div class="shipping-label" style="page-break-after: always;">
@@ -62,12 +64,20 @@
                 </div>
                 <hr>
                 <table class="items">
+                    {% set vars = {'numItem': 1} %}
                     {% for item in orders[order]['itemsDict'] %}
                     {% if orders[order]['itemsDict'][item] != '0' %}
-                    <tr class="items">
-                        <td class="items"><b>{{ item }}</b></td>
-                        <td class="items">{{ orders[order]['itemsDict'][item] }}</td>
-                    </tr>
+                        {% if vars.numItem % 4 == 1 %}
+                            <tr class="items">
+                        {% elif vars.numItem % 4 == 0 %}
+                            <td class="items"><b>{{ item }}</b></td>
+                            <td class="items">{{ orders[order]['itemsDict'][item] }}</td>
+                            </tr>
+                        {% else %}
+                            <td class="items"><b>{{ item }}</b></td>
+                            <td class="items">{{ orders[order]['itemsDict'][item] }}</td>
+                        {% endif %}
+                        {% if vars.update({'numItem': vars.numItem + 1}) %}{% endif %}
                     {% endif %}
                     {% endfor %}
                 </table>
@@ -75,7 +85,7 @@
             <hr>
             <table class="barcodes">
                 <tr>
-                <td><img src="data:;base64,{{ barcode_to_base64(orders[order]['id']) }}" height="200px" width="200px"/></td>
+                <td><img src="data:;base64,{{ barcode_to_base64(orders[order]['id']) }}"height="200px" width="200px"/></td>
                 <td><img src="data:;base64,{{ qrcode_to_base64(orders[order]['id']) }}" height="200px" width="200px" /></td>
                 </tr>
                 <tr>
