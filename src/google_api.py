@@ -1,8 +1,8 @@
 import requests
 from os import environ
 from json import  loads
-from db import users, orders
-from sqlalchemy import conn
+from db import users, orders, conn
+from sqlalchemy import select
 import set_environment_variables
 
 def matrix(origins, destinations):
@@ -34,7 +34,7 @@ def directions(origin, destination, waypoints):
 def getOrdering(origin, destination, orderList):
     addresses = []
     for order in orderList:
-        user = conn.execute(users.select().where(id==order.userId))
+        user = conn.execute(users.select().where(users.c.id==order.userId)).fetchone()
         addresses.append(user.address)
     response = directions(origin, destination, addresses)
     waypoint_order = response['routes'][0]['waypoint_order']
@@ -52,5 +52,3 @@ def addAdresses(addresses):
         
         toReturn += "|" + address
     return toReturn
-
-print(getOrdering("Adelaide,SA", "Adelaide,SA", ["Clare, SA", "Connawarra, SA", "McLaren Vale, SA", "Barossa Valey, SA"]))
