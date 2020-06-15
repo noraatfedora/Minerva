@@ -1,5 +1,9 @@
 import requests
+from os import environ
 from json import  loads
+from db import users, orders
+from sqlalchemy import conn
+import set_environment_variables
 
 def matrix(origins, destinations):
     # Example URL:
@@ -10,7 +14,8 @@ def matrix(origins, destinations):
         + addAdresses(destinations)
         + "&departure_time=now"
         + "&key="
-        + open('GOOGLE_API_KEY', 'r').read())
+        + environ['GOOGLE_API']
+    )
 
     return loads(requests.get(requestString).content)
 
@@ -22,8 +27,21 @@ def directions(origin, destination, waypoints):
         + "&waypoints=optimize:true"
         + addAdresses(waypoints)
         + "&key="
-        + open('GOOGLE_API_KEY', 'r').read())
+        + environ['GOOGLE_API'])
     return loads(requests.get(requestString).content)
+
+# Returns a sorted list of the order ID's
+def getOrdering(origin, destination, orderList):
+    addresses = []
+    for order in orderList:
+        user = conn.execute(users.select().where(id==order.userId))
+        addresses.append(user.address)
+    response = directions(origin, destination, addresses)
+    waypoint_order = response['routes'][0]['waypoint_order']
+    toReturn = []
+    for index in waypoint_order:
+        toReturn.append(orderList[index].id)
+    return toReturn
 
 def addAdresses(addresses):
     toReturn = ''
@@ -32,8 +50,7 @@ def addAdresses(addresses):
         address.replace('&', '')
         address.replace('|', '')
         
-        toReturn += address + "|" 
+        toReturn += "|" + address
+    return toReturn
 
-    # Remove the last '|'
-    return toReturn[:-1]
-
+print(getOrdering("Adelaide,SA", "Adelaide,SA", ["Clare, SA", "Connawarra, SA", "McLaren Vale, SA", "Barossa Valey, SA"]))
