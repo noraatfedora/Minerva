@@ -1,5 +1,5 @@
 from flask import ( Blueprint, flash, g, redirect, render_template,
-    request, session, url_for, Flask
+    request, session, url_for, Flask, make_response
 )
 from werkzeug.exceptions import abort
 from auth import login_required, volunteer_required
@@ -9,7 +9,7 @@ from sqlalchemy import and_, select
 from send_confirmation import send_recieved_notification
 from datetime import date
 from os import environ
-import google_maps_qr
+import google_maps_qr, pdfkit
 
 bp = Blueprint('dashboard', __name__)
 
@@ -52,17 +52,15 @@ def qr_mark_as_complete():
             send_recieved_notification(email)
             conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
     return "Order " + str(orderId) + " has been marked as complete."
+
 @bp.route('/driver_printout', methods=('GET', 'POST'))
 def driver_printout():
-    itemsList = loads(open(environ['INSTANCE_PATH'] + "items.json", "r").read()).keys()
-
-    ordersDict = getOrders(g.user.id)
+    ordersDict =getOrders(g.user.id)
 
     if request.method == "POST":
         orderId = int(next(request.form.keys()))
         query = select([orders.c.completed]).where(orders.c.id==orderId)
         completed = conn.execute(query).fetchone()[0]
-        print("completeedddsf: " + str(completed))
         # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
         if (completed == 0):
             email = ordersDict[orderId]['email']
@@ -70,8 +68,15 @@ def driver_printout():
             conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
             ordersDict = getOrders(g.user.id)
     
-    print("orders: " + str(orders))
-    return render_template("driver_printout.html", orders=ordersDict, items=itemsList, volunteer=g.user)
+    html = render_template("driver_printout.html", orders=ordersDict, volunteer=g.user)
+    
+    pdf = pdfkit.from_string(html, False)
+
+    response = make_response(pdf)
+    response.headers['Content-type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline;'
+
+    return response
 
 # Returns a dictionary where the keys are the order ID's,
 # and the values are dicts with attributes about that order (contents, email, etc.)
@@ -94,8 +99,9 @@ def getOrders(volunteerId):
         for column in conn.execute(orders.select()).keys():        
             toReturn[order.id][str(column)] = str(getattr(order, str(column)))
 
-        toReturn[order.id]['itemsDict'] = loads(toReturn[order.id]['contents'])
+        toReturn[order.id]['contents'] = loads(toReturn[order.id]['contents'])
 
+    print(toReturn)
     return toReturn
 
 def getAddresses(orders):

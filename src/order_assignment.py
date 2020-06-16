@@ -34,6 +34,7 @@ def unassign(orderId):
 def bag(orderId):
     order = conn.execute(orders.select().where(orders.c.id==orderId)).fetchone()
     if (not order.bagged == 1):
+        conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
         client = conn.execute(users.select().where(users.c.id==order.userId)).fetchone()
         volunteer = conn.execute(users.select().where(users.c.id==order.volunteerId)).fetchone()
         send_bagged_notification(reciever_email=volunteer.email, orderId=orderId, address=client.address)

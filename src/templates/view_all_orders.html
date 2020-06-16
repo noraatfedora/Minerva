@@ -10,7 +10,7 @@
         <li>{{ volunteer.name }}</li>
         {% endfor %}
     </ul>
-    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn">Assign all routes automatically</a>
+    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn blue-hover">Assign all routes automatically</a>
     {% else %}
     You can assign all routes automatically once a driver checks in.
     {% endif %}
@@ -19,7 +19,7 @@
     <div class="spacer"></div>
     <form method="POST" class="form" action="">
         <div class="form-group">
-            <div class="col-xs-4">
+            <div class="container">
                 <label for="barcodeTextInput">Bag with barcode scanner:</label>
                 <textarea type="text" class="form-control" rows="3" name="barcodes" id="barcodeTextInput" aria-describedby="barcode text input"></textarea>
             </div>
