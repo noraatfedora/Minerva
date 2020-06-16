@@ -31,10 +31,45 @@ def send_request_confirmation(reciever_email, items, date):
 def send_recieved_notification(reciever_email):
 	html = """
 		<html>
-			<body>
-				<p> Your Minerva order has arrived. If you have any questions, respond to this email.</p>
-			</body>
-		</html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500');
+            @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+            body {
+                margin-left: auto;
+                margin-right: auto;
+                width: 40em;
+            }
+
+            h1 {
+                position:relative;
+            
+                font-size: 40px;
+                font-family: 'Noto Sans TC', sans-serif;
+            }
+
+            .meat-text {
+                font-size: 18px;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            #logo-text {
+                font-family: 'Pacifico', cursive;
+                position:relative;
+                top:10px;
+                font-size:25px;
+            }
+        </style>
+    </head>
+    <body>
+        <img id = "logo" align = "left"  src="https://drive.google.com/uc?export=view&id=1JPAYyTTclCvrJhatLlk4zmmPi-6LBeJZ" alt = "logo" height = "60px" width = "60px"/> 
+        <p id = "logo-text">Minerva</p>
+        <h1>And... Delivered!</h1>
+        <p class = "meat-text"> Your Minerva order has arrived! If you have any questions, respond to this email.</p>
+        <hr>
+    </body>
+</html>
 	"""
 	send_email(to = reciever_email, contents = html, subject = "Your Minerva order is here")
 
