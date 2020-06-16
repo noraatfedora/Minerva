@@ -9,13 +9,8 @@ from db import users, conn, orders
 from sqlalchemy import and_, select
 from os import environ
 from barcode import Code128
-import datetime
 from barcode.writer import ImageWriter
-import assign
-import io
-import pdfkit
-import base64
-import qrcode
+import assign, io, pdfkit, base64, qrcode, datetime, order_assignment
 from send_confirmation import send_recieved_notification, send_bagged_notification
 bp = Blueprint('view_all_orders', __name__)
 
@@ -31,42 +26,23 @@ def allOrders():
     if request.method == "GET" and "volunteer" in request.args.keys():
         volunteerId = int(request.args.get("volunteer"))
         orderId = int(request.args.get("order"))
-        bagged = conn.execute(select([orders.c.bagged]).where(orders.c.id==orderId)).fetchall()[0]
-        conn.execute(orders.update(whereclause=orders.c.id==orderId).values(volunteerId=volunteerId))
-        print("out of the thinmg")
-        if bagged == 1:
-            print("In the thing")
-            conn.execute(orders.update(whereclause=orders.c.id==orderId).values(volunteerId=volunteerId))
-            volunteerEmail = conn.execute(select([users.c.email]).where(users.c.id==volunteerId)).fetchone()[0]
-            print("Volunteer email")
-            userId = conn.execute(select([orders.c.userId]).where(orders.c.id==orderId)).fetchone()[0]
-            address = conn.execute(select([users.c.address]).where(users.c.id==userId)).fetchone()[0]
-            send_bagged_notification(reciever_email=volunteerEmail, orderId=orderId, address=address)
+        order_assignment.assign(orderId=orderId, volunteerId=volunteerId)
         return redirect("/allorders")
     if request.method == "POST":
         key = next(request.form.keys())
         print("Key: " + str(key))
         if "unassign" in key:
             orderId = int(key[len('unassign-'):])
-            conn.execute(orders.update(whereclause=(orders.c.id==orderId)).values(volunteerId=None))
+            order_assignment.unassign(orderId)
             ordersDict = getOrders(g.user.id)
         elif "bag" in key:
             orderId = int(key[len('bag-'):])
-            query = select([orders.c.bagged]).where(orders.c.id==orderId)
-            bagged = conn.execute(query).fetchone()[0]
-            volunteerEmail = conn.execute(select([users.c.email]).where(users.c.id==select([orders.c.volunteerId]).where(orders.c.id==orderId))).fetchone()
-            conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
-            # If you refresh the page and resend data, it'll send 2 confirmation emails. This if statement prevents that.
-            if (bagged != 1 and not volunteerEmail==None):
-                date, userId = tuple(conn.execute(select([orders.c.date, orders.c.userId]).where(orders.c.id==orderId)).fetchone())
-                address = conn.execute(select([users.c.address]).where(users.c.id==userId)).fetchone()[0]
-                send_bagged_notification(volunteerEmail[0], orderId, address)
-                ordersDict = getOrders(g.user.id)
+            order_assignment.bag(orderId)
+            ordersDict = getOrders(g.user.id)
         elif "barcode" in key:
-            print("Text: " + request.form[key])
             baggedIds = request.form[key].split('\r\n')
             for order in baggedIds:
-                conn.execute(orders.update().values(bagged=1).where(orders.c.id==order))
+                order_assignment.bag(order)
     volunteers = getVolunteers()
     today = datetime.date.today()
     checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
