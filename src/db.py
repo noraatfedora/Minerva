@@ -40,15 +40,7 @@ users = Table(
     Column('zipCode', Integer),
     # for volunteers
     Column('approved', Boolean),
-    Column('sunday', Boolean),
-    Column('monday', Boolean),
-    Column('tuesday', Boolean),
-    Column('wednesday', Boolean),
-    Column('thursday', Boolean),
-    Column('friday', Boolean),
-    Column('saturday', Boolean),
-    Column('assignedZipCodes', String(255)),
-
+    Column('volunteerRole', String(10)),
     # Store for food banks, not volunteers
     Column('maxOrders', Integer),
 
