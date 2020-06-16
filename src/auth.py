@@ -160,13 +160,6 @@ def change_info():
                     'cellPhone': query.values(cellPhone=given),
                     'instructions': query.values(instructions=given),
                     'homePhone': query.values(homePhone=given),
-                    'Sunday': query.values(sunday=(given!=None)),
-                    'Monday': query.values(monday=given!=None),
-                    'Tuesday': query.values(tuesday=given!=None),
-                    'Wednesday': query.values(wednesday=given!=None),
-                    'Thursday': query.values(thursday=given!=None),
-                    'Friday': query.values(friday=given!=None),
-                    'Saturday': query.values(saturday=given!=None),
                 }[attribute]
                 print("Values: " + str(values))
                 conn.execute(values)
@@ -176,7 +169,6 @@ def change_info():
 
 @bp.route('/volunteerregister', methods=('GET', 'POST'))
 def volunteerregister():
-    days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
     foodBanks = conn.execute(select([users.c.name], whereclause=users.c.role=="ADMIN")).fetchall()
     if request.method == "POST":
         print("Data: " + str(request.form))
@@ -189,22 +181,17 @@ def volunteerregister():
         cellPhone = request.form['cell']
         homePhone = request.form['homePhone']
         foodBank = request.form['organization']
+        volunteerRole = request.form['volunteerRole']
         # kinda proud of how clean this line is ngl
         foodBankId, foodBankEmail = tuple(conn.execute(select([users.c.id, users.c.email]).where(users.c.name==foodBank)).fetchone())
         dayValues = {}
-        for day in days:
-            if day in request.form.keys():
-                dayValues[day] = True
-            else:
-                dayValues[day] = False
         error = ""
+        # TODO: find error stuff
         if error == "":
             password_hash = generate_password_hash(password)
-            conn.execute(users.insert(), email=email, name=name, password=password_hash, address=address, 
+            conn.execute(users.insert(), email=email, name=name, password=password_hash, address=address,
             role="VOLUNTEER", cellPhone=cellPhone, homePhone=homePhone,
-            zipCode=zipCode, completed=0, approved=False, foodBankId=foodBankId,
-            sunday=dayValues["Sunday"], monday=dayValues["Monday"], tuesday=dayValues["Tuesday"],
-            wednesday=dayValues["Wednesday"], thursday=dayValues["Thursday"], friday=dayValues["Friday"], saturday=dayValues["Saturday"])
+            zipCode=zipCode, completed=0, approved=False, foodBankId=foodBankId, volunteerRole=volunteerRole)
 
             send_new_volunteer_request_notification(foodBankEmail, name)
             return redirect(url_for('auth.login'))
@@ -219,9 +206,9 @@ def volunteerregister():
                     'homePhone': homePhone,
                     'zipCode': zipCode,
                     }
-            return render_template('auth/volunteer-register.html', title='Register', data=data, days=days)
+            return render_template('auth/volunteer-register.html', title='Register', data=data)
     data = {'email': '', 'address': '', 'firstName': '', 'lastName': '','homePhone': '', 'zipCode': ''}
-    return render_template('auth/volunteer-register.html', title = 'Register', data=data, days=days, foodBanks=foodBanks)
+    return render_template('auth/volunteer-register.html', title = 'Register', data=data, foodBanks=foodBanks)
 
 @bp.route('/changepass', methods=['GET', 'POST'])
 @login_required

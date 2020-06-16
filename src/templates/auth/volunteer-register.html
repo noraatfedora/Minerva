@@ -15,62 +15,64 @@
                     <div class="form-group">
                         <input type="text" name="name" id="name" class="form-control" value="{{ data['firstName'] }}"
                             placeholder="Name">
-                            <small>Error message</small>
+                        <small>Error message</small>
                     </div>
                     <div class="dropdown">
                         <div class="form-group">
                             <select class="form-control form-group" id="inputGroupSelect" name="organization">
-                            <option selected>Organization</option>
-                            {% for foodBank in foodBanks %}
-                                <option name="{{ foodBank[0] }}" value="{{ foodBank[0] }}" id="{{ foodBank[0] }}">{{ foodBank[0] }}</option>
-                            {% endfor %}
+                                <option selected>Organization</option>
+                                {% for foodBank in foodBanks %}
+                                <option name="{{ foodBank[0] }}" value="{{ foodBank[0] }}" id="{{ foodBank[0] }}">
+                                    {{ foodBank[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <div class="form-group">
+                            <select class="form-control form-group" id="inputGroupSelect" name="volunteerRole">
+                                <option selected>Role</option>
+                                <option value="BAGGER" id="Bagger">Bagger</option>
+                                <option value="DRIVER" id="Driver">Driver</option>
+                                <option value="BOTH" id="Bagger">Both driver and bagger</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <input type="text" name="email" id="email" class="form-control" value="{{ data['email'] }}"
                             placeholder="Email">
-                            <small>Error message</small>
+                        <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <input type="password" name="password" id="password" class="form-control"
                             placeholder="Password">
-                            <small>Error message</small>
+                        <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <input type="password" name="confirm" id="confirm" class="form-control"
                             placeholder="Confirm Password">
-                            <small>Error message</small>
+                        <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <input type="address" name="address" id="address" class="form-control"
                             value="{{ data['address'] }}"
                             placeholder="Full Address Example: 1234 Elm Street, Kirkland, WA 98083 ">
-                            <small>Error message</small>
+                        <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <input type="number" name="zipCode" id="zipCode" class="form-control"
                             value="{{ data['zipCode'] }}" placeholder="Zip Code"></label>
-                            <small>Error message</small>
+                        <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)"
                             value="{{ data['cellPhone'] }}">
-                            <small>Error message</small>
+                        <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <input type="text" name="homePhone" id="homePhone" class="form-control"
                             placeholder="Landline (Optional)" value="{{ data['homePhone'] }}">
                     </div>
-                   
-                    <b> Days Available: </b> 
-                    {% for day in days %}
-                        <div class="form-check form-group form-check-inline">
-                            <input class="form-check-input form-control" name="{{ day }}" type="checkbox" id="{{day}}" value="{{day}}">
-                            <label class="form-check-label" for="{{day}}">{{day}}</label>
-                        </div>
-                    {% endfor %}
-               
                     <div class="form-group">
                         <button class="btn bw-btn center-block blue-hover" type="submit">
                             Sign Up
