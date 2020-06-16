@@ -9,12 +9,10 @@
   <div class="container">
     <h1 class="text-center">Send a request</h1>
     <div class="big-boy-body">
-      <ul class="big-boy-body">
-        <li>Use this form to request goods.</li>
-        <li>Expect about a week for items.</li>
-        <li>Meat products can only be ordered in quantities of 1.</li>
-        <li>Other products can be ordered with a quantity of 2.</li>
-      </ul>
+        Request items by entering a quantity and pressing submit at the bottom<br>
+        Meat products can only be ordered at a max quantity of 1<br>
+        All other products can be ordered with a max quantity of 2<br>
+        Expect items to arrive within about a week
     </div>
     <!-- <div class="dropdown">
       <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
@@ -36,18 +34,32 @@
   <div class="container">
     <form id="request-form" action="" method="post">
       <div class="row">
-        {% for item in items %}
-        <!-- <div class="col-md-4 item" filter={{item.subcategory}}> -->
-        <div class="item card mb-4 shadow-sm card-body">
-          <div class="form-group">
-            <label class="center-vertical" for="{{item.name}}"><b>{{item.name}}</b></label>
-            <div class="float-right">
-              <input type="number" class="form-control" name="{{item.name}}" min="0" max='{{item.max}}' value="0"
-                oninput="this.form.amountRange.value=this.value" />
+        <div class="col-sm">
+          {% for i in range(((items | length) / 2) | int) %}
+          <div class="item card mb-4 shadow-sm card-body">
+            <div class="form-group">
+              <label class="center-vertical" for="{{items[i].name}}"><b>{{items[i].name}}</b></label>
+              <div class="float-right">
+                <input type="number" class="form-control" name="{{items[i].name}}" min="0" max='{{items[i].max}}' value="0"
+                  oninput="this.form.amountRange.value=this.value" />
+              </div>
             </div>
           </div>
+          {% endfor %}
         </div>
-        {% endfor %}
+        <div class="col-sm">
+          {% for i in range(((items | length) / 2) | int, (items | length)) %}
+          <div class="item card mb-4 shadow-sm card-body">
+            <div class="form-group">
+              <label class="center-vertical" for="{{items[i].name}}"><b>{{items[i].name}}</b></label>
+              <div class="float-right">
+                <input type="number" class="form-control" name="{{items[i].name}}" min="0" max='{{items[i].max}}' value="0"
+                  oninput="this.form.amountRange.value=this.value" />
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
       </div>
       <!-- <div class="text-center">
         <b>Select your prefered delivery date.</b>
