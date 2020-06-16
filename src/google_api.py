@@ -32,10 +32,15 @@ def directions(origin, destination, waypoints):
 
 # Returns a sorted list of the order ID's
 def getOrdering(origin, destination, orderList):
+    if orderList == []:
+        return []
     addresses = []
     for order in orderList:
         user = conn.execute(users.select().where(users.c.id==order.userId)).fetchone()
         addresses.append(user.address)
+    print("Origin: " + origin)
+    print("Dest: " + destination)
+    print("waypoints: " + str(addresses))
     response = directions(origin, destination, addresses)
     waypoint_order = response['routes'][0]['waypoint_order']
     toReturn = []
