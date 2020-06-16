@@ -6,6 +6,7 @@ from json import loads
 from db import users, conn, orders
 from sqlalchemy import and_, select
 from os import environ
+from order_assignment import unassign
 from send_confirmation import send_volunteer_acceptance_notification
 
 bp = Blueprint('modify', __name__)
@@ -31,7 +32,7 @@ def dashboard():
         print("Key: " + key)
         if "unassign" in key:
             orderId = key[len('unassign-'):]
-            conn.execute(orders.update(orders.c.id==int(orderId)).values(volunteerId=None))
+            unassign(int(orderId))
         '''
         userId = next(request.form.keys())
         print(userId)
