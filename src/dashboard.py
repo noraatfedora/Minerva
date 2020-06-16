@@ -30,15 +30,13 @@ def dashboard():
         orderId = int(firstKey)
         query = select([orders.c.completed]).where(orders.c.id==orderId)
         completed = conn.execute(query).fetchone()[0]
-        print("completeedddsf: " + str(completed))
-        # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
+        # If you refresh the page and resend data, it'll send 2 confirmation emails. This if statement prevents that.
         if (completed == 0):
             email = ordersDict[orderId]['email']
             send_recieved_notification(email)
             conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
             ordersDict = getOrders(g.user.id)
 
-    print("orders: " + str(orders))
     checkedIn = g.user.checkedIn == str(date.today())
     return render_template("dashboard.html", orders=ordersDict, items=itemsList, google_maps = google_maps_qr.make_url(loads(g.user.ordering)), checkedIn=checkedIn)
 
