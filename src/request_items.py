@@ -9,6 +9,7 @@ from json import loads, dumps
 import datetime
 from sqlalchemy import select, and_
 from os import environ
+from order_assignment import refreshOrdering
 from sys import path
 
 bp = Blueprint('request_items', __name__)
@@ -35,7 +36,12 @@ def request_items():
 
         # Make sure that the user only orders once per week by marking all their
         # old orders as completed
-        conn.execute(orders.update(orders.c.userId==g.user.id).values(completed=1))
+        oldOrder = conn.execute(orders.select().where(and_(orders.c.userId==g.user.id, orders.c.completed==0))).fetchone()
+        if oldOrder != None:
+            volunteer = conn.execute(users.select().where(users.c.id==oldOrder.volunteerId)).fetchone()
+            if volunteer != None:
+                conn.execute(orders.update(orders.c.userId==g.user.id).values(completed=1))
+                refreshOrdering(volunteer)
         # insert new order into the orders table
         orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId).inserted_primary_key[0]
         return redirect("/success")

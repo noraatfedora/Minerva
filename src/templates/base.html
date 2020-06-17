@@ -18,11 +18,11 @@
 
             <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="{{ url_for('home') }}" id="navtext">
-                        {% if request.path == "/home" or request.path == "/" %}
-                        <strong style="color:white;">Home</strong>
+                    <a class="nav-item nav-link active" href="{{ url_for('about') }}" id="navtext">
+                        {% if request.path == "/about" or request.path == "/" %}
+                        <strong style="color:white;">About us</strong>
                         {% else %}
-                        <strong>Home</strong>
+                        <strong>About us</strong>
                         {% endif %}
                     </a>
                     <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id="navtext">
