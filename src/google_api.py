@@ -2,7 +2,7 @@ import requests
 from os import environ
 from json import  loads
 from db import users, orders, conn
-from sqlalchemy import select
+from sqlalchemy import select, and_
 import set_environment_variables
 
 def matrix(origins, destinations):
