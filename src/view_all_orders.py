@@ -93,7 +93,7 @@ def getOrders(adminId):
     return toReturn 
 
 def getVolunteers():
-    proxy = conn.execute(users.select(and_(users.c.role=="VOLUNTEER", users.c.approved==True))).fetchall()
+    proxy = conn.execute(users.select(and_(users.c.role=="VOLUNTEER", users.c.approved==True, users.c.volunteerRole=="DRIVER"))).fetchall()
     dictList = []
     for volunteer in proxy:
         volunteerDict = {}
