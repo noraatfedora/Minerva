@@ -464,8 +464,12 @@ a:not([href]):not([tabindex]):hover {
 }
 
 .center-vertical {
-  position: relative;
-  top: 25%;
+  line-height: 45px;
+  display: inline;
+}
+
+.float-right .form-control {
+  max-width: 60px;
 }
 
 h2 {
