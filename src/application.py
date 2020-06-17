@@ -27,10 +27,19 @@ def create_app(test_config=None):
     
     # a simple page that says hello
     @app.route('/')
-    @app.route('/home')
     def home():
+        if g.user != None:
+            defaults = {
+                'RECIEVER': '/request_items',
+                'VOLUNTEER': '/dashboard',
+                'ADMIN': '/allorders'
+            }
+            return redirect(defaults[g.user.role])
         return render_template('home.html', title = 'Home')
     
+    @app.route('/about')
+    def about():
+        return render_template('home.html', title = 'Home')
     @app.route('/volunteer')
     def volunteer():
         return render_template('volunteer.html', title = 'Volunteer')
