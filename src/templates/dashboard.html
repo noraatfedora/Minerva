@@ -24,10 +24,10 @@
         <div class="card-header">
             {{ orders[order]['cellPhone']}}
         </div>
-        {% for item in orders[order]['itemsDict'] %}
-        {% if orders[order]['itemsDict'][item] != '0' %}
+        {% for item in orders[order]['contents'] %}
+        {% if orders[order]['contents'][item] != '0' %}
         <div class="card-header">
-            {{ item }}<span>{{ orders[order]['itemsDict'][item] }}</span>
+            {{ item }}<span>{{ orders[order]['contents'][item] }}</span>
         </div>
         {% endif %}
         {% endfor %}
