@@ -32,7 +32,7 @@
   <div class="container">
     <form id="request-form" action="" method="post">
       <div class="row">
-        <div class="col-sm">
+        <div class="col-md">
           {% for i in range(((items | length) / 2) | int) %}
           <div class="item card mb-4 shadow-sm card-body">
             <div class="form-group">
@@ -45,7 +45,7 @@
           </div>
           {% endfor %}
         </div>
-        <div class="col-sm">
+        <div class="col-md">
           {% for i in range(((items | length) / 2) | int, (items | length)) %}
           <div class="item card mb-4 shadow-sm card-body">
             <div class="form-group">
