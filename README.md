@@ -6,6 +6,5 @@ https://minervagroceries.org/
 
 ## Setup
 
-To install all required python packages, run `pip3 install -r requirements.txt`
-
-Then, you'll need to set environment variables. Go to src and create a file called `set_environment_variables.py`, and have it export your environment variables.
+Install all required python packages using `pip install .`
+Run the server using `python minerva/`
