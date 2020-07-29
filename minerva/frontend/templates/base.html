@@ -1,0 +1,118 @@
+{% extends "head.html" %}
+{% block html %}
+
+<body>
+    <noscript>
+        You're blocking JavaScript. You may notice that certain parts of the site don't work, such as the dropdown menu
+        or https redirection.
+        You can view our <a href="https://github.com/jaredgoodman03/minerva">source code</a> on Github - we don't do
+        anything nasty, we promise!
+    </noscript>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar navbar-dark">
+            <a class="navbar-brand" href="{{ url_for('home') }}" id="logo">Minerva</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+                aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link active" href="{{ url_for('about') }}" id="navtext">
+                        {% if request.path == "/about" or request.path == "/" %}
+                        <strong style="color:white;">About us</strong>
+                        {% else %}
+                        <strong>About us</strong>
+                        {% endif %}
+                    </a>
+                    <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id="navtext">
+                        {% if request.path == "/volunteer" %}
+                        <strong style="color:white;">Volunteer</strong>
+                        {% else %}
+                        <strong>Volunteer</strong>
+                        {% endif %}
+                    </a>
+                    {% if g.user and g.user['role'].lower() == "reciever" %}
+                    <a class="nav-item nav-link" href="{{ url_for('request_items.request_items') }}" id="navtext">
+                        {% if request.path == "/request_items" %}
+                        <strong style="color:white;">Request</strong>
+                        {% else %}
+                        <strong>Request</strong>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                    <a class="nav-item nav-link" href="#" id="navtext"><strong>Donate</strong></a>
+                    {% if g.user and g.user['role'].lower() == "volunteer" %}
+                    <a class="nav-item nav-link" href="{{ url_for('dashboard.dashboard') }}" id="navtext">
+                        {% if request.path == "/dashboard" %}
+                        <strong style="color:white;">My Dashboard</strong>
+                        {% else %}
+                        <strong>My Dashboard</strong>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                    {% if g.user and g.user['role'].lower() == "admin" %}
+                    <a class="nav-item nav-link" href="{{ url_for('view_all_orders.allOrders') }}" id="navtext">
+                        {% if request.path == "/allorders" %}
+                        <strong style="color:white;">View Orders</strong>
+                        {% else %}
+                        <strong>View Orders</strong>
+                        {% endif %}
+                    </a>
+                    <a class="nav-item nav-link" href="{{ url_for('modify.dashboard') }}" id="navtext">
+                        {% if request.path == "/modify" %}
+                        <strong style="color:white;">Volunteer Settings</strong>
+                        {% else %}
+                        <strong>Volunteer Settings</strong>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="navbar-nav ml-auto">
+                    <!-- <a class="nav-item nav-link" href="https://github.com/jaredgoodman03/Minerva" style="font-size: 20px;"><i class="fab fa-github" id="Git"></i></a> -->
+                    {% if g.user %}
+                    <div class="btn-group">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            id="logged-in">
+                            <i class="fas fa-user-circle" id="user-icon"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item disabled" id="dropdown-email-text" href=""
+                                onclick="return true">Logged in as {{g.user['email']}}</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url_for('auth.your_account') }}">Your Account</a>
+                            <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sign Out</a>
+                        </div>
+                        {% else %}
+                        <a href="{{ url_for('auth.login') }}" style="text-decoration: none;" id="navtext">
+                            <button class="btn bw-btn" type="submit">
+                                Sign In
+                                <i class="fas fa-sign-in-alt"></i></button></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div id="container">
+        <div id="main">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+</body>
+{% endblock %}

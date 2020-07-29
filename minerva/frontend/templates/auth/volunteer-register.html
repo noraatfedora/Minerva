@@ -1,0 +1,93 @@
+{% extends "head.html" %}
+{% block html %}
+
+<body id="register-body">
+    <script defer type=text/javascript src="{{url_for('static', filename='scripts/register.js') }}"></script>
+    {% block content %}
+    <p class="intro-text">Welcome to</p>
+    <h1 id="jumbomain">Minerva</h1>
+    {% endblock %}
+    <div id="login">
+        <div id="login-column" class="register-form-text justify-content-center align-items-center row">
+            <div id="login-box" class="register-form-text">
+                <form name="register" id="register-form-text" class="form" action="" method="post"
+                    onsubmit="return verifyForm()">
+                    <div class="form-group">
+                        <input type="text" name="name" id="name" class="form-control" value="{{ data['firstName'] }}"
+                            placeholder="Name">
+                        <small>Error message</small>
+                    </div>
+                    <div class="dropdown">
+                        <div class="form-group">
+                            <select class="form-control form-group" id="inputGroupSelect" name="organization">
+                                <option selected>Organization</option>
+                                {% for foodBank in foodBanks %}
+                                <option name="{{ foodBank[0] }}" value="{{ foodBank[0] }}" id="{{ foodBank[0] }}">
+                                    {{ foodBank[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <div class="form-group">
+                            <select class="form-control form-group" id="inputGroupSelect" name="volunteerRole">
+                                <option selected>Role</option>
+                                <option value="BAGGER" id="Bagger">Bagger</option>
+                                <option value="DRIVER" id="Driver">Driver</option>
+                                <option value="BOTH" id="Bagger">Both driver and bagger</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="email" id="email" class="form-control" value="{{ data['email'] }}"
+                            placeholder="Email">
+                        <small>Error message</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" id="password" class="form-control"
+                            placeholder="Password">
+                        <small>Error message</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="confirm" id="confirm" class="form-control"
+                            placeholder="Confirm Password">
+                        <small>Error message</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="address" name="address" id="address" class="form-control"
+                            value="{{ data['address'] }}"
+                            placeholder="Full Address Example: 1234 Elm Street, Kirkland, WA 98083 ">
+                        <small>Error message</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" name="zipCode" id="zipCode" class="form-control"
+                            value="{{ data['zipCode'] }}" placeholder="Zip Code"></label>
+                        <small>Error message</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)"
+                            value="{{ data['cellPhone'] }}">
+                        <small>Error message</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="homePhone" id="homePhone" class="form-control"
+                            placeholder="Landline (Optional)" value="{{ data['homePhone'] }}">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn bw-btn center-block blue-hover" type="submit">
+                            Sign Up
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
+    <div class="register-text">
+        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in.</a></p>
+    </div>
+</body>
+
+{% endblock %}

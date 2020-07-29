@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<center style="min-height: 500px;">
+    <h2>Volunteer Dashboard</h2>
+    <div class="spacer"></div>
+    {% if checkedIn %}
+        You've checked in for today.
+    {% else %}
+        <a href="/dashboard?checkin=1" name="check-in" class="btn bw-btn blue-hover">Mark yourself as checked in today</a>
+    {% endif %}
+    <div class="spacer"></div>
+    <a href="/driver_printout" target="_blank" name="driver_printout" class="btn bw-btn blue-hover">Generate Driver Printout</a>
+    <div class="spacer"></div>
+    <a href="{{ google_maps }}">Click to open Google Maps for an optimized route</a>
+    <div class="spacer"></div>
+    {% for order in orders %}
+    <div class="card text-left task-incomplete item" filter="{{ orders[order]['date']}}">
+        <div class="card-header">
+            {{ orders[order]['email'] }}
+        </div>
+        <div class="card-header">
+            {{ orders[order]['address']}}
+        </div>
+        <div class="card-header">
+            {{ orders[order]['cellPhone']}}
+        </div>
+        {% for item in orders[order]['contents'] %}
+        {% if orders[order]['contents'][item] != '0' %}
+        <div class="card-header">
+            {{ item }}<span>{{ orders[order]['contents'][item] }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div class="card-body">
+            <form action="" method="POST">
+                <button type="submit" value="Mark as completed" name="{{ orders[order]['id'] }}" class="btn bw-btn">Mark
+                    As Complete</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</center>
+{% endblock %}
