@@ -1,0 +1,59 @@
+
+body {
+  background-color: #f8f9fa;
+}
+
+#dropdownMenuButton {
+  position: relative;
+  background-color: #77b6ea;
+  border: none;
+  left: 40%;
+  margin-top: 30px;
+}
+
+h1 {
+   text-align:50%; 
+}
+
+img {
+    height: 300px;
+    object-fit: cover;
+}
+
+.jumbotron {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    margin-bottom: 0;
+    background-color: #ffffff;
+  }
+
+@media (min-width: 768px) {
+  .jumbotron {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+  
+.jumbotron p:last-child {
+  margin-bottom: 0;
+}
+  
+.jumbotron h1 {
+  font-weight: 300;
+}
+  
+.jumbotron .container {
+   max-width: 50rem;
+}
+
+#item-name {
+    position: relative;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.card-columns {
+    column-count: 1;
+    margin-left:50px;
+}

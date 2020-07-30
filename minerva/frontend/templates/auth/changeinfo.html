@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+<body style="margin-top: 50px;">
+    {% block content %}
+    <p id="logo-login"> Change Account Info</p>
+    <div id="login">
+        <div class="container">
+            <div id="register-box" class="row justify-content-center align-items-center">
+                <div id="login-column" class="register-form-text">
+                    <div id="login-box" class="register-form-text">
+                        <form id="register-form-text" class="form" action="" method="post">
+                            <div class="form-group">
+                                <label for="email">Email</label><br>
+                                <input type="text" name="email" id="email" class="form-control"
+                                    placeholder="{{ user['email'] }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Home Address</label><br>
+                                <input type="text" name="address" id="address" class="form-control"
+                                    placeholder="{{ user['address'] }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cell">Phone Number (Cell)</label><br>
+                                <input type="text" name="cell" id="cell" class="form-control"
+                                    placeholder="{{ user['cellPhone'] }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cell">Phone Number (Landline, Optional)</label><br>
+                                <input type="text" name="homePhone" id="homePhone" class="form-control"
+                                    placeholder="{{ user['homePhone'] }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cell">Special Instructions (Optional)</label><br>
+                                <textarea type="text" name="instructions" id="instructions" class="form-control"
+                                    placeholder="{{ user['instructions'] }}"></textarea>
+                            </div>
+                            {% if g.user.role=="VOLUNTEER" %}
+                                <b> Days Available: </b> 
+                                {% for day in days %}
+                                    <div class="form-check form-group form-check-inline">
+                                        {% if g.user[day.lower()] %}
+                                            <input class="form-check-input form-control" name="{{ day }}" type="checkbox" checked id="{{day}}" value="{{day}}">
+                                        {% else %}
+                                            <input class="form-check-input form-control" name="{{ day }}" type="checkbox" id="{{day}}" value="{{day}}">
+                                        {% endif %}
+                                        <label class="form-check-label" for="{{day}}">{{day}}</label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-group">
+                                <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Save
+                                    Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
+</body>
+{% endblock content %}

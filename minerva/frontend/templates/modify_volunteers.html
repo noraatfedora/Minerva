@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<center>
+    <script defer type=text/javascript src="{{url_for('static', filename='scripts/filter.js') }}"></script>
+    <h2>Volunteer Settings</h2>
+    <button class="btn dropdown-toggle bw-btn blue-hover" type="button" id="unassigned-dropdown" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">[add new volunteer]</button>
+    <div class="spacer"></div>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        {% for volunteer in unassigned %}
+        <a class="dropdown-item" href="/modify?assign={{ volunteer['name'] }}">
+            {{ volunteer['name'] }}
+        </a>
+        {% endfor %}
+    </div>
+    <div class="dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="filter-button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Filter
+        </button>
+        <div class="dropdown-menu" aria-labelledby="filter-button">
+            <a class="dropdown-item" onclick="updateFilter('')">Reset Filter</a>
+            <a class="dropdown-item" onclick="updateFilter('DRIVER')">Driver</a>
+            <a class="dropdown-item" onclick="updateFilter('BAGGER')">Bagger</a>
+        </div>
+    </div>
+    <div class="spacer"></div>
+    {% for user in users %}
+    <div class="card text-left task-incomplete bg-primary item" filter="{{ user['volunteerRole'] }}">
+        <div class="card-header">
+            {{ user['email'] }}
+        </div>
+        <div class="card-header">
+            <a class="btn bw-btn" data-toggle="collapse" href="#collapse-user-{{ user['id'] }}" role="button"
+                aria-expanded="false" aria-controls="collapse-user-{{ user['id'] }}">
+                {% if user['orders']|length==1 %}
+                Show 1 order
+                {% else %}
+                Show {{ user['orders']|length }} orders
+                {% endif %}
+            </a>
+        </div>
+        <div id="collapse-user-{{ user['id'] }}" class="collapse">
+            <div id="accordion-{{ user['id'] }}">
+                <tbody>
+                    {% for order in user['orders'] %}
+                    <div class="card bg-light" id="order-header-{{ order['id'] }}">
+                        <button class="btn btn-link" data-toggle="collapse"
+                            data-target="#collapse-order-{{ order['id'] }}" role="button"
+                            aria-controls="collapse-{{ order['id'] }}">
+                            {{ order['address'] }}
+                        </button>
+                        <div id="collapse-order-{{ order['id'] }}" class="collapse"
+                            aria-labelledby="order-header-{{ order['id'] }}" data-parent="accordion-{{ user['id'] }}">
+                            <table>
+                                <tr>
+                                    <th>
+                                        Email:
+                                    </th>
+                                    <th>
+                                        {{ order['email'] }}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Cell Phone:
+                                    </th>
+                                    <th>
+                                        {{ order['cellPhone'] }}
+                                    </th>
+                                </tr>
+                                {% for item in order['contents'] %}
+                                {% if order['contents'][item] != "0"%}
+                                <tr>
+                                    <th>
+                                        {{ item }}:
+                                    </th>
+                                    <th>
+                                        {{ order['contents'][item] }}
+                                    </th>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
+                            <form action="" method="POST"">
+                            <button type=" submit" value="unassign-{{ order['id'] }}" name="unassign-{{ order['id'] }}"
+                                class="btn bw-btn">Unassign order</button>
+                            </form>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="" method="POST">
+                <button type="submit" value="remove" name="{{ user['id'] }}" class="btn bw-btn bg-danger">Remove
+                    Volunteer</button>
+            </form>
+        </div>
+    </div>
+    <br>
+    {% endfor %}
+</center>
+
+{% endblock content %}

@@ -1,0 +1,64 @@
+{% block content %}
+<html>
+
+<body>
+    <style>
+        body,
+        table.items {
+            font-size: 20px;
+            line-height: 40px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 5px;
+        }
+
+        .container {
+            padding-left: 30px;
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+
+        .shipping-label:not(:last-of-type) {
+            margin-bottom: 24px;
+        }
+    </style>
+        <h2>Summary for {{ volunteer.name }}</h2>
+        {% for order in orders %}
+            <div class="shipping-label">
+                <div class="card-header">
+                    <b>Email: </b>{{ orders[order]['email'] }}
+                </div>
+                <div class="card-header">
+                    <b>Address: </b>{{ orders[order]['address']}}
+                </div>
+                <div class="card-header">
+                    <b>Phone number: </b>{{ orders[order]['cellPhone']}}
+                </div>
+                <table class="items">
+                    <tr class="items">
+                        <td class="items"><b>Product</b></td>
+                        <td class="items"><b>Quantity</b></td>
+                    </tr>
+                    {% for item in orders[order]['contents'] %}
+                        {% if orders[order]['contents'][item] != '0' %}
+                            <tr class="items">
+                                <td class="items">{{ item }}</td>
+                                <td class="items">{{ orders[order]['contents'][item] }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+        {% endfor %}
+
+
+</body>
+
+</html>
+{% endblock content %}
