@@ -20,7 +20,9 @@ strf = "%A, %B %d" # will output dates in the format like "May 31"
 @bp.route('/request_items', methods=('GET', 'POST'))
 @login_required
 def request_items():
-    itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
+    foodBank =conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()
+    itemsList = loads(foodBank['items'])
+    description = foodBank['requestPageDescription']
     if request.method == "POST":
         itemsDict = {} # Used for email confirmation script
         for item in itemsList:
@@ -32,7 +34,7 @@ def request_items():
         # date = datetime.datetime.strptime(request.form['date'], "%Y-%m-%d")
         # date.strftime("%A, %B %e")
 
-        send_request_confirmation(g.user['email'], itemsDict, "date strftime would go here")
+        send_request_confirmation(g.user['email'], itemsDiHvtegfbL3EvRuS7ct, "date strftime would go here")
 
         # Make sure that the user only orders once per week by marking all their
         # old orders as completed
@@ -46,7 +48,7 @@ def request_items():
         orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId).inserted_primary_key[0]
         return redirect("/success")
     categories = []
-    return render_template("request_items.html", items=itemsList, categories=categories, dates="availableDates() would go here")
+    return render_template("request_items.html", items=itemsList, categories=categories, dates="availableDates() would go here", description=description)
 
 def availableDates():
     numDays = 10 # number of available days to display
