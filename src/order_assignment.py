@@ -32,11 +32,15 @@ def bag(orderId):
         conn.execute(orders.update().where(orders.c.id==orderId).values(bagged=1))
         client = conn.execute(users.select().where(users.c.id==order.userId)).fetchone()
         volunteer = conn.execute(users.select().where(users.c.id==order.volunteerId)).fetchone()
-        refreshOrdering(volunteer)
-        send_bagged_notification(reciever_email=volunteer.email, orderId=orderId, address=client.address)
+        if volunteer != None:
+            refreshOrdering(volunteer)
+            send_bagged_notification(reciever_email=volunteer.email, orderId=orderId, address=client.address)
 
 def refreshOrdering(volunteer):
-    foodBank = conn.execute(users.select().where(users.c.id==volunteer.foodBankId)).fetchone()
+    try:
+        foodBank = conn.execute(users.select().where(users.c.id==volunteer.foodBankId)).fetchone()
+    except: # if order isn't assigned but we marked it as bagged
+        return
     orderList = conn.execute(orders.select().where(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0, orders.c.bagged==1))).fetchall()
     ordering = getOrdering(origin=foodBank.address, destination=volunteer.address, orderList=orderList)
     conn.execute(users.update().where(users.c.id==volunteer.id).values(ordering=dumps(ordering)))

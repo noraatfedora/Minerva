@@ -13,5 +13,5 @@ pytest
 yagmail
 ortools
 pdfkit
-barcode
+python-barcode
 qrcode

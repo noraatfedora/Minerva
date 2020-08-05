@@ -13,12 +13,21 @@
                 <form name="register" id="register-form-text" class="form" action="" method="post"
                     onsubmit="return verifyForm()">
                     <div class="form-group">
+                        <textarea type="text" name="instructions" id="instructions" class="form-control"
+                            placeholder="First Name" value="{{ data['name'] }}"></textarea>
+                    </div>
+                    <div class="form-group">
                         <input type="text" name="email" id="email" class="form-control" value="{{ data['email'] }}"
                             placeholder="Email">
                         <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <input type="password" name="password" id="password" class="form-control"
+                            placeholder="Password">
+                        <small>Error message</small>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="password" id="password" class="form-control"
                             placeholder="Password">
                         <small>Error message</small>
                     </div>

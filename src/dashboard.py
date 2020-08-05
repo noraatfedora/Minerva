@@ -39,7 +39,11 @@ def dashboard():
 
     checkedIn = g.user.checkedIn == str(date.today())
     print("ordering: " + str(g.user.ordering))
-    return render_template("dashboard.html", orders=ordersDict, items=itemsList, google_maps = google_maps_qr.make_url(loads(g.user.ordering)), checkedIn=checkedIn)
+    try:
+        google_maps_url = google_maps_qr.make_url(loads(g.user.ordering))
+    except:
+        google_maps_url = "https://maps.google.com"
+    return render_template("dashboard.html", orders=ordersDict, items=itemsList, google_maps = google_maps_url, checkedIn=checkedIn)
 
 @login_required
 @volunteer_required
