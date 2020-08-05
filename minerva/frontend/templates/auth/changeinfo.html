@@ -21,7 +21,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="cell">Phone Number (Cell)</label><br>
-                                <input type="text" name="cell" id="cell" class="form-control"
+                                <input type="text" name="cellPhone" id="cellPhone" class="form-control"
                                     placeholder="{{ user['cellPhone'] }}">
                             </div>
                             <div class="form-group">
@@ -34,18 +34,11 @@
                                 <textarea type="text" name="instructions" id="instructions" class="form-control"
                                     placeholder="{{ user['instructions'] }}"></textarea>
                             </div>
-                            {% if g.user.role=="VOLUNTEER" %}
-                                <b> Days Available: </b> 
-                                {% for day in days %}
-                                    <div class="form-check form-group form-check-inline">
-                                        {% if g.user[day.lower()] %}
-                                            <input class="form-check-input form-control" name="{{ day }}" type="checkbox" checked id="{{day}}" value="{{day}}">
-                                        {% else %}
-                                            <input class="form-check-input form-control" name="{{ day }}" type="checkbox" id="{{day}}" value="{{day}}">
-                                        {% endif %}
-                                        <label class="form-check-label" for="{{day}}">{{day}}</label>
-                                    </div>
-                                {% endfor %}
+                            {% if g.user.role=="ADMIN" %}
+                                <h2>Admin tools</h2>
+                                <label for="cell">Request page description</label><br>
+                                <textarea type="text" name="requestPageDescription" id="requestPageDescription" class="form-control"
+                                    placeholder="{{ user['requestPageDescription'] }}"></textarea>
                             {% endif %}
                             <div class="form-group">
                                 <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Save
