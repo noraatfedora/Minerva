@@ -147,11 +147,10 @@ def your_account():
 @bp.route('/changeinfo', methods=['GET', 'POST'])
 @login_required
 def change_info():
-    days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
     if request.method=='POST':
         for attribute in request.form:
             given = request.form[attribute]
-            if (given != '' or given in days) and attribute != 'submit':
+            if (given != '') and attribute != 'submit':
                 print("Given: " + str(given))
                 query = users.update().where(users.c.id==g.user['id'])
                 values = {
@@ -160,11 +159,12 @@ def change_info():
                     'cellPhone': query.values(cellPhone=given),
                     'instructions': query.values(instructions=given),
                     'homePhone': query.values(homePhone=given),
+                    'requestPageDescription': query.values(requestPageDescription=given)
                 }[attribute]
                 print("Values: " + str(values))
                 conn.execute(values)
         return redirect('/youraccount')
-    return render_template("auth/changeinfo.html", user=g.user, days=days)
+    return render_template("auth/changeinfo.html", user=g.user)
 
 
 @bp.route('/volunteerregister', methods=('GET', 'POST'))
