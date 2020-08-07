@@ -16,7 +16,7 @@ if os.environ.get('RDS_CONNECT') is not None:
     sess = Session()
     print("DB URL: " + url)
 else:
-    url = 'sqlite:///database/requests.sqlite?check_same_thread=False'
+    url = 'sqlite:///minerva/backend/apis/database/requests.sqlite?check_same_thread=False'
     print('URL: ' + url)
     engine = create_engine(url)
     Session.configure(bind=engine)
