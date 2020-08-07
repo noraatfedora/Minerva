@@ -48,7 +48,7 @@ function setValidation(input, message, valid) {
     return valid;
 }
 
-function addMember() {
+function addItem() {
     const fields =
     `<div id="household-member-${index}">
         <div class="form-group">
