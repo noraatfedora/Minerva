@@ -3,7 +3,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from minerva.backend.apis.db import users, conn
+from minerva.backend.apis.db import users, conn, items
 from sqlalchemy import select, update 
 from json import loads, dumps
 from os import environ
@@ -164,6 +164,13 @@ def change_info():
                 print("Values: " + str(values))
                 conn.execute(values)
         return redirect('/youraccount')
+    if g.user.role=="ADMIN":
+        rawItemsList = conn.execute(select([items.c.name]).where(items.c.foodBankId==g.user.id)).fetchall()
+        itemsList = []
+        for item in rawItemsList:
+            itemsList.append(item[0])
+        print("Items list: " + str(itemsList))
+        return render_template("auth/changeinfo.html", user=g.user, items=itemsList)
     return render_template("auth/changeinfo.html", user=g.user)
 
 
