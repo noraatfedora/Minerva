@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-<body style="margin-top: 50px;">
-    {% block content %}
+{% block content %}
+    <script defer type=text/javascript src="{{url_for('static', filename='scripts/changeinfo.js') }}"></script>
     <p id="logo-login"> Change Account Info</p>
     <div id="login">
         <div class="container">
@@ -35,15 +35,31 @@
                                     placeholder="{{ user['instructions'] }}"></textarea>
                             </div>
                             {% if g.user.role=="ADMIN" %}
-                                <h2>Admin tools</h2>
-                                <label for="cell">Request page description</label><br>
-                                <textarea type="text" name="requestPageDescription" id="requestPageDescription" class="form-control"
-                                    placeholder="{{ user['requestPageDescription'] }}"></textarea>
+                            <h2>Admin tools</h2>
+                            <label for="cell">Request page description</label><br>
+                            <textarea type="text" name="requestPageDescription" id="requestPageDescription"
+                                class="form-control" placeholder="{{ user['requestPageDescription'] }}"></textarea>
+
+                            <div id="item-fields"></div>
                             {% endif %}
+
+                            <br>
                             <div class="form-group">
                                 <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Save
                                     Changes</button>
                             </div>
+                            {% for i in range(items | length) %}
+                            {{ items[i] }}
+                            <div id="item-field-${index}">
+                                <div class="form-group">
+                                    <input type="text" name="name${index}" id="name${index}" class="form-control" placeholder="Item Name"
+                                        default="${item}">
+                                    <small>Error message</small>
+                                </div>
+                                <button class="add-remove-button" onclick="event.preventDefault(); removeMember({{i}})"><b>–</b></button>
+                                <br>
+                            </div>
+                            {% endfor %}
                         </form>
                     </div>
                 </div>
@@ -53,5 +69,4 @@
     {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
     {% endfor %}
-</body>
 {% endblock content %}

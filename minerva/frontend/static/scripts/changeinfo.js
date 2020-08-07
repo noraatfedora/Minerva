@@ -48,29 +48,29 @@ function setValidation(input, message, valid) {
     return valid;
 }
 
-function addItem() {
+function initializeItems(items) {
+    console.log(items);
+    items.forEach((item) => addItem(item));
+}
+
+function addItem(item) {
     const fields =
-    `<div id="household-member-${index}">
+    `<div id="item-field-${index}">
         <div class="form-group">
         <input type="text" name="name${index}" id="name${index}" class="form-control"
-            placeholder="Name">
+            placeholder="Item Name" default="${item}">
         <small>Error message</small>
-        </div>
-        <div class="form-group">
-            <input type="text" name="race${index}" id="race${index}" class="form-control"
-                placeholder="Race">
-            <small>Error message</small>
         </div>
         <button class="add-remove-button" onclick="event.preventDefault(); removeMember(${index})">-</button>
         <br>
     </div>`;
 
-    document.querySelector("#household-members").insertAdjacentHTML('beforeend', fields);
+    document.querySelector("#item-fields").insertAdjacentHTML('beforeend', fields);
     index++;
 }
 
 function removeMember(toRemove) {
-    const select = document.getElementById("household-member-" + toRemove);
+    const select = document.getElementById("item-field-" + toRemove);
     select.parentNode.removeChild(select);
     /*
     if (index > 0) {
