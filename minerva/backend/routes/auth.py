@@ -40,7 +40,7 @@ dietaryRestrictions = ["Lactose Intolerant", "Vegetarian", "Peanut Allergy", "Gl
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
-        with open("." + environ['INSTANCE_PATH'] + 'supported_zip_codes', 'r') as f:
+        with open("../database/supported_zip_codes", 'r') as f:
             supportedZipCodes = f.read()
         email = request.form['email']
         password = request.form['password']

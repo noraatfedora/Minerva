@@ -11,7 +11,17 @@
         <div id="login-column" class="register-form-text justify-content-center align-items-center row">
             <div id="login-box" class="register-form-text">
                 <form name="register" id="register-form-text" class="form" action="" method="post"
-                    onsubmit="return verifyForm()">
+                    onsubmit="event.preventDefault(); verifyForm()">
+                    <div class="form-group">
+                        <input type="text" name="name" id="name" class="form-control"
+                            placeholder="Name">
+                        <small>Error message</small>
+                    </div>
+                    <div class="form-group">
+                        <label><b>Date of birth</b></label>
+                        <input class="form-control-aesthetic" type="date" id="birthday" name="birthday" placeholder="yyyy-mm-dd">
+                        <small>Error message</small>
+                    </div>
                     <div class="form-group">
                         <input type="text" name="email" id="email" class="form-control" value="{{ data['email'] }}"
                             placeholder="Email">
@@ -35,7 +45,7 @@
                     </div>
                     <div class="form-group">
                         <input type="number" name="zipCode" id="zipCode" class="form-control"
-                            value="{{ data['zipCode'] }}" placeholder="Zip Code"></label>
+                            value="{{ data['zipCode'] }}" placeholder="Zip Code">
                         <small>Error message</small>
                     </div>
                     <div class="form-group">
@@ -57,6 +67,17 @@
                         <label class="custom-control-label" for="{{restriction}}">{{restriction}}</label>
                     </div>
                     {% endfor %}
+                    <br>
+                    <b>Add or remove members of household</b>
+                    <button class="add-remove-button" onclick="event.preventDefault(); addMember()">
+                        +
+                    </button>
+                    <button class="add-remove-button" onclick="event.preventDefault(); removeMember()">
+                        –
+                    </button>
+                    <br>
+                    <br>
+                    <div id="household-members"></div>
                     <div class="form-group">
                         <button class="btn bw-btn center-block blue-hover" type="submit">
                             Sign Up
