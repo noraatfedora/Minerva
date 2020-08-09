@@ -72,6 +72,13 @@ orders = Table(
     Column('completed', Integer)  # either 0 or 1
 )
 
+items = Table(
+    'items', meta,
+    Column('id', Integer, primary_key=True),
+    Column('foodBankId'),
+    Column('name', String(100))
+)
+
 print("Date type: " + str(Date.python_type))
 conn = engine.connect()
 print("Initializing db!")

@@ -3,7 +3,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required
-from db import users, conn, orders
+from db import users, conn, orders, items
 from minerva.backend.apis.email import send_request_confirmation
 from json import loads, dumps
 import datetime
@@ -21,7 +21,8 @@ strf = "%A, %B %d" # will output dates in the format like "May 31"
 @login_required
 def request_items():
     foodBank =conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()
-    itemsList = loads(foodBank['items'])
+    itemsList = conn.execute(select([items.c.name]).where(items.c.foodBankId==g.user.foodBankId)).fetchall()
+    print("Items list: " + str(itemsList))
     description = foodBank['requestPageDescription']
     if request.method == "POST":
         itemsDict = {} # Used for email confirmation script

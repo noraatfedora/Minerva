@@ -5,7 +5,7 @@ from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, admin_required 
 from json import loads, dumps
 from collections import OrderedDict
-from db import users, conn, orders
+from db import users, conn, orders, items
 from sqlalchemy import and_, select
 from os import environ
 from barcode import Code128
@@ -18,7 +18,7 @@ bp = Blueprint('view_all_orders', __name__)
 @admin_required
 @bp.route('/allorders', methods=('GET', 'POST'))
 def allOrders():
-    itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
+    #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
     ordersDict = getOrders(g.user.id)
     if request.method == "GET" and "assignall" in request.args.keys():
         assign.assignAllOrders(g.user.id)
