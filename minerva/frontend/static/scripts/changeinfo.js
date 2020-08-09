@@ -56,12 +56,13 @@ function initializeItems(items) {
 function addItem(item) {
     const fields =
     `<div id="item-field-${index}">
-        <div class="form-group">
-        <input type="text" name="name${index}" id="name${index}" class="form-control"
+        <div class="input-group">
+        <input type="text" name="name${index}" id="name${index}" class="form-control width100"
             placeholder="Item Name" default="${item}">
-        <small>Error message</small>
+            <span class="input-group-btn">
+                <button class="add-remove-button" onclick="event.preventDefault(); removeItem(${index})">–</button>
+            </span>
         </div>
-        <button class="add-remove-button" onclick="event.preventDefault(); removeItem(${index})">–</button>
         <br>
     </div>`;
 
