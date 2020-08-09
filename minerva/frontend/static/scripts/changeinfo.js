@@ -61,7 +61,7 @@ function addItem(item) {
             placeholder="Item Name" default="${item}">
         <small>Error message</small>
         </div>
-        <button class="add-remove-button" onclick="event.preventDefault(); removeMember(${index})">-</button>
+        <button class="add-remove-button" onclick="event.preventDefault(); removeItem(${index})">–</button>
         <br>
     </div>`;
 
@@ -69,7 +69,7 @@ function addItem(item) {
     index++;
 }
 
-function removeMember(toRemove) {
+function removeItem(toRemove) {
     const select = document.getElementById("item-field-" + toRemove);
     select.parentNode.removeChild(select);
     /*

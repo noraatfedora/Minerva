@@ -61,7 +61,7 @@ function addMember() {
                 placeholder="Race">
             <small>Error message</small>
         </div>
-        <button class="add-remove-button" onclick="event.preventDefault(); removeMember(${index})">-</button>
+        <button class="add-remove-button" onclick="event.preventDefault(); removeMember(${index})">–</button>
         <br>
     </div>`;
 
