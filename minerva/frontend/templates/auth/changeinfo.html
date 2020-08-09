@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-<body style="margin-top: 50px;">
-    {% block content %}
+{% block content %}
+    <script defer type=text/javascript src="{{url_for('static', filename='scripts/changeinfo.js') }}"></script>
     <p id="logo-login"> Change Account Info</p>
     <div id="login">
         <div class="container">
@@ -35,16 +35,33 @@
                                     placeholder="{{ user['instructions'] }}"></textarea>
                             </div>
                             {% if g.user.role=="ADMIN" %}
-                                <h2>Admin tools</h2>
-                                <label for="cell">Request page description</label><br>
-                                <textarea type="text" name="requestPageDescription" id="requestPageDescription" class="form-control"
-                                    placeholder="{{ user['requestPageDescription'] }}"></textarea>
+                            <h2>Admin tools</h2>
+                            <label for="cell">Request page description</label><br>
+                            <textarea type="text" name="requestPageDescription" id="requestPageDescription"
+                                class="form-control" placeholder="{{ user['requestPageDescription'] }}"></textarea>
+
                             {% endif %}
+                            <br>
+                            <label for="cell">Add/remove available items</label>
+                            <button class="add-remove-button" onclick="event.preventDefault(); addItem()"><b>+</b></button>
+                            {% for i in range(items | length) %}
+                            <div id="item-field-{{ i }}">
+                                <div class="input-group">
+                                    <input type="text" name="name{{ items[i] }}" id="name{{ items[i] }}" class="form-control width100" value="{{ items[i] }}"> 
+                                    <span class="input-group-btn">
+                                        <button class="add-remove-button" onclick="event.preventDefault(); removeItem({{i}})"><b>–</b></button>
+                                    </span>
+                                </div>
+                                <br>
+                            </div>
+                            {% endfor %}
+                            <div id="item-fields"></div>
+                        
                             <div class="form-group">
                                 <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Save
                                     Changes</button>
                             </div>
-                        </form>
+                            </form>
                     </div>
                 </div>
             </div>
@@ -53,5 +70,4 @@
     {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
     {% endfor %}
-</body>
 {% endblock content %}

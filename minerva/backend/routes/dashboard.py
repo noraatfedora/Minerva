@@ -4,7 +4,7 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, volunteer_required
 from json import loads, dumps
-from db import users, conn, orders
+from db import users, conn, orders, items
 from sqlalchemy import and_, select
 from minerva.backend.apis.email import send_recieved_notification
 from datetime import date
@@ -19,7 +19,7 @@ bp = Blueprint('dashboard', __name__)
 @login_required
 @volunteer_required
 def dashboard():
-    itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
+    itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
 
     ordersDict = getOrders(g.user.id)
     if request.method == "GET" and "checkin" in request.args.keys():
