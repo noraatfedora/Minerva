@@ -148,21 +148,33 @@ def your_account():
 @login_required
 def change_info():
     if request.method=='POST':
+        if g.user.role == "ADMIN":
+            newItemsList = []
         for attribute in request.form:
-            given = request.form[attribute]
-            if (given != '') and attribute != 'submit':
-                print("Given: " + str(given))
-                query = users.update().where(users.c.id==g.user['id'])
-                values = {
-                    'email': query.values(email=given),
-                    'address': query.values(address=given),
-                    'cellPhone': query.values(cellPhone=given),
-                    'instructions': query.values(instructions=given),
-                    'homePhone': query.values(homePhone=given),
-                    'requestPageDescription': query.values(requestPageDescription=given)
-                }[attribute]
-                print("Values: " + str(values))
-                conn.execute(values)
+            if attribute[:len('name')] == 'name':
+                newItemsList.append(request.form[attribute])
+            else:
+                given = request.form[attribute]
+                if (given != '') and attribute != 'submit':
+                    print("Given: " + str(given))
+                    query = users.update().where(users.c.id==g.user['id'])
+                    values = {
+                        'email': query.values(email=given),
+                        'address': query.values(address=given),
+                        'cellPhone': query.values(cellPhone=given),
+                        'instructions': query.values(instructions=given),
+                        'homePhone': query.values(homePhone=given),
+                        'requestPageDescription': query.values(requestPageDescription=given)
+                    }[attribute]
+                    print("Values: " + str(values))
+                    conn.execute(values)
+        
+        # Remove all of our items, so that we can just cleanly replace it
+        conn.execute(items.delete().where(items.c.foodBankId==g.user.id))
+        # Insert new elements into table
+        for itemName in newItemsList:
+            conn.execute(items.insert().values(name=itemName, foodBankId=g.user.id))
+        
         return redirect('/youraccount')
     if g.user.role=="ADMIN":
         rawItemsList = conn.execute(select([items.c.name]).where(items.c.foodBankId==g.user.id)).fetchall()
@@ -189,6 +201,7 @@ def volunteerregister():
         homePhone = request.form['homePhone']
         foodBank = request.form['organization']
         volunteerRole = request.form['volunteerRole']
+        
         # kinda proud of how clean this line is ngl
         foodBankId, foodBankEmail = tuple(conn.execute(select([users.c.id, users.c.email]).where(users.c.name==foodBank)).fetchone())
         dayValues = {}
