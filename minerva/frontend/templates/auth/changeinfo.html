@@ -42,15 +42,16 @@
 
                             {% endif %}
                             <br>
-                            <label for="cell">Edit available items</label><br>
+                            <label for="cell">Add/remove available items</label>
                             <button class="add-remove-button" onclick="event.preventDefault(); addItem()"><b>+</b></button>
                             {% for i in range(items | length) %}
                             <div id="item-field-{{ i }}">
-                                <div class="form-group">
-                                    <input type="text" name="name{{ items[i] }}" id="name{{ items[i] }}" class="form-control" value="{{ items[i] }}"> 
-                                    <small>Error message</small>
+                                <div class="input-group">
+                                    <input type="text" name="name{{ items[i] }}" id="name{{ items[i] }}" class="form-control width100" value="{{ items[i] }}"> 
+                                    <span class="input-group-btn">
+                                        <button class="add-remove-button" onclick="event.preventDefault(); removeItem({{i}})"><b>–</b></button>
+                                    </span>
                                 </div>
-                                <button class="add-remove-button" onclick="event.preventDefault(); removeItem({{i}})"><b>–</b></button>
                                 <br>
                             </div>
                             {% endfor %}
