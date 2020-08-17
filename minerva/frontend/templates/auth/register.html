@@ -8,23 +8,27 @@
     <h1 id="jumbomain">Minerva</h1>
     {% endblock %}
     <div id="login">
+        {% if error != '' %}
+            <h1 class="server-error">
+                {{ error }}
+            </h1>
+        {% endif %}
         <div id="login-column" class="register-form-text justify-content-center align-items-center row">
             <div id="login-box" class="register-form-text">
                 <form name="register" id="register-form-text" class="form" action="" method="post"
                     onsubmit="event.preventDefault(); verifyForm()">
                     <div class="form-group">
-                        <input type="text" name="name" id="name" class="form-control"
-                            placeholder="Name">
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Name">
                         <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <label><b>Date of birth</b></label>
-                        <input class="form-control-aesthetic" type="date" id="birthday" name="birthday" placeholder="yyyy-mm-dd">
+                        <input class="form-control-aesthetic" type="date" id="birthday" name="birthday"
+                            placeholder="yyyy-mm-dd">
                         <small>Error message</small>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="email" id="email" class="form-control" value="{{ data['email'] }}"
-                            placeholder="Email">
+                        <input type="text" name="email" id="email" class="form-control" placeholder="Email">
                         <small>Error message</small>
                     </div>
                     <div class="form-group">
@@ -39,29 +43,26 @@
                     </div>
                     <div class="form-group">
                         <input type="address" name="address" id="address" class="form-control"
-                            value="{{ data['address'] }}"
                             placeholder="Full Address Example: 1234 Elm Street, Kirkland, WA 98083 ">
                         <small>Error message</small>
                     </div>
                     <div class="form-group">
-                        <input type="number" name="zipCode" id="zipCode" class="form-control"
-                            value="{{ data['zipCode'] }}" placeholder="Zip Code">
+                        <input type="number" name="zipCode" id="zipCode" class="form-control" placeholder="Zip Code">
                         <small>Error message</small>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)"
-                            value="{{ data['cellPhone'] }}">
+                        <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)">
                         <small>Error message</small>
                     </div>
                     <div class="form-group">
                         <input type="text" name="homePhone" id="homePhone" class="form-control"
-                            placeholder="Landline (Optional)" value="{{ data['homePhone'] }}">
+                            placeholder="Landline (Optional)">
                     </div>
                     <div class="form-group">
                         <textarea type="text" name="instructions" id="instructions" class="form-control"
-                            placeholder="Special Instructions (Optional)" value="{{ data['instructions'] }}"></textarea>
+                            placeholder="Special Instructions (Optional)"></textarea>
                     </div>
-                    {% for restriction in data['dietaryRestrictions'] %}
+                    {% for restriction in dietaryRestrictions %}
                     <div class="custom-control custom-checkbox">
                         <input name="{{restriction}}" type="checkbox" class="custom-control-input" id="{{restriction}}">
                         <label class="custom-control-label" for="{{restriction}}">{{restriction}}</label>
@@ -72,10 +73,8 @@
                     <button class="add-remove-button" onclick="event.preventDefault(); addMember()">
                         +
                     </button>
-                    <br>
-                    <br>
                     <div id="household-members"></div>
-                    You must list all  names of people living in your household or you will not recieve food for them.
+                    You must list all names of people living in your household or you will not recieve food for them.
                     <div class="form-group">
                         <button class="btn bw-btn center-block blue-hover" type="submit">
                             Sign Up
@@ -83,7 +82,7 @@
                     </div>
                 </form>
             </div>
-        </div>+
+        </div>
     </div>
     {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>

@@ -494,6 +494,13 @@ h2 {
   border: 2px solid #e74c3c;
 }
 
+.server-error {
+  color: #e74c3c;
+  width: 100%;
+  text-align: center;
+  font-size: 24px;
+}
+
 .spacer {
   height: 24px;
 }
@@ -508,4 +515,5 @@ h2 {
   border-radius: 50%;
   cursor: pointer;
   margin-left: 16px;
+  margin-bottom: 24px;
 }

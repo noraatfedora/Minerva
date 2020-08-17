@@ -14,13 +14,14 @@ function verifyForm() {
     valid = setValidation(form["cell"], 'Phone number must be valid', validatePhone(form["cell"].value)) && valid;
 
     for (let i = 0; i < index; i++) {
-        console.log(form[`name${i}`].value);
-        console.log(form[`race${i}`].value);
-        valid = setValidation(form[`name${i}`], 'Field cannot be empty', form[`name${i}`].value !== '') && valid;
-        valid = setValidation(form[`race${i}`], 'Field cannot be empty', form[`race${i}`].value !== '') && valid;
+        if (form[`name${i}`]) {
+            valid = setValidation(form[`name${i}`], 'Field cannot be empty', form[`name${i}`].value !== '') && valid;
+            valid = setValidation(form[`race${i}`], 'Field cannot be empty', form[`race${i}`].value !== '') && valid;
+        }
     }
-    
-    return valid;
+
+    valid ? form.submit() : null;
+    return false;
 }
 
 function validateEmail(email) {
