@@ -54,7 +54,15 @@ users = Table(
     # String that holds the date of last checked in 
     Column('checkedIn', String(15)),
     Column('restrictions', String(255)),
-    Column('requestPageDescription', String(255)) # for food bank, changes what's on the request page
+    Column('requestPageDescription', String(255)), # for food bank, changes what's on the request page
+    Column('birthday', String()),
+)
+
+family_members = Table(
+    'family_members', meta,
+    Column('user', Integer),
+    Column('name', String()),
+    Column('race', String())
 )
 
 orders = Table(
