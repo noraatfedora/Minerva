@@ -37,9 +37,8 @@ def send_request_confirmation(reciever_email, items, date):
 			<tr>
 				<td class="p" align="left" bgcolor="#FFFFFF" style="padding-top: 0px; padding-right: 50px; padding-bottom: 50px; padding-left: 50px; font-size: 16px; line-height: 24px; font-weight: 400; text-align: left; color: ##37393a;">
 	""" 
-	for item in items.keys():
-			if (int(items[item]) > 0):
-					html += "<li>" + items[item] + " orders of " + item + "</li>"
+	for item in items:
+		html += "<li>" + item + "</li>"
 	html += "<br> A volunteer should deliver within the next week or two. If you have any questions, respond to this email."
 	html += """
 			</td>

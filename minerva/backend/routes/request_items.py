@@ -11,6 +11,7 @@ from sqlalchemy import select, and_
 from os import environ
 from order_assignment import refreshOrdering
 from sys import path
+import json
 
 bp = Blueprint('request_items', __name__)
 strf = "%A, %B %d" # will output dates in the format like "May 31"
@@ -22,23 +23,14 @@ strf = "%A, %B %d" # will output dates in the format like "May 31"
 def request_items():
     foodBank =conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()
     itemsList = conn.execute(select([items.c.name]).where(items.c.foodBankId==g.user.foodBankId)).fetchall()
-    print("Items list: " + str(itemsList))
     description = foodBank['requestPageDescription']
     if request.method == "POST":
-        itemsDict = {} # Used for email confirmation script
-        for item in itemsList:
-            name = item['name']
-            quantity = request.form[name]
-            itemsDict[name] = quantity
+        itemsOrdered = []
+        for item in request.form:
+            itemsOrdered.append(item)
 
+        send_request_confirmation(g.user['email'], itemsOrdered, "date strftime would go here")
 
-        # date = datetime.datetime.strptime(request.form['date'], "%Y-%m-%d")
-        # date.strftime("%A, %B %e")
-
-        send_request_confirmation(g.user['email'], itemsDiHvtegfbL3EvRuS7ct, "date strftime would go here")
-
-        # Make sure that the user only orders once per week by marking all their
-        # old orders as completed
         oldOrder = conn.execute(orders.select().where(and_(orders.c.userId==g.user.id, orders.c.completed==0))).fetchone()
         if oldOrder != None:
             volunteer = conn.execute(users.select().where(users.c.id==oldOrder.volunteerId)).fetchone()
@@ -46,7 +38,7 @@ def request_items():
                 conn.execute(orders.update(orders.c.userId==g.user.id).values(completed=1))
                 refreshOrdering(volunteer)
         # insert new order into the orders table
-        orderId = conn.execute(orders.insert(), contents=dumps(itemsDict), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId).inserted_primary_key[0]
+        orderId = conn.execute(orders.insert(), contents=dumps(itemsOrdered), completed=0, bagged=0, userId=g.user.id, foodBankId=g.user.foodBankId).inserted_primary_key[0]
         return redirect("/success")
     categories = []
     return render_template("request_items.html", items=itemsList, categories=categories, dates="availableDates() would go here", description=description)

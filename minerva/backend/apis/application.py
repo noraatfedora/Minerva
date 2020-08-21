@@ -3,6 +3,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
 from db import  conn, users
+from barcode.writer import ImageWriter
 
 def create_app(test_config=None):
     # create and configure the app
@@ -76,8 +77,6 @@ def create_app(test_config=None):
     from minerva.backend.routes import view_all_orders
 
     app.register_blueprint(view_all_orders.bp)
-    app.jinja_env.globals.update(barcode_to_base64=view_all_orders.barcode_to_base64)
-    app.jinja_env.globals.update(qrcode_to_base64=view_all_orders.qrcode_to_base64)
 
     return app
 

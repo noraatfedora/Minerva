@@ -44,6 +44,9 @@
                     <b>Order ID:</b> {{ orders[order]['id'] }}
                 </div>
                 <div class="card-header">
+                    <b>Name:</b> {{ orders[order]['name'] }}
+                </div>
+                <div class="card-header">
                     <b>Email:</b> {{ orders[order]['email'] }}
                 </div>
                 <div class="card-header">
@@ -64,21 +67,8 @@
                 </div>
                 <hr>
                 <table class="items">
-                    {% set vars = {'numItem': 1} %}
                     {% for item in orders[order]['itemsDict'] %}
-                    {% if orders[order]['itemsDict'][item] != '0' %}
-                        {% if vars.numItem % 4 == 1 %}
-                            <tr class="items">
-                        {% elif vars.numItem % 4 == 0 %}
-                            <td class="items"><b>{{ item }}</b></td>
-                            <td class="items">{{ orders[order]['itemsDict'][item] }}</td>
-                            </tr>
-                        {% else %}
-                            <td class="items"><b>{{ item }}</b></td>
-                            <td class="items">{{ orders[order]['itemsDict'][item] }}</td>
-                        {% endif %}
-                        {% if vars.update({'numItem': vars.numItem + 1}) %}{% endif %}
-                    {% endif %}
+                        <td class="items">{{ item }}</td><tr></tr>
                     {% endfor %}
                 </table>
             </div>
