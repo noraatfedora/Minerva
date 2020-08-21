@@ -55,7 +55,7 @@ def generate_shipping_labels():
     volunteers = getVolunteers()
     ordersDict = getOrders(g.user.id)
     itemsList = loads(conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()['items'])
-    html = render_template("shipping-labels.html", orders=ordersDict, volunteers=volunteers)
+    html = render_template("shipping-labels.html", orders=ordersDict, volunteers=volunteers, barcode_to_base64=barcode_to_base64, qrcode_to_base64=qrcode_to_base64)
     # Uncomment this line for debugging
     #return html
     pdf = pdfkit.from_string(html, False)

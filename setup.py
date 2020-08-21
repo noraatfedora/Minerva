@@ -14,7 +14,8 @@ setup(
         'click==7.1.2',
         'ortools==7.7.7810',
         'pdfkit==0.6.1',
-        'python-barcode==0.11.0',
+        'python-barcode==0.13.1',
+        'Pillow==2.2.1'
         'python-dotenv==0.14.0',
         'qrcode==6.1',
         'requests==2.24.0',
