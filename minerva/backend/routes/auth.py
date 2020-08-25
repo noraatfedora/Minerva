@@ -185,6 +185,7 @@ def change_info():
                     print("Given: " + str(given))
                     query = users.update().where(users.c.id == g.user['id'])
                     values = {
+                        'name': query.values(name=given),
                         'email': query.values(email=given),
                         'address': query.values(address=given),
                         'cellPhone': query.values(cellPhone=given),
@@ -192,7 +193,6 @@ def change_info():
                         'homePhone': query.values(homePhone=given),
                         'requestPageDescription': query.values(requestPageDescription=given)
                     }[attribute]
-                    print("Values: " + str(values))
                     conn.execute(values)
 
         # Remove all of our items, so that we can just cleanly replace it
@@ -211,7 +211,11 @@ def change_info():
             itemsList.append(item[0])
         print("Items list: " + str(itemsList))
         return render_template("auth/changeinfo.html", user=g.user, items=itemsList)
-    return render_template("auth/changeinfo.html", user=g.user)
+    family_raw = conn.execute(family_members.select().where(g.user.id == family_members.c.user)).fetchall()
+    family = []
+    for member in family_raw:
+        family.append([member[1], member[2]])
+    return render_template("auth/changeinfo.html", user=g.user, family_members=family)
 
 
 @bp.route('/volunteerregister', methods=('GET', 'POST'))

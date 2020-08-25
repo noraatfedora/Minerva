@@ -10,44 +10,47 @@
                     <div id="login-box" class="register-form-text">
                         <form id="register-form-text" class="form" action="" method="post">
                             <div class="form-group">
+                                <label for="name">Name</label><br>
+                                <input type="text" name="name" id="name" class="form-control"
+                                    value="{{ user['name'] }}">
+                            </div>
+                            <div class="form-group">
                                 <label for="email">Email</label><br>
                                 <input type="text" name="email" id="email" class="form-control"
-                                    placeholder="{{ user['email'] }}">
+                                    value="{{ user['email'] }}">
                             </div>
                             <div class="form-group">
                                 <label for="address">Home Address</label><br>
                                 <input type="text" name="address" id="address" class="form-control"
-                                    placeholder="{{ user['address'] }}">
+                                    value="{{ user['address'] }}">
                             </div>
                             <div class="form-group">
                                 <label for="cell">Phone Number (Cell)</label><br>
                                 <input type="text" name="cellPhone" id="cellPhone" class="form-control"
-                                    placeholder="{{ user['cellPhone'] }}">
+                                    value="{{ user['cellPhone'] }}">
                             </div>
                             <div class="form-group">
                                 <label for="cell">Phone Number (Landline, Optional)</label><br>
                                 <input type="text" name="homePhone" id="homePhone" class="form-control"
-                                    placeholder="{{ user['homePhone'] }}">
+                                    value="{{ user['homePhone'] }}">
                             </div>
                             <div class="form-group">
                                 <label for="cell">Special Instructions (Optional)</label><br>
-                                <textarea type="text" name="instructions" id="instructions" class="form-control"
-                                    placeholder="{{ user['instructions'] }}"></textarea>
+                                <textarea type="text" name="instructions" id="instructions" class="form-control">{{ user['instructions'] }}</textarea>
                             </div>
                             {% if g.user.role=="ADMIN" %}
                             <h2>Admin tools</h2>
                             <label for="cell">Request page description</label><br>
-                            <textarea type="text" name="requestPageDescription" id="requestPageDescription"
-                                class="form-control" placeholder="{{ user['requestPageDescription'] }}"></textarea>
-
-                            {% endif %}
+                            <textarea type="text" name="requestPageDescription" id="requestPageDescription" class="form-control"
+                                placeholder="{{ user['requestPageDescription'] }}"></textarea>
                             <br>
                             <label for="cell">Add/remove available items</label>
                             <button class="add-remove-button" onclick="event.preventDefault(); addItem()"><b>+</b></button>
                             {% for i in range(items | length) %}
                             <div id="item-field-{{ i }}">
                                 <div class="input-group">
-                                    <input type="text" name="name{{ items[i] }}" id="name{{ items[i] }}" class="form-control width100" value="{{ items[i] }}"> 
+                                    <input type="text" name="name{{ items[i] }}" id="name{{ items[i] }}" class="form-control width100"
+                                        value="{{ items[i] }}">
                                     <span class="input-group-btn">
                                         <button class="add-remove-button" onclick="event.preventDefault(); removeItem({{i}})"><b>–</b></button>
                                     </span>
@@ -55,8 +58,34 @@
                                 <br>
                             </div>
                             {% endfor %}
+                            {% endif %}
+
+                            {% if g.user.role=="RECIEVER" %}
+                                <b>Members of your household</b>
+                                <button class="add-remove-button" onclick="event.preventDefault(); addMember()">
+                                    +
+                                </button>
+                                <div id="household-members">
+                                    {% for indexMember in range(family_members | length) %}
+                                    <div id="household-member-{{indexMember}}">
+                                        <div class="form-group">
+                                        <input type="text" name="name{{indexMember}}" id="name{{indexMember}}" class="form-control"
+                                            placeholder="Name" value="{{family_members[indexMember][0]}}">
+                                        <small>Error message</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="race{{indexMember}}" id="race{{indexMember}}" class="form-control"
+                                                placeholder="Race" value="{{family_members[indexMember][1]}}">
+                                            <small>Error message</small>
+                                        </div>
+                                        <button class="add-remove-button" onclick="event.preventDefault(); removeMember({{indexMember}})">–</button>
+                                        <br>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
                             <div id="item-fields"></div>
-                        
                             <div class="form-group">
                                 <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Save
                                     Changes</button>
