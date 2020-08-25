@@ -1,4 +1,5 @@
 let index = 0;
+let indexMember = 0;
 
 function verifyForm() {
     let form = document.forms["register"]
@@ -13,7 +14,7 @@ function verifyForm() {
     valid = setValidation(form["zipCode"], 'Zip code cannot be empty', form["zipCode"].value !== '') && valid;
     valid = setValidation(form["cell"], 'Phone number must be valid', validatePhone(form["cell"].value)) && valid;
 
-    for (let i = 0; i < index; i++) {
+    for (let i = 0; i < indexMember; i++) {
         console.log(form[`name${i}`].value);
         console.log(form[`race${i}`].value);
         valid = setValidation(form[`name${i}`], 'Field cannot be empty', form[`name${i}`].value !== '') && valid;
@@ -68,6 +69,32 @@ function addItem(item) {
 
     document.querySelector("#item-fields").insertAdjacentHTML('beforeend', fields);
     index++;
+}
+
+function addMember() {
+    const fields =
+    `<div id="household-member-${indexMember}">
+        <div class="form-group">
+        <input type="text" name="name${indexMember}" id="name${indexMember}" class="form-control"
+            placeholder="Name">
+        <small>Error message</small>
+        </div>
+        <div class="form-group">
+            <input type="text" name="race${indexMember}" id="race${indexMember}" class="form-control"
+                placeholder="Race">
+            <small>Error message</small>
+        </div>
+        <button class="add-remove-button" onclick="event.preventDefault(); removeMember(${indexMember})">–</button>
+        <br>
+    </div>`;
+
+    document.querySelector("#household-members").insertAdjacentHTML('beforeend', fields);
+    indexMember++;
+}
+
+function removeMember(toRemove) {
+    const select = document.getElementById("household-member-" + toRemove);
+    select.parentNode.removeChild(select);
 }
 
 function removeItem(toRemove) {
