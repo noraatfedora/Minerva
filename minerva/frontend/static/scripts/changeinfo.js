@@ -1,5 +1,5 @@
-let index = 0;
-let indexMember = 0;
+let index = -1;
+let indexMember = -1;
 
 function verifyForm() {
     let form = document.forms["register"]
@@ -68,7 +68,7 @@ function addItem(item) {
     </div>`;
 
     document.querySelector("#item-fields").insertAdjacentHTML('beforeend', fields);
-    index++;
+    index--;
 }
 
 function addMember() {
@@ -89,7 +89,7 @@ function addMember() {
     </div>`;
 
     document.querySelector("#household-members").insertAdjacentHTML('beforeend', fields);
-    indexMember++;
+    indexMember--;
 }
 
 function removeMember(toRemove) {
