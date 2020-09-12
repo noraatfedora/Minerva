@@ -44,7 +44,9 @@ dietaryRestrictions = ["Lactose Intolerant",
 
 
 def fetch_delete(key, dictionary):
-    value = dictionary[key]
+    value = None
+    if key in dictionary:
+        value = dictionary[key]
     dictionary.pop(key, None)
     return value
 
@@ -54,41 +56,89 @@ def all_users():
     if request.method == "GET":
         return render_template('all_users.html', title='All Users')
 
-    file = request.files.get('users')
-    filename = file.filename
-    splitname = filename.split(".")
-    fileType = splitname[len(splitname) - 1]
+    if 'name' in request.form:
+        form = request.form.to_dict()
 
-    df = pd.DataFrame()
-    if (fileType == 'csv'):
-        df = pd.read_csv(request.files['users'], skiprows=1)
+        name = fetch_delete('name', form)
+        birthday = fetch_delete('birthday', form)
+        email = fetch_delete('email', form)
+        password = fetch_delete('password', form)
+        confirm = fetch_delete('confirm', form)
+        address = fetch_delete('address', form)
+        zipCode = fetch_delete('zipCode', form)
+        cellPhone = fetch_delete('cell', form)
+        homePhone = fetch_delete('homePhone', form)
+        instructions = fetch_delete('instructions', form)
+        restrictions = []
+
+        for restriction in dietaryRestrictions:
+            if restriction in request.form:
+                restrictions.append(restriction)
+        error = ""
+
+        with open("minerva/backend/apis/database/supported_zip_codes", 'r') as f:
+            supportedZipCodes = f.read()
+
+        if zipCode[0:5] not in supportedZipCodes:
+            error = "Sorry, but your zip code is not supported at this time. Please contact your local food banks."
+        elif conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
+            error += '\nUser {} is already registered.'.format(email)
+
+        if error == "":
+            conn.execute(users.insert(), name=name, birthday=birthday, email=email, address=address,
+                         role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
+                         zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), restrictions=dumps(restrictions))
+
+            user_id = conn.execute(users.select().where(
+                users.c.email == email)).fetchone().id
+
+            for key in list(form):
+                if ('name' not in key and 'race' not in key):
+                    form.pop(key, None)
+
+            # Get list of keys
+            keys = [*form]
+
+            for i in range(0, len(keys), 2):
+                conn.execute(family_members.insert(), user=user_id,
+                             name=form[keys[i]], race=form[keys[i + 1]])
+    
     else:
-        df = pd.read_excel(request.files['users'], skiprows=1)
-    df = df.dropna(thresh=2)
+        file = request.files.get('users')
+        filename = file.filename
+        splitname = filename.split(".")
+        fileType = splitname[len(splitname) - 1]
 
-    for index, row in df.iterrows():
-        # This checks to make sure email is not nan
-        if (row['Email'] == row['Email']):
-            if conn.execute(users.select().where(users.c.email == row['Email'])).fetchone() is not None:
-                continue
+        df = pd.DataFrame()
+        if (fileType == 'csv'):
+            df = pd.read_csv(request.files['users'], skiprows=1)
         else:
-            if conn.execute(users.select().where(users.c.address == row['Address 1'])).fetchone() is not None and conn.execute(users.select().where(users.c.address2 == row['Address 2'])).fetchone() is not None:
-                continue
+            df = pd.read_excel(request.files['users'], skiprows=1)
+        df = df.dropna(thresh=2)
 
-        conn.execute(users.insert(),
-                     name=str(row['First Name']) + " " + str(row['Last Name']),
-                     email=row['Email'],
-                     address=row['Address 1'],
-                     address2=row['Address 2'],
-                     role="RECIEVER",
-                     instructions=row['Notes'],
-                     cellPhone=row['Phone Number'],
-                     zipCode=row['Zip'],
-                     city=row['City'],
-                     state=row['State'],
-                     householdSize=row['Household Size'],
-                     completed=0,
-                     foodBankId=getFoodBank(row['Address 1']))
+        for index, row in df.iterrows():
+            # This checks to make sure email is not nan
+            if (row['Email'] == row['Email']):
+                if conn.execute(users.select().where(users.c.email == row['Email'])).fetchone() is not None:
+                    continue
+            else:
+                if conn.execute(users.select().where(users.c.address == row['Address 1'])).fetchone() is not None and conn.execute(users.select().where(users.c.name == str(row['First Name']) + " " + str(row['Last Name']))).fetchone() is not None:
+                    continue
+
+            conn.execute(users.insert(),
+                        name=str(row['First Name']) + " " + str(row['Last Name']),
+                        email=row['Email'],
+                        address=row['Address 1'],
+                        address2=row['Address 2'],
+                        role="RECIEVER",
+                        instructions=row['Notes'],
+                        cellPhone=row['Phone Number'],
+                        zipCode=row['Zip'],
+                        city=row['City'],
+                        state=row['State'],
+                        householdSize=row['Household Size'],
+                        completed=0,
+                        foodBankId=getFoodBank(row['Address 1']))
 
     return render_template('all_users.html', title='All Users')
 
