@@ -66,6 +66,13 @@
                         <strong>Volunteer Settings</strong>
                         {% endif %}
                     </a>
+                    <a class="nav-item nav-link" href="{{ url_for('auth.all_users') }}" id="navtext">
+                        {% if request.path == "/all_users" %}
+                        <strong style="color:white;">Upload Users</strong>
+                        {% else %}
+                        <strong>Upload Users</strong>
+                        {% endif %}
+                    </a>
                     {% endif %}
                 </div>
                 <div class="navbar-nav ml-auto">

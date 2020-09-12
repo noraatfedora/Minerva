@@ -45,7 +45,6 @@
                                 placeholder="{{ user['requestPageDescription'] }}"></textarea>
                             <br>
                             <label for="cell">Add/remove available items</label>
-                            <button class="add-remove-button" onclick="event.preventDefault(); addItem()"><b>+</b></button>
                             {% for i in range(items | length) %}
                             <div id="item-field-{{ i }}">
                                 <div class="input-group">
@@ -58,6 +57,8 @@
                                 <br>
                             </div>
                             {% endfor %}
+                            <div id="item-fields"></div>
+                            <button class="add-remove-button" onclick="event.preventDefault(); addItem()"><b>+</b></button>
                             {% endif %}
 
                             {% if g.user.role=="RECIEVER" %}
@@ -85,7 +86,6 @@
                                 </div>
                             {% endif %}
 
-                            <div id="item-fields"></div>
                             <div class="form-group">
                                 <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Save
                                     Changes</button>

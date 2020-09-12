@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if g.user.role=="ADMIN" %}
+<center>
+    <h2 style="margin-bottom: 24px;">
+        Upload Data
+    </h2>
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="users" accept=".csv,.xlsx" />
+        <input type="submit" value="Submit">
+    </form>
+</center>
+{% endif %}
+{% endblock content %}
