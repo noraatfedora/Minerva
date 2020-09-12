@@ -37,6 +37,7 @@ users = Table(
     Column('instructions', String(255)),
     Column('homePhone', String(15)),
     Column('address', String(40)),
+    Column('address2', String(40)),
     Column('zipCode', Integer),
     # for volunteers
     Column('approved', Boolean),
@@ -56,6 +57,9 @@ users = Table(
     Column('restrictions', String(255)),
     Column('requestPageDescription', String(255)), # for food bank, changes what's on the request page
     Column('birthday', String()),
+    Column('city', String()),
+    Column('state', String()),
+    Column('householdSize', Integer),
 )
 
 family_members = Table(

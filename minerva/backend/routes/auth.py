@@ -9,6 +9,7 @@ from json import loads, dumps
 from os import environ
 from sys import path
 from minerva.backend.apis.email import send_new_volunteer_request_notification
+import pandas as pd
 
 bp = Blueprint('auth', __name__)
 
@@ -48,6 +49,49 @@ def fetch_delete(key, dictionary):
     return value
 
 
+@bp.route('/all_users', methods=('GET', 'POST'))
+def all_users():
+    if request.method == "GET":
+        return render_template('all_users.html', title='All Users')
+
+    file = request.files.get('users')
+    filename = file.filename
+    splitname = filename.split(".")
+    fileType = splitname[len(splitname) - 1]
+
+    df = pd.DataFrame()
+    if (fileType == 'csv'):
+        df = pd.read_csv(request.files['users'], skiprows=1)
+    else:
+        df = pd.read_excel(request.files['users'], skiprows=1)
+    df = df.dropna(thresh=2)
+
+    for index, row in df.iterrows():
+        # This checks to make sure email is not nan
+        if (row['Email'] == row['Email']):
+            if conn.execute(users.select().where(users.c.email == row['Email'])).fetchone() is not None:
+                continue
+        else:
+            if conn.execute(users.select().where(users.c.address == row['Address 1'])).fetchone() is not None and conn.execute(users.select().where(users.c.address2 == row['Address 2'])).fetchone() is not None:
+                continue
+
+        conn.execute(users.insert(),
+                     name=str(row['First Name']) + " " + str(row['Last Name']),
+                     email=row['Email'],
+                     address=row['Address 1'],
+                     address2=row['Address 2'],
+                     role="RECIEVER",
+                     instructions=row['Notes'],
+                     cellPhone=row['Phone Number'],
+                     zipCode=row['Zip'],
+                     city=row['City'],
+                     state=row['State'],
+                     householdSize=row['Household Size'],
+                     completed=0,
+                     foodBankId=getFoodBank(row['Address 1']))
+
+    return render_template('all_users.html', title='All Users')
+
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
@@ -82,10 +126,11 @@ def register():
             password_hash = generate_password_hash(password)
 
             conn.execute(users.insert(), name=name, birthday=birthday, email=email, password=password_hash, address=address,
-                                  role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
-                                  zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), restrictions=dumps(restrictions))
+                         role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
+                         zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), restrictions=dumps(restrictions))
 
-            user_id = conn.execute(users.select().where(users.c.email == email)).fetchone().id
+            user_id = conn.execute(users.select().where(
+                users.c.email == email)).fetchone().id
 
             for key in list(form):
                 if ('name' not in key and 'race' not in key):
@@ -95,7 +140,8 @@ def register():
             keys = [*form]
 
             for i in range(0, len(keys), 2):
-                conn.execute(family_members.insert(), user=user_id, name=form[keys[i]], race=form[keys[i + 1]])
+                conn.execute(family_members.insert(), user=user_id,
+                             name=form[keys[i]], race=form[keys[i + 1]])
 
             return redirect(url_for('auth.login'))
         else:
@@ -211,7 +257,8 @@ def change_info():
             itemsList.append(item[0])
         print("Items list: " + str(itemsList))
         return render_template("auth/changeinfo.html", user=g.user, items=itemsList)
-    family_raw = conn.execute(family_members.select().where(g.user.id == family_members.c.user)).fetchall()
+    family_raw = conn.execute(family_members.select().where(
+        g.user.id == family_members.c.user)).fetchall()
     family = []
     for member in family_raw:
         family.append([member[1], member[2]])

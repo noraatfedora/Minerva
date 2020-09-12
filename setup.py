@@ -20,6 +20,8 @@ setup(
         'qrcode==6.1',
         'requests==2.24.0',
         'sendgrid==6.4.4',
-        'yagmail==0.11.224'
+        'yagmail==0.11.224',
+        'pandas==1.1.2'
+        'xlrd==1.2.0'
     ],
 )
