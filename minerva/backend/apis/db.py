@@ -37,6 +37,7 @@ users = Table(
     Column('instructions', String(255)),
     Column('homePhone', String(15)),
     Column('address', String(40)),
+    Column('address2', String(40)),
     Column('zipCode', Integer),
     # for volunteers
     Column('approved', Boolean),
@@ -56,13 +57,13 @@ users = Table(
     Column('checkedIn', String(15)),
     Column('restrictions', String(255)),
     Column('requestPageDescription', String(255)), # for food bank, changes what's on the request page
-    Column('birthday', Date()),
 
     Column('lastDelivered', DateTime()), # So that we can prioritize routes
     Column('latitude', Float()), # Save lat and long so we do less API calls
     Column('longitude', Float()),
     # After we get the lat and long, we also get GM's prefered format of saying the address (which would be good for drivers to have)
     Column('formattedAddress', Float())
+    Column('birthday', Date()),
 )
 
 family_members = Table(
