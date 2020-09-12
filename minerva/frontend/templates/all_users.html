@@ -2,14 +2,76 @@
 {% block content %}
 
 {% if g.user.role=="ADMIN" %}
-<center>
-    <h2 style="margin-bottom: 24px;">
-        Upload Data
-    </h2>
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="users" accept=".csv,.xlsx" />
-        <input type="submit" value="Submit">
-    </form>
-</center>
+
+<body>
+    <script defer type=text/javascript src="{{url_for('static', filename='scripts/all_users.js') }}"></script>
+    <center>
+        <h2 style="margin-bottom: 24px;">
+            Upload Data
+        </h2>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="users" accept=".csv,.xlsx" />
+            <input type="submit" value="Submit">
+        </form>
+
+        <h2 style="margin-top: 36px">
+            Manual Entery
+        </h2>
+
+        <form name="register" id="register-form-text" class="form" action="" method="post"
+            onsubmit="event.preventDefault(); verifyForm()">
+            <div class="form-group">
+                <input type="text" name="name" id="name" class="form-control" placeholder="Name">
+                <small>Error message</small>
+            </div>
+            <div class="form-group">
+                <input type="text" name="email" id="email" class="form-control" placeholder="Email">
+                <small>Error message</small>
+            </div>
+            <div class="form-group">
+                <input type="address" name="address" id="address" class="form-control" placeholder="Address Line 1">
+                <small>Error message</small>
+            </div>
+            <div class="form-group">
+                <input type="address" name="address2" id="address2" class="form-control"
+                    placeholder="Address Line 2 (Optional)">
+            </div>
+            <div class="form-group">
+                <input type="number" name="zipCode" id="zipCode" class="form-control" placeholder="Zip Code">
+                <small>Error message</small>
+            </div>
+            <div class="form-group">
+                <input type="text" name="cell" id="cell" class="form-control" placeholder="Phone Number (Cell)">
+                <small>Error message</small>
+            </div>
+            <div class="form-group">
+                <input type="text" name="homePhone" id="homePhone" class="form-control"
+                    placeholder="Landline (Optional)">
+            </div>
+            <div class="form-group">
+                <textarea type="text" name="instructions" id="instructions" class="form-control"
+                    placeholder="Special Instructions (Optional)"></textarea>
+            </div>
+            {% for restriction in dietaryRestrictions %}
+            <div class="custom-control custom-checkbox">
+                <input name="{{restriction}}" type="checkbox" class="custom-control-input" id="{{restriction}}">
+                <label class="custom-control-label" for="{{restriction}}">{{restriction}}</label>
+            </div>
+            {% endfor %}
+            <br>
+            <b>Members of your household</b>
+            <button class="add-remove-button" onclick="event.preventDefault(); addMember()">
+                +
+            </button>
+            <div id="household-members"></div>
+            You must list all names of people living in your household or you will not recieve food for them.
+            <div class="form-group">
+                <button class="btn bw-btn center-block blue-hover" type="submit">
+                    Register
+                </button>
+            </div>
+        </form>
+    </center>
+</body>
 {% endif %}
 {% endblock content %}
