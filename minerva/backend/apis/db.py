@@ -1,7 +1,7 @@
 import click
 import json
 from flask import current_app, g, Flask
-from sqlalchemy import create_engine, Table, Column, Date, Integer, String, MetaData, Boolean
+from sqlalchemy import create_engine, Table, Column, Float, Date, DateTime, Integer, String, MetaData, Boolean
 from sqlalchemy.orm import session, sessionmaker
 from flask.cli import with_appcontext
 import sys
@@ -43,6 +43,7 @@ users = Table(
     Column('volunteerRole', String(10)),
     # Store for food banks, not volunteers
     Column('maxOrders', Integer),
+    Column('routes', String()), # big long json, specific to food bank
 
     Column('items', String()),
     # for both users and volunteers
@@ -55,7 +56,13 @@ users = Table(
     Column('checkedIn', String(15)),
     Column('restrictions', String(255)),
     Column('requestPageDescription', String(255)), # for food bank, changes what's on the request page
-    Column('birthday', String()),
+    Column('birthday', Date()),
+
+    Column('lastDelivered', DateTime()), # So that we can prioritize routes
+    Column('latitude', Float()), # Save lat and long so we do less API calls
+    Column('longitude', Float()),
+    # After we get the lat and long, we also get GM's prefered format of saying the address (which would be good for drivers to have)
+    Column('formattedAddress', Float())
 )
 
 family_members = Table(
