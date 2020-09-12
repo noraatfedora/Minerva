@@ -8,6 +8,7 @@ from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from os import environ
 from datetime import date
 import math
+from flask import g
 from db import orders, users, conn
 from sqlalchemy import select, and_
 
@@ -138,7 +139,7 @@ def get_order_assignments(num_vehicles):
 
     return get_solution(data, manager, routing, solution)
 
-def createAllRoutes(foodBankId=g.user.id, num_vehicles=40):
+def createAllRoutes(foodBankId, num_vehicles=40):
     '''
     addresses = ['3610+Hacks+Cross+Rd+Memphis+TN', # depot
                      '1921 Elvis+Presley Blvd Memphis TN',
