@@ -7,63 +7,62 @@ import urllib.request
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from os import environ
 from datetime import date
+import math
 from db import orders, users, conn
 from sqlalchemy import select, and_
 
+
+def create_data(num_vehicles):
+    data = {}
+
+    data['API_key'] = environ['GOOGLE_API']
+    data['addresses'] = conn.execute(
+        select([users.c.formattedAddress])).fetchAll()
+
+    data['num_vehicles'] = num_vehicles
+    data['depot'] = 0
+    data['addresses'].insert(0, g.user.formattedAddress)
+
+    data['vehicle_capacities'] = []
+    maximumStops = len(data['addresses'])/data['num_vehicles'] + 2
+    for vehicleNum in range(data['num_vehicles']):
+        data['vehicle_capacities'].append(maximumStops)
+
+    return data
+# Haversine formula, gets distance in meeters between coords
+
+
+def measure(lat1, lon1, lat2, lon2):
+    # no idea how this works but stackoverflow does
+    R = 6378.137  # radius of earth in KM
+    dLat = lat2 * math.pi / 180 - lat1 * math.pi / 180
+    dLon = lon2 * math.pi / 180 - lon1 * math.pi / 180
+    a = math.sin(dLat/2) * math.sin(dLat/2) + \
+        math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * \
+        math.sin(dLon/2) * math.sin(dLon/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = R * c
+    return d * 1000
+
+
+def demand_callback(from_index):
+    return 1
+
+
 def create_distance_matrix(data):
-    addresses = data["addresses"]
-    API_key = data["API_key"]
-    # Distance Matrix API only accepts 100 elements per request, so get rows in multiple requests.
-    max_elements = 100
-    num_addresses = len(addresses)  # 16 in this example.
-    # Maximum number of rows that can be computed per request (6 in this example).
-    max_rows = max_elements // num_addresses
-    # num_addresses = q * max_rows + r (q = 2 and r = 4 in this example).
-    q, r = divmod(num_addresses, max_rows)
-    dest_addresses = addresses
     distance_matrix = []
-    # Send q requests, returning max_rows rows per request.
-    for i in range(q):
-        origin_addresses = addresses[i * max_rows: (i + 1) * max_rows]
+    userList = conn.execute(users.select()).fetchall()
+    for fromUser in userList:
+        #row_list = [row['elements'][j]['distance']['value'] for j in range(len(row['elements']))]
+        row_list = []
+        for toUser in userList:
+            row_list.append(measure(
+                fromUser.latitude, fromUser.longitude, toUser.latitude, toUser.longitude))
 
-    # Get the remaining remaining r rows, if necessary.
-    if r > 0:
-        origin_addresses = addresses[q * max_rows: q * max_rows + r]
-        response = send_request(origin_addresses, dest_addresses, API_key)
-        distance_matrix += build_distance_matrix(response)
-    return distance_matrix
-
-
-def send_request(origin_addresses, dest_addresses, API_key):
-    """ Build and send request for the given origin and destination addresses."""
-    def build_address_str(addresses):
-        # Build a pipe-separated string of addresses
-        address_str = ''
-        for i in range(len(addresses) - 1):
-            address_str += addresses[i].replace(' ', '+') + '|'
-        address_str += addresses[-1]
-        return address_str
-
-    request = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial'
-    origin_address_str = build_address_str(origin_addresses)
-    dest_address_str = build_address_str(dest_addresses)
-    request = request + '&origins=' + origin_address_str + '&destinations=' + \
-        dest_address_str + '&key=' + API_key
-    jsonResult = urllib.request.urlopen(request).read()
-    response = json.loads(jsonResult)
-    return response
-
-
-
-def build_distance_matrix(response):
-    distance_matrix = []
-    for row in response['rows']:
-        row_list = [row['elements'][j]['duration']['value']
-                    for j in range(len(row['elements']))]
         distance_matrix.append(row_list)
+
     return distance_matrix
 
-# Returns a 2D array of addresses
 def get_solution(data, manager, routing, solution):
     """Prints solution on console."""
     max_route_distance = 0
@@ -82,17 +81,11 @@ def get_solution(data, manager, routing, solution):
         toReturn.append(toAppend)
     return toReturn
 
-def get_order_assignments(orders, num_vehicles, foodBankAddress):
+
+def get_order_assignments(num_vehicles):
     """Solve the CVRP problem."""
     # Instantiate the data problem.
-    data = {}
-    data['addresses'] = []
-    for order in orders:
-        data['addresses'].append(conn.execute(select([users.c.address]).where(users.c.id==order.userId)).fetchone()[0].replace(' ', '+'))
-    data['API_key'] = environ['GOOGLE_API']
-    data['distance_matrix'] = create_distance_matrix(data)
-    data['depot'] = 0
-    data['num_vehicles'] = num_vehicles
+    data = create_data(num_vehicles)
 
     # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
@@ -101,8 +94,8 @@ def get_order_assignments(orders, num_vehicles, foodBankAddress):
     # Create Routing Model.
     routing = pywrapcp.RoutingModel(manager)
 
-
     # Create and register a transit callback.
+
     def distance_callback(from_index, to_index):
         """Returns the distance between the two nodes."""
         # Convert from routing variable Index to distance matrix NodeIndex.
@@ -111,6 +104,7 @@ def get_order_assignments(orders, num_vehicles, foodBankAddress):
         return data['distance_matrix'][from_node][to_node]
 
     transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+    demand_callback_index = routing.RegisterTransitCallback(demand_callback)
 
     # Define cost of each arc.
     routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
@@ -126,6 +120,14 @@ def get_order_assignments(orders, num_vehicles, foodBankAddress):
     distance_dimension = routing.GetDimensionOrDie(dimension_name)
     distance_dimension.SetGlobalSpanCostCoefficient(100)
 
+    routing.AddDimensionWithVehicleCapacity(
+        demand_callback_index,
+        0,
+        data['vehicle_capacities'],
+        True,
+        'Capacity'
+    )
+
     # Setting first solution heuristic.
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
@@ -136,8 +138,7 @@ def get_order_assignments(orders, num_vehicles, foodBankAddress):
 
     return get_solution(data, manager, routing, solution)
 
-# this is the one
-def assignAllOrders(foodBankId):
+def createAllRoutes(foodBankId=g.user.id, num_vehicles=40):
     '''
     addresses = ['3610+Hacks+Cross+Rd+Memphis+TN', # depot
                      '1921 Elvis+Presley Blvd Memphis TN',
@@ -157,24 +158,32 @@ def assignAllOrders(foodBankId):
                      '1005+Tillman+St+Memphis+TN'
                     ]
     '''
-    ordersList = conn.execute(orders.select().where(and_(orders.c.bagged==1, orders.c.completed==0))).fetchall()
-    print("Orders List: " + str(ordersList))
-    volunteersList = conn.execute(users.select().where(and_(users.c.role=="VOLUNTEER", users.c.approved==True, users.c.foodBankId==foodBankId, users.c.checkedIn==date.today()))).fetchall()
-    foodBankAddr = conn.execute(select([users.c.address]).where(users.c.id==foodBankId)).fetchone()[0]
-    assignments = get_order_assignments(ordersList, len(volunteersList), foodBankAddr)
+    usersList = conn.execute(users.select().where(
+        users.c.role=="RECIEVER"
+    )).fetchall()
+    volunteersList = conn.execute(users.select().where(and_(users.c.role == "VOLUNTEER", users.c.approved ==
+                                                            True, users.c.foodBankId == foodBankId, users.c.checkedIn == date.today()))).fetchall()
+    assignments = get_order_assignments(num_vehicles)
+    route = []
     for i in range(len(assignments)):
         volunteer = volunteersList[i]
-        orderIdList = [] # sorted list to store as column with volunteer
+        orderIdList = []  # sorted list to store as column with volunteer
         for addr in assignments[i]:
             addr = addr.replace('+', ' ')
-            userId = conn.execute(select([users.c.id]).where(users.c.address==addr)).fetchone()[0]
-            orderId = conn.execute(select([orders.c.id]).where(and_(orders.c.userId==userId, orders.c.completed==0, orders.c.bagged==1))).fetchone()[0]
+            userId = conn.execute(select([users.c.id]).where(
+                users.c.address == addr)).fetchone()[0]
+            orderId = conn.execute(select([orders.c.id]).where(and_(
+                orders.c.userId == userId, orders.c.completed == 0, orders.c.bagged == 1))).fetchone()[0]
             print("Order id:" + str(orderId))
-            conn.execute(orders.update().where(orders.c.id==orderId).values(volunteerId=volunteer.id))
+            conn.execute(orders.update().where(
+                orders.c.id == orderId).values(volunteerId=volunteer.id))
             orderIdList.append(orderId)
         print("Order id list: " + str(orderIdList))
-        conn.execute(users.update().where(users.c.id==volunteer.id).values(ordering=json.dumps(orderIdList)))
+        route.append(orderIdList)
     print("Volunteers: " + str(volunteersList))
+    routeJson = json.dumps(route)
+    conn.execute(users.update().where(users.c.id==g.user.id).values(routes=routeJson))
 
 
-#assignAllOrders(2)
+
+# assignAllOrders(2)
