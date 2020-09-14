@@ -62,8 +62,8 @@ users = Table(
     Column('latitude', Float()), # Save lat and long so we do less API calls
     Column('longitude', Float()),
     # After we get the lat and long, we also get GM's prefered format of saying the address (which would be good for drivers to have)
-    Column('formattedAddress', Float())
-    Column('birthday', Date()),
+    Column('formattedAddress', String()),
+    Column('birthday', Date())
 )
 
 family_members = Table(
