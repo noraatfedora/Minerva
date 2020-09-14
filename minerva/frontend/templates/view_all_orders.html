@@ -3,17 +3,7 @@
 <center>
     <h2>All orders</h2>
     <br>
-    {% if checkedIn %}
-    <h3>Checked in drivers:</h3>
-    <ul>
-        {% for volunteer in checkedIn %}
-        <li>{{ volunteer.name }}</li>
-        {% endfor %}
-    </ul>
-    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn blue-hover">Assign all routes automatically</a>
-    {% else %}
-    You can assign all routes automatically once a driver checks in.
-    {% endif %}
+    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn blue-hover">Generate new routes for this week</a>
     <div class="spacer"> </div>
     <a href="/shipping_labels" target="_blank" name="shipping_labels" class="btn bw-btn blue-hover">Generate shipping labels</a>
     <div class="spacer"></div>
