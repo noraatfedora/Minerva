@@ -15,6 +15,12 @@ from sqlalchemy import select, and_
 
 
 def create_data(num_vehicles):
+
+    '''
+    with open("minerva/data.json", "r") as jsonFile:
+        return json.load(jsonFile)
+    '''
+
     data = {}
 
     data['API_key'] = environ['GOOGLE_API']
@@ -27,8 +33,9 @@ def create_data(num_vehicles):
     data['users'].insert(0, g.user)
 
     data['vehicle_capacities'] = []
-    #maximumStops = len(data['users'])/data['num_vehicles'] + 5
-    maximumStops = 500
+    maximumStops = len(data['users'])/data['num_vehicles'] + 5
+    print("Maximum stops: " + str(maximumStops))
+    #maximumStops = 500
     for vehicleNum in range(data['num_vehicles']):
         data['vehicle_capacities'].append(maximumStops)
 
@@ -112,43 +119,78 @@ def get_solution(data, manager, routing, solution):
 
 
 def get_order_assignments(num_vehicles, data):
+
     """Solve the CVRP problem."""
+
     # Instantiate the data problem.
 
+    #sdfdsfljk = spreadsheet[spreadsheet['Address 1'] != start_address]
+
+    data = create_data(num_vehicles=40)
+
+    #add_coords_to_df(spreadsheet, data)
+
+
     # Create the routing index manager.
-    manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
-                                           data['num_vehicles'], data['depot'])
+
+    manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']), data['num_vehicles'], data['depot'])
+
+
 
     # Create Routing Model.
+
     routing = pywrapcp.RoutingModel(manager)
+
+
+
+
 
     # Create and register a transit callback.
 
     def distance_callback(from_index, to_index):
+
         """Returns the distance between the two nodes."""
+
         # Convert from routing variable Index to distance matrix NodeIndex.
+
         from_node = manager.IndexToNode(from_index)
+
         to_node = manager.IndexToNode(to_index)
+
         return data['distance_matrix'][from_node][to_node]
 
+
+
     transit_callback_index = routing.RegisterTransitCallback(distance_callback)
-    #demand_callback_index = routing.RegisterUnaryTransitCallback(demand_callback)
+    demand_callback_index = routing.RegisterUnaryTransitCallback(demand_callback)
+
 
     # Define cost of each arc.
+
     routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
 
+
+
     # Add Distance constraint.
+
     dimension_name = 'Distance'
+
     routing.AddDimension(
+
         transit_callback_index,
+
         0,  # no slack
-        30000,  # vehicle maximum travel distance
+
+        90000,  # vehicle maximum travel distance
+
         True,  # start cumul to zero
+
         dimension_name)
+
     distance_dimension = routing.GetDimensionOrDie(dimension_name)
+
     distance_dimension.SetGlobalSpanCostCoefficient(100)
 
-    '''
     routing.AddDimensionWithVehicleCapacity(
         demand_callback_index,
         0,
@@ -156,18 +198,23 @@ def get_order_assignments(num_vehicles, data):
         True,
         'Capacity'
     )
-    '''
+
+
 
     # Setting first solution heuristic.
+
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
-    search_parameters.solution_limit = 100
+
     search_parameters.first_solution_strategy = (
+
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
 
+
+
     # Solve the problem.
-    print("Solving with parameters...")
+
     solution = routing.SolveWithParameters(search_parameters)
-    print("Done!")
+
     return get_solution(data, manager, routing, solution)
 
 def createAllRoutes(foodBankId, num_vehicles=40):
