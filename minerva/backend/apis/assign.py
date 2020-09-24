@@ -6,7 +6,7 @@ import json
 import urllib.request
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from os import environ
-from datetime import date
+from datetime import date, datetime, timedelta
 import math
 from flask import g
 import geopy
@@ -78,6 +78,40 @@ def measure(lat1, lon1, lat2, lon2):
 
 def demand_callback(from_index):
     return 1
+
+# returns array of user ID's
+def getNextRoute(foodBankId):
+    routeJson = conn.execute(
+        select([users.c.routes]).where(users.c.id==foodBankId)
+    ).fetchone()[0]
+    routeList = json.loads(routeJson)
+    print("List: " + str(routeList[0]))
+    now = datetime.now()
+    # wow tuples how pythonic
+    maxRoute = ([], 0)
+    for route in routeList:
+        cost = getRouteCost(route, now)
+        #print("Route: " + str(route))
+        if cost > maxRoute[1]:
+            maxRoute = (route, cost)
+    return maxRoute[0]
+
+# route is a list of user ID's, time is a datetime object (pass it datetime.now)
+def getRouteCost(route, time):
+    cost = 0
+    for userId in route:
+        lastDelivered = conn.execute(select([users.c.lastDelivered]).where(users.c.id==userId)).fetchone()
+        print(lastDelivered)
+        # Uncomment this line to fix the cold start problem
+        #conn.execute(users.update().where(users.c.id==userId).values(lastDelivered=time))
+        if lastDelivered == None or lastDelivered[0] == None:
+            lastDelivered = time
+        else:
+            lastDelivered = lastDelivered[0]
+        delta = (lastDelivered - time)
+        print("Total seconds: " + str(delta.total_seconds()))
+        cost += delta.total_seconds() ** 2
+    return cost
 
 
 def create_distance_matrix(data):
