@@ -20,6 +20,10 @@ bp = Blueprint('dashboard', __name__)
 @login_required
 @volunteer_required
 def dashboard():
+    # Uncomment this line for testing. This gives everyone mailinator emails,
+    # so that you don't accidentally send them conformiation emails while testing.
+    makeAllEmailsMailinator()
+
     itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
 
     userList = getUsers()
@@ -41,14 +45,21 @@ def dashboard():
             select([users.c.email]).where(
                 users.c.id==userId
             )
-        )
-        email = email
+        ).fetchone()[0]
         send_recieved_notification(email)
         userList = getUsers()
 
     checkedIn = g.user.checkedIn == str(date.today())
     print("ordering: " + str(g.user.ordering))
     return render_template("dashboard.html", orders=userList, items=[], google_maps = google_maps_qr.make_url([]), checkedIn=checkedIn)
+
+def makeAllEmailsMailinator():
+    userList = conn.execute(users.select()).fetchall()
+    for user in userList:
+        if not user['email'] == None and not '@mailinator.com' in user['email']:
+            newEmail = user['name'].replace(' ', '') + "@mailinator.com"
+            conn.execute(users.update().where(users.c.id==user.id).values(email=newEmail))
+
 
 @login_required
 @volunteer_required
