@@ -20,7 +20,7 @@ def send_request_confirmation(reciever_email, items, date):
 		<!-- H1 -->
 			<tr>
 				<td class="h1" align="left" bgcolor="#FFFFFF" style="padding-top: 50px; padding-right: 50px; padding-bottom: 20px; padding-left: 50px; font-size: 36px; line-height: 44px; font-weight: 700; text-align: left; color: #37393a;" >
-					Order Confirmation
+					Food Bank Order Confirmation
 				</td>
 			</tr>
 
@@ -50,8 +50,8 @@ def send_recieved_notification(reciever_email):
 	html = openHTML() + """
 	<!-- H1 -->
 		<tr>
-			<td class="h1" align="left" bgcolor="#FFFFFF" style="padding-top: 50px; padding-right: 50px; padding-bottom: 20px; padding-left: 50px; font-size: 36px; line-height: 44px; font-weight: 700; text-align: left; color: #37393a;" >
-				Your Minerva order has arrived!
+			<td class="h1" align="left" bgcolor="#FFFFFF" style="padding-top: 0px; padding-right: 50px; padding-bottom: 20px; padding-left: 50px; font-size: 36px; line-height: 44px; font-weight: 700; text-align: left; color: #37393a;" >
+				Your food bank order has arrived!
 			</td>
 		</tr>
 
@@ -62,7 +62,8 @@ def send_recieved_notification(reciever_email):
 			</td>
 		</tr>
 	""" + endHTML()
-	send_email(to = reciever_email, contents = html, subject = "Your Minerva order is here")
+	print("Email: " + reciever_email)
+	send_email(to = reciever_email, contents = html, subject = "Your Food Bank Order is Here")
 
 def send_new_volunteer_request_notification(reciever_email, name):
 	html = openHTML() + """
