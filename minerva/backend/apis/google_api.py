@@ -1,7 +1,7 @@
 import requests
 from os import environ
 from json import  loads
-from db import users, orders, conn
+from db import users, conn
 from sqlalchemy import select, and_
 
 def matrix(origins, destinations):

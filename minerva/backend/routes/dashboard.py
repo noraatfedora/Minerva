@@ -4,7 +4,7 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, volunteer_required
 from json import loads, dumps
-from db import users, conn, orders, items
+from db import users, conn, items
 from assign import getNextRoute
 from sqlalchemy import and_, select
 from minerva.backend.apis.email import send_recieved_notification
@@ -76,7 +76,7 @@ def qr_mark_as_complete():
 
 @bp.route('/driver_printout', methods=('GET', 'POST'))
 def driver_printout():
-    ordersDict =getUsers(g.user.id)
+    usersList = getUsers()
 
     if request.method == "POST":
         orderId = int(next(request.form.keys()))
@@ -88,8 +88,8 @@ def driver_printout():
             send_recieved_notification(email)
             conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
             ordersDict = getUsers(g.user.id)
-
-    html = render_template("driver_printout.html", orders=ordersDict, volunteer=g.user)
+    
+    html = render_template("driver_printout.html", users=usersList, volunteer=g.user)
 
     pdf = pdfkit.from_string(html, False)
 
@@ -97,6 +97,7 @@ def driver_printout():
     response.headers['Content-type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'inline;'
 
+    #return html
     return response
 
 # Returns a list of users based off the volunteer's ordering column

@@ -3,7 +3,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required
-from db import users, conn, orders, items
+from db import users, conn, items
 from minerva.backend.apis.email import send_request_confirmation
 from json import loads, dumps
 import datetime

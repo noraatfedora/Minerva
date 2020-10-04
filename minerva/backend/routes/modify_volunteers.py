@@ -3,7 +3,7 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, volunteer_required
 from json import loads
-from minerva.backend.apis.db import users, conn, orders
+from minerva.backend.apis.db import users, conn
 from sqlalchemy import and_, select
 from os import environ
 from order_assignment import unassign

@@ -1,5 +1,5 @@
 import qrcode
-from db import orders, users, conn
+from db import users, conn
 from sqlalchemy import select
 
 # Takes a list of order IDs, saves image to static/google_maps_qr.png
