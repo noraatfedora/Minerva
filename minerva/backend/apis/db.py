@@ -76,6 +76,7 @@ family_members = Table(
     Column('race', String())
 )
 
+'''
 orders = Table(
     'orders', meta,
     Column('id', Integer, primary_key=True),
@@ -90,6 +91,7 @@ orders = Table(
     Column('date', Date),
     Column('completed', Integer)  # either 0 or 1
 )
+'''
 
 items = Table(
     'items', meta,

@@ -10,7 +10,7 @@ from datetime import date, datetime, timedelta
 import math
 from flask import g
 import geopy
-from db import orders, users, conn
+from db import users, conn
 from sqlalchemy import select, and_
 
 

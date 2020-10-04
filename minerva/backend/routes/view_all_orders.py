@@ -5,7 +5,7 @@ from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, admin_required 
 from json import loads, dumps
 from collections import OrderedDict
-from db import users, conn, orders, items
+from db import users, conn, items
 from sqlalchemy import and_, select
 from os import environ
 from barcode import Code128
