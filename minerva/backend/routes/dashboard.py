@@ -51,7 +51,7 @@ def dashboard():
 
     checkedIn = g.user.checkedIn == str(date.today())
     print("ordering: " + str(g.user.ordering))
-    return render_template("dashboard.html", orders=userList, items=[], google_maps = google_maps_qr.make_url([]), checkedIn=checkedIn)
+    return render_template("dashboard.html", users=userList, items=[], google_maps = google_maps_qr.make_url([]), checkedIn=checkedIn)
 
 def makeAllEmailsMailinator():
     userList = conn.execute(users.select()).fetchall()
@@ -108,16 +108,14 @@ def getUsers():
     toReturn = []
     for userId in ordering:
         if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
-            toReturn.append(
-                row2dict(
-                    conn.execute(
-                        users.select().where(users.c.id==userId)
-                    ).fetchone()
-                )
-            )
+            user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+            userObj = row2dict(user_rp)
+            userObj['doneToday'] = user_rp['lastDelivered'].date() == datetime.today().date()
+            toReturn.append(userObj)
 
     print("Users: " + str(toReturn))
     return toReturn
+
 
 def getAddresses(orders):
     #TODO 

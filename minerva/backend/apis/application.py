@@ -4,7 +4,13 @@ from flask import (
 )
 from db import  conn, users
 from barcode.writer import ImageWriter
+from babel.dates import format_datetime
+from datetime import datetime
 
+def format_datetime(value):
+    format = "%Y-%m-%d %H:%M:%S.%f"
+    dt = datetime.strptime(value, format)
+    return dt.strftime("%B %d at %I:%M %p")
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True, template_folder="../../frontend/templates", static_folder="../../frontend/static")
@@ -77,6 +83,8 @@ def create_app(test_config=None):
     from minerva.backend.routes import view_all_orders
 
     app.register_blueprint(view_all_orders.bp)
+
+    app.jinja_env.filters['datetime'] = format_datetime
 
     return app
 
