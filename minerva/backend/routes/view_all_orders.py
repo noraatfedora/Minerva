@@ -21,7 +21,7 @@ def allOrders():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
     ordersDict = getOrders(g.user.id)
     if request.method == "GET" and "assignall" in request.args.keys():
-        assign.assignAllOrders(g.user.id)
+        assign.createAllRoutes(foodBankId=g.user.id)
         return redirect('/allorders')
     if request.method == "GET" and "volunteer" in request.args.keys():
         volunteerId = int(request.args.get("volunteer"))
@@ -45,8 +45,8 @@ def allOrders():
                 order_assignment.bag(order)
     volunteers = getVolunteers()
     today = datetime.date.today()
-    checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
-    return render_template("view_all_orders.html", orders=ordersDict, volunteers=volunteers, checkedIn=checkedInVolunteers)
+    #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
+    return render_template("view_all_orders.html", orders=ordersDict, volunteers=volunteers)
 
 @login_required
 @admin_required
