@@ -9,32 +9,30 @@
     <div class="spacer"></div>
     <a href="{{ google_maps }}">Click to open Google Maps for an optimized route</a>
     <div class="spacer"></div>
-    {% for order in orders %}
-    <div class="card text-left task-incomplete item" filter="{{ order['date']}}">
+    {% for user in users %}
+    {% if user['doneToday'] %}
+        <div class="card text-left task-incomplete item bg-success" filter="{{ user['date']}}">
+    {% else %}
+        <div class="card text-left task-incomplete item" filter="{{ user['date']}}">
+    {% endif %}
         <div class="card-header">
-            <b>Name:</b> {{ order['name'] }}
+            <b>Name:</b> {{ user['name'] }}
         </div>
         <div class="card-header">
-            <b>Email: </b>{{ order['email'] }}
+            <b>Email: </b>{{ user['email'] }}
         </div>
         <div class="card-header">
-            <b>Address: </b>{{ order['address']}}
+            <b>Address: </b>{{ user['address']}}
         </div>
         <div class="card-header">
-            <b>Cell phone: </b>{{ order['cellPhone']}}
+            <b>Cell phone: </b>{{ user['cellPhone']}}
         </div>
-        <!--
-        {% for item in orders['contents'] %}
-        {% if orders['contents'][item] != '0' %}
         <div class="card-header">
-            {{ item }}<span>{{ orders['contents'][item] }}</span>
+            <b>Last delivered: </b>{{ user['lastDelivered']|datetime}}
         </div>
-        {% endif %}
-        {% endfor %}
-        -->
         <div class="card-body">
             <form action="" method="POST">
-                <button type="submit" value="Mark as completed" name="{{ order['id'] }}" class="btn bw-btn">Mark
+                <button type="submit" value="Mark as completed" name="{{ user['id'] }}" class="btn bw-btn">Mark
                     As Complete</button>
             </form>
         </div>
