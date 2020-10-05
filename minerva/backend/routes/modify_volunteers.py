@@ -3,7 +3,8 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, volunteer_required
 from json import loads
-from minerva.backend.apis.db import users, conn, orders
+from datetime import datetime
+from minerva.backend.apis.db import users, conn
 from sqlalchemy import and_, select
 from os import environ
 from order_assignment import unassign
@@ -28,7 +29,10 @@ def dashboard():
         send_volunteer_acceptance_notification(volunteerEmail, g.user.name)
         return redirect("/modify")
     if request.method == "POST":
-        key = next(request.form.keys())
+        try:
+            key = next(request.form.keys())
+        except:
+            key = ""
         print("Key: " + key)
         if "unassign" in key:
             orderId = key[len('unassign-'):]
@@ -49,39 +53,32 @@ def dashboard():
             for user in completedUsers:
                 print(user)
         '''
-    return render_template("modify_volunteers.html", users=dictList(volunteers), unassigned=unassigned)
+    return render_template("modify_volunteers.html", volunteers=getVolunteerInfoList(g.user.id), unassigned=unassigned)
 
-# Basically this method takes all our volunteers
-# and converts them into nice little dicts so that
-# jinja2 can access all their data.
-# This is a list of dicts of lists of dicts of dicts.
-# VolunteerLIst --> volunteer --> assignedOrders --> order --> contents
-def dictList(rows):
+# Returns a list of users based off the volunteer's ordering column
+def getUsers(volunteer):
+    row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in users.columns}
+    # Get the ID's that our volunteer is assigned to
+    ordering = loads(volunteer['ordering'])
     toReturn = []
-    for row in rows:
-        volunteer = {}
-        for column in conn.execute(users.select()).keys():
-            volunteer[str(column)] = str(getattr(row, str(column)))
-        
-        assignedOrders = conn.execute(orders.select(and_(orders.c.volunteerId==volunteer['id'], orders.c.completed==0))).fetchall()
-        assignedOrdersDictList = []
-        for order in assignedOrders:
-            orderDict = {}
-            orderColumns = conn.execute(orders.select()).keys()
-            for column in orderColumns:
-                orderDict[column] = str(getattr(order, str(column)))
+    for userId in ordering:
+        if userId != volunteer['foodBankId']: # Stupid to put the food bank on the user's list of orders
+            user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+            userObj = row2dict(user_rp)
+            userObj['doneToday'] = user_rp['lastDelivered'].date() == datetime.today().date()
+            toReturn.append(userObj)
 
-            userColumns = conn.execute(users.select()).keys()
-            user = conn.execute(users.select(users.c.id==order['userId'])).fetchone()
-            for column in userColumns:
-                if column not in orderColumns:
-                    orderDict[column] = str(getattr(user, str(column)))
-                else:
-                    print("skipping " + column)
-            orderDict['contents'] = loads(orderDict['contents'])
+    print("Users: " + str(toReturn))
+    return toReturn
 
-            assignedOrdersDictList.append(orderDict)
-        volunteer['orders'] = assignedOrdersDictList
-        toReturn.append(volunteer)
 
+
+def getVolunteerInfoList(foodBankId):
+    row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in users.columns}
+    volunteerList = conn.execute(users.select().where(and_(users.c.role=="VOLUNTEER", users.c.foodBankId==foodBankId)))
+    toReturn = []
+    for volunteer_rp in volunteerList:
+        volunteerDict = row2dict(volunteer_rp)
+        volunteerDict['userList'] = getUsers(volunteerDict)
+        toReturn.append(volunteerDict)
     return toReturn
