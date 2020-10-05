@@ -19,7 +19,7 @@ bp = Blueprint('view_all_orders', __name__)
 @bp.route('/allorders', methods=('GET', 'POST'))
 def allOrders():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
-    ordersDict = getOrders(g.user.id)
+    userList = conn.execute(users.select().where(users.c.foodBankId == g.user.id)).fetchall()
     if request.method == "GET" and "assignall" in request.args.keys():
         assign.createAllRoutes(foodBankId=g.user.id)
         return redirect('/allorders')
@@ -31,22 +31,13 @@ def allOrders():
     if request.method == "POST":
         key = next(request.form.keys())
         print("Key: " + str(key))
-        if "unassign" in key:
-            orderId = int(key[len('unassign-'):])
-            order_assignment.unassign(orderId)
-            ordersDict = getOrders(g.user.id)
-        elif "bag" in key:
-            orderId = int(key[len('bag-'):])
-            order_assignment.bag(orderId)
-            ordersDict = getOrders(g.user.id)
-        elif "barcode" in key:
-            baggedIds = request.form[key].split('\r\n')
-            for order in baggedIds:
-                order_assignment.bag(order)
+        if "delete" in key: #TODO
+            userId = int(key[len('bag-'):])
+            userList = conn.execute(users.select().where(users.c.foodBankId == g.user.id)).fetchall()
     volunteers = getVolunteers()
     today = datetime.date.today()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
-    return render_template("view_all_orders.html", orders=ordersDict, volunteers=volunteers)
+    return render_template("view_all_orders.html", users=userList, volunteers=volunteers)
 
 @login_required
 @admin_required
@@ -63,34 +54,6 @@ def generate_shipping_labels():
     response.headers['Content-type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'inline;'
     return response
-
-# Returns a dictionary where the keys are the order ID's,
-# and the values are dicts with attributes about that order (contents, email, etc.)
-# All of these should be uncompleted orders, since an order is removed from a volunteer's
-# list when it's completed.
-def getOrders(adminId):
-    # Get the ID's that our volunteer is assigned to
-    orderIdList = conn.execute(select([orders.c.id]).where(and_(orders.c.foodBankId==g.user.id, orders.c.completed==0)).order_by(orders.c.date)).fetchall()
-    toReturn = OrderedDict() # Sorted by date
-    for orderIdProxy in orderIdList:
-        orderId = orderIdProxy[0]
-        toReturn[orderId] = {}
-        order = conn.execute(orders.select().where(orders.c.id==orderId)).fetchone()
-        user = conn.execute(users.select().where(users.c.id==order['userId'])).fetchone()
-        # Add all our user's attributes to our order
-        userColumns = conn.execute(users.select()).keys()
-        userColumns.remove('id')
-        for column in userColumns:
-            toReturn[orderId][str(column)] = str(getattr(user, str(column)))
-        # And all our order's attributes
-        for column in conn.execute(orders.select()).keys():        
-            toReturn[orderId][str(column)] = str(getattr(order, str(column)))
-        toReturn[orderId]['itemsDict'] = loads(toReturn[orderId]['contents'])
-        volunteerName = conn.execute(select([users.c.name], users.c.id==order.volunteerId)).fetchone()
-        if not volunteerName is None:
-            toReturn[orderId]['volunteerName'] = volunteerName[0]
-            
-    return toReturn 
 
 def getVolunteers():
     proxy = conn.execute(users.select(and_(users.c.role=="VOLUNTEER", users.c.approved==True, users.c.volunteerRole=="DRIVER"))).fetchall()
