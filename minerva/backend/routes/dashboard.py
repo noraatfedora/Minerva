@@ -51,7 +51,7 @@ def dashboard():
 
     checkedIn = g.user.checkedIn == str(date.today())
     print("ordering: " + str(g.user.ordering))
-    return render_template("dashboard.html", users=userList, items=[], google_maps = google_maps_qr.make_url([]), checkedIn=checkedIn)
+    return render_template("dashboard.html", users=userList, items=[], google_maps = google_maps_qr.make_url(userList), checkedIn=checkedIn)
 
 def makeAllEmailsMailinator():
     userList = conn.execute(users.select()).fetchall()
@@ -118,5 +118,5 @@ def getUsers():
 
 
 def getAddresses(orders):
-    #TODO 
+    #TODO
     return []
