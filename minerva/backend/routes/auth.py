@@ -4,6 +4,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 from minerva.backend.apis.db import users, conn, items, family_members
+from datetime import datetime, date
 from sqlalchemy import select, update
 from json import loads, dumps
 from os import environ
@@ -60,7 +61,7 @@ def all_users():
         form = request.form.to_dict()
 
         name = fetch_delete('name', form)
-        birthday = fetch_delete('birthday', form)
+        birthday = datetime.strptime(fetch_delete('birthday', form), "%Y-%m-%d")
         email = fetch_delete('email', form)
         password = fetch_delete('password', form)
         confirm = fetch_delete('confirm', form)
@@ -76,18 +77,13 @@ def all_users():
                 restrictions.append(restriction)
         error = ""
 
-        with open("minerva/backend/apis/database/supported_zip_codes", 'r') as f:
-            supportedZipCodes = f.read()
-
-        if zipCode[0:5] not in supportedZipCodes:
-            error = "Sorry, but your zip code is not supported at this time. Please contact your local food banks."
-        elif conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
+        if conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
             error += '\nUser {} is already registered.'.format(email)
 
         if error == "":
             conn.execute(users.insert(), name=name, birthday=birthday, email=email, address=address,
                          role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
-                         zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), restrictions=dumps(restrictions))
+                         zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), lastDelivered=datetime.now(), restrictions=dumps(restrictions))
 
             user_id = conn.execute(users.select().where(
                 users.c.email == email)).fetchone().id
@@ -151,7 +147,7 @@ def register():
         form = request.form.to_dict()
 
         name = fetch_delete('name', form)
-        birthday = fetch_delete('birthday', form)
+        birthday = datetime.strptime(fetch_delete('birthday', form), "%Y-%m-%d")
         email = fetch_delete('email', form)
         password = fetch_delete('password', form)
         confirm = fetch_delete('confirm', form)
@@ -167,9 +163,7 @@ def register():
                 restrictions.append(restriction)
         error = ""
 
-        if zipCode[0:5] not in supportedZipCodes:
-            error = "Sorry, but your zip code is not supported at this time. Please contact your local food banks."
-        elif conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
+        if conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
             error += '\nUser {} is already registered.'.format(email)
 
         if error == "":
@@ -177,7 +171,7 @@ def register():
 
             conn.execute(users.insert(), name=name, birthday=birthday, email=email, password=password_hash, address=address,
                          role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
-                         zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), restrictions=dumps(restrictions))
+                         zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), lastDelivered=datetime.today(), restrictions=dumps(restrictions))
 
             user_id = conn.execute(users.select().where(
                 users.c.email == email)).fetchone().id
