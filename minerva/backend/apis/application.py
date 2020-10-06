@@ -81,8 +81,10 @@ def create_app(test_config=None):
     app.register_blueprint(modify_volunteers.bp)
 
     from minerva.backend.routes import view_all_orders
-
     app.register_blueprint(view_all_orders.bp)
+
+    from minerva.backend.routes import routes_view
+    app.register_blueprint(routes_view.bp)
 
     app.jinja_env.filters['datetime'] = format_datetime
 
