@@ -4,7 +4,7 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, volunteer_required
 from json import loads, dumps
-from db import users, conn, items
+from db import users, conn, routes
 from assign import getNextRoute
 from sqlalchemy import and_, select
 from minerva.backend.apis.email import send_recieved_notification
@@ -24,13 +24,11 @@ def dashboard():
     # so that you don't accidentally send them conformiation emails while testing.
     makeAllEmailsMailinator()
 
-    itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
 
-    userList = getUsers()
     if request.method == "GET" and "claimRoute" in request.args.keys():
-        route = getNextRoute(g.user.foodBankId)
+        route = getNextRoute(g.user.id, g.user.foodBankId)
         print("route: " + str(route))
-        conn.execute(users.update().where(users.c.id==g.user.id).values(ordering=dumps(route)))
+        #conn.execute(users.update().where(users.c.id==g.user.id).values(ordering=dumps(route)))
         return redirect('/dashboard')
     if request.method == "POST":
         firstKey = next(request.form.keys())
@@ -49,9 +47,12 @@ def dashboard():
         send_recieved_notification(email)
         userList = getUsers()
 
+    routeId = conn.execute(select([routes.c.id]).where(routes.c.volunteerId==g.user.id)).fetchone()[0]
+    if routeId == None:
+        return render_template("dashboard.html", users=[], google_maps = "")
+    userList = getUsers(routeId)
     checkedIn = g.user.checkedIn == str(date.today())
-    print("ordering: " + str(g.user.ordering))
-    return render_template("dashboard.html", users=userList, items=[], google_maps = google_maps_qr.make_url(userList), checkedIn=checkedIn)
+    return render_template("dashboard.html", users=userList, google_maps = google_maps_qr.make_url(userList))
 
 def makeAllEmailsMailinator():
     userList = conn.execute(users.select()).fetchall()
@@ -100,13 +101,15 @@ def driver_printout():
     #return html
     return response
 
-# Returns a list of users based off the volunteer's ordering column
-def getUsers():
+# Returns a list of users based off the given route ID
+def getUsers(routeId):
+    print("Route ID:" + str(routeId))
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in users.columns}
     # Get the ID's that our volunteer is assigned to
-    ordering = loads(g.user.ordering)
+    route_rp = conn.execute(routes.select().where(routes.c.id==routeId)).fetchone()
+    content = loads(route_rp.content)
     toReturn = []
-    for userId in ordering:
+    for userId in content:
         if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
             user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
             userObj = row2dict(user_rp)
