@@ -19,7 +19,7 @@ bp = Blueprint('view_all_orders', __name__)
 @bp.route('/allorders', methods=('GET', 'POST'))
 def allOrders():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
-    userList = conn.execute(users.select().where(users.c.foodBankId == g.user.id)).fetchall()
+    userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
     if request.method == "GET" and "assignall" in request.args.keys():
         assign.createAllRoutes(foodBankId=g.user.id)
         return redirect('/allorders')
