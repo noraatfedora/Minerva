@@ -7,29 +7,17 @@
     <div class="spacer"> </div>
     {% for route in routes %}
     <div class="card bg-success text-left task-incomplete">
-        {% else %}
         <div class="card text-left task-incomplete">
-            {% endif %}
             <div class="card-header">
-                ID: {{ route['id'] }}
+                Route ID: {{ route['id'] }}
             </div>
-            <div class="card-header">
-                Volunteer ID: {{ route['id'] }}
+            <div class="card-body">
+                <iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://map.project-osrm.org/?z=13&center=47.656311%2C-122.129345&loc=47.694660%2C-122.070479&loc=47.634460%2C-122.162001&loc=47.672529%2C-122.091444&hl=en&alt=0&srv=0" style="border: 1px solid black"></iframe><br/><small><a href="https://www.openstreetmap.org/#map=13/47.7753/-122.1599">View Larger Map</a></small>
             </div>
-            <div class="card-header">
-                Google maps: {{ route['google_maps'] }}
-            </div>
-            {% if user['bagged']!='1' %}
-            <div class="card-header">
-                <form action="" method="POST">
-                    <button type="submit" value="Delete user" name="delete-{{ user['id'] }}"
-                        class="btn bw-btn">Delete user</button>
-                </form>
-            </div>
-            {% else %}
-            {% endif %}
         </div>
         <br>
-        {% endfor %}
+    </div>
+    <div class="spacer"> </div>
+    {% endfor %}
 </center>
 {% endblock content %}

@@ -2,8 +2,12 @@
 {% block content %}
 <center>
     <h2>All orders</h2>
-    <br>
-    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn blue-hover">Generate new routes for this week</a>
+    <div class="spacer"> </div>
+    Number of vehicles: <input type="number" class="form-control col-md-1" value="40" id="usr"> 
+    <div class="spacer"> </div>
+    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn blue-hover">Generate new routes for this week</a><br>
+    <div class="spacer"> </div>
+    <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover">Download spreadsheet of all routes</a>
     <div class="spacer"> </div>
     {% for user in users %}
     {% if user['bagged']=='1' and user['volunteerEmail'] %}
