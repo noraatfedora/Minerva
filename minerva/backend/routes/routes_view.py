@@ -10,6 +10,7 @@ from sqlalchemy import and_, select
 from os import environ
 import assign, io, datetime, order_assignment
 import google_maps_qr
+from datetime import datetime
 from minerva.backend.apis.email import send_recieved_notification, send_bagged_notification
 bp = Blueprint('routes', __name__)
 
@@ -24,7 +25,7 @@ def allOrders():
         return redirect('/allorders')
     volunteers = getVolunteers()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
-    return render_template("routes_view.html", routeList, volunteers=volunteers)
+    return render_template("routes_view.html", routes=routeList)
 
 @login_required
 @admin_required
@@ -56,12 +57,30 @@ def getVolunteers():
 
 def getRoutes():
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in routes.columns}
-    rp = conn.execute(routes.select().where(routes.c.id==g.user.id)).fetchall()
+    rp = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
     toReturn = []
     for route_rp in rp:
         routeDict = row2dict(route_rp)
-        routeDict['google_maps'] = google_maps_qr.make_url(loads(route_rp.content))
+        routeDict['userList'] = getUsers(route_rp.id)
+        routeDict['google_maps'] = google_maps_qr.make_url(routeDict['userList'])
         routeDict['parsedContent'] = loads(route_rp.content)
         toReturn.append(routeDict)
+
+    return toReturn
+
+# Returns a list of users based off the given route ID
+def getUsers(routeId):
+    print("Route ID:" + str(routeId))
+    row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in users.columns}
+    # Get the ID's that our volunteer is assigned to
+    route_rp = conn.execute(routes.select().where(routes.c.id==routeId)).fetchone()
+    content = loads(route_rp.content)
+    toReturn = []
+    for userId in content:
+        if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
+            user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+            userObj = row2dict(user_rp)
+            userObj['doneToday'] = user_rp['lastDelivered'].date() == datetime.today().date()
+            toReturn.append(userObj)
 
     return toReturn

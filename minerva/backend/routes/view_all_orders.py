@@ -1,8 +1,8 @@
 from flask import ( Blueprint, flash, g, redirect, render_template,
-    request, session, url_for, Flask, make_response
+    request, session, url_for, Flask, make_response, send_file
 )
 from werkzeug.exceptions import abort
-from minerva.backend.routes.auth import login_required, admin_required 
+from minerva.backend.routes.auth import login_required, admin_required
 from json import loads, dumps
 from collections import OrderedDict
 from db import users, conn, items
@@ -38,6 +38,12 @@ def allOrders():
     today = datetime.date.today()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
     return render_template("view_all_orders.html", users=userList, volunteers=volunteers)
+
+@login_required
+@admin_required
+@bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
+def send_spreadsheet():
+    return send_file(environ['INSTANCE_PATH'] + 'routes.xlsx', as_attachment=True)
 
 @login_required
 @admin_required
