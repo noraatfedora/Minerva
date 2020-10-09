@@ -26,6 +26,7 @@ def dashboard():
 
 
     if request.method == "GET" and "claimRoute" in request.args.keys():
+        print("Getting next route...")
         route = getNextRoute(g.user.id, g.user.foodBankId)
         print("route: " + str(route))
         #conn.execute(users.update().where(users.c.id==g.user.id).values(ordering=dumps(route)))
@@ -47,9 +48,11 @@ def dashboard():
         send_recieved_notification(email)
         userList = getUsers()
 
-    routeId = conn.execute(select([routes.c.id]).where(routes.c.volunteerId==g.user.id)).fetchone()[0]
+    routeId = conn.execute(select([routes.c.id]).where(routes.c.volunteerId==g.user.id)).fetchone()
     if routeId == None:
         return render_template("dashboard.html", users=[], google_maps = "")
+    else:
+        routeId = routeId[0]
     userList = getUsers(routeId)
     checkedIn = g.user.checkedIn == str(date.today())
     return render_template("dashboard.html", users=userList, google_maps = google_maps_qr.make_url(userList))
@@ -77,19 +80,13 @@ def qr_mark_as_complete():
 
 @bp.route('/driver_printout', methods=('GET', 'POST'))
 def driver_printout():
-    usersList = getUsers()
+    routeId = conn.execute(routes.select().where(routes.c.volunteerId==g.user.id)).fetchone()
+    if routeId == None:
+        return redirect('/dashboard')
+    else:
+        routeId = routeId[0]
+    usersList = getUsers(routeId)
 
-    if request.method == "POST":
-        orderId = int(next(request.form.keys()))
-        query = select([orders.c.completed]).where(orders.c.id==orderId)
-        completed = conn.execute(query).fetchone()[0]
-        # If you refresh the page and resend data, it'll send 2 conformation emails. This if statement prevents that.
-        if (completed == 0):
-            email = ordersDict[orderId]['email']
-            send_recieved_notification(email)
-            conn.execute(orders.update().where(orders.c.id==orderId).values(completed=1))
-            ordersDict = getUsers(g.user.id)
-    
     html = render_template("driver_printout.html", users=usersList, volunteer=g.user)
 
     pdf = pdfkit.from_string(html, False)

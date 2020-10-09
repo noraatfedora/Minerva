@@ -274,7 +274,7 @@ def createAllRoutes(foodBankId, num_vehicles=40):
         routeList.append(userIdList)
     conn.execute(routes.delete().where(routes.c.foodBankId==foodBankId))
     for route in routeList:
-        conn.execute(routes.insert().values(foodBankId=foodBankId, content=json.dumps(route)))
+        conn.execute(routes.insert().values(foodBankId=foodBankId, content=json.dumps(route), volunteerId=-1))
     routesToSpreadsheet(foodBankId)
 
 def routesToSpreadsheet(foodBankId):
