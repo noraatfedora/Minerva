@@ -10,7 +10,7 @@
         <input type="hidden" name="num-vehicles" value="{{ num_vehicles }}">
     </form>
     <script>
-        document.getElementById("form").submit();
+        setTimeout(() => { document.getElementById("form").submit(); }, 500);
     </script>
 </center>
 {% endblock content %}
