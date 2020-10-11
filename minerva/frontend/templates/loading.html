@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<center>
+    <h2>Generating new routes, please wait...</h2>
+    <div class="spacer"></div>
+    <img src="/static/loading-1.gif">
+    <div class="spacer"></div>
+    Please do not exit or refresh this page. This may take a few minutes.
+    <form method='POST' action='allorders' id="form" name="generate-routes">
+        <input type="hidden" name="num-vehicles" value="{{ num_vehicles }}">
+    </form>
+    <script>
+        document.getElementById("form").submit();
+    </script>
+</center>
+{% endblock content %}

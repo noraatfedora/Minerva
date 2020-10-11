@@ -2,10 +2,15 @@
 {% block content %}
 <center>
     <h2>All orders</h2>
+    <div class="spacer"></div>
+    <form name="generate-routes" id="generate-routes" class="form" action="" method="post" onsubmit="return verifyForm()">
+    Number of vehicles: <input type="number" class="form-control col-md-1" value="40" id="num-vehicles" name="num-vehicles"> 
     <div class="spacer"> </div>
-    Number of vehicles: <input type="number" class="form-control col-md-1" value="40" id="usr"> 
+    Note: The number of vehicles is a rough estimate, the route planning algorithm might make a couple of empty routes.
     <div class="spacer"> </div>
-    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn blue-hover">Generate new routes for this week</a><br>
+    <input type="hidden" name="redirect" value="loading">
+    <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Generate new routes for this week</button>
+    </form>
     <div class="spacer"> </div>
     <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover">Download spreadsheet of all routes</a>
     <div class="spacer"> </div>
