@@ -29,6 +29,25 @@
             <div class="card-header">
                 <a href="{{ route['google_maps'] }}">View Map</a>
             </div>
+            <div class="card-header">
+                <a class="btn bw-btn" data-toggle="collapse" href="#collapse-route-{{ route['id'] }}" role="button"
+                    aria-expanded="false" aria-controls="collapse-route-{{ route['id'] }}">
+                    {% if route['userList']|length==1 %}
+                    Show 1 stop
+                    {% else %}
+                    Show {{ route['userList']|length }} stops
+                    {% endif %}
+                </a>
+            </div>
+            <div id="collapse-route-{{ route['id'] }}" class="collapse">
+                {% for user in route['userList'] %}
+                    <div class="card bg-light" id="user-header-{{ user['id'] }}">
+                        <a class="btn btn-link" target="_bland" rel="noopener noreferrer" href="/allorders#card-{{ user['id'] }}">
+                            {{ user['address'] }}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
         <br>
     </div>
