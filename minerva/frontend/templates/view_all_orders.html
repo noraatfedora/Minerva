@@ -1,19 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <center>
-    <h2>All orders</h2>
+    <h2>All users</h2>
     <div class="spacer"></div>
-    <form name="generate-routes" id="generate-routes" class="form" action="" method="post" onsubmit="return verifyForm()">
-    Number of vehicles: <input type="number" class="form-control col-md-1" value="40" id="num-vehicles" name="num-vehicles"> 
-    <div class="spacer"> </div>
-    Note: The number of vehicles is a rough estimate, the route planning algorithm might make a couple of empty routes.
-    <div class="spacer"> </div>
-    <input type="hidden" name="redirect" value="loading">
-    <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Generate new routes for this week</button>
-    </form>
-    <div class="spacer"> </div>
-    <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover">Download spreadsheet of all routes</a>
-    <div class="spacer"> </div>
     {% for user in users %}
     <div class="card bg-success text-left task-incomplete" id="card-{{ user['id'] }}" >
         <div class="card text-left task-incomplete">
