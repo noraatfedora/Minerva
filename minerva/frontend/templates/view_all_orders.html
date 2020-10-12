@@ -15,11 +15,8 @@
     <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover">Download spreadsheet of all routes</a>
     <div class="spacer"> </div>
     {% for user in users %}
-    {% if user['bagged']=='1' and user['volunteerEmail'] %}
-    <div class="card bg-success text-left task-incomplete">
-        {% else %}
+    <div class="card bg-success text-left task-incomplete" id="card-{{ user['id'] }}" >
         <div class="card text-left task-incomplete">
-            {% endif %}
             <div class="card-header">
                 Name: {{ user['name'] }}
             </div>
@@ -42,7 +39,8 @@
             {% else %}
             {% endif %}
         </div>
-        <br>
-        {% endfor %}
+    </div>
+    <br>
+    {% endfor %}
 </center>
 {% endblock content %}

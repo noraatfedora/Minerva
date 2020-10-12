@@ -106,6 +106,8 @@ def getNextRoute(volunteerId, foodBankId):
 def getRouteCost(route, time):
     cost = 0
     for userId in route:
+        if userId == g.user.id or userId == g.user.foodBankId:
+            continue
         lastDelivered = conn.execute(select([users.c.lastDelivered]).where(users.c.id==userId)).fetchone()
         #print(lastDelivered)
         # Uncomment this line to fix the cold start problem

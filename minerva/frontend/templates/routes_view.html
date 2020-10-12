@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
+<script>
+    function explainScore(){
+        var message = "The score is calculated through the amount of time it has been " +
+            "since each stop on the route has been last delivered. The higher the score, " +
+            "the sooner this route should be done. When a volunteer claims the next route, they're " +
+            "given the route with the highest score."
+        window.alert(message)
+    }
+</script>
 <center>
     <h2>Routes</h2>
     <br>
@@ -11,8 +20,14 @@
             <div class="card-header">
                 Route ID: {{ route['id'] }}
             </div>
-            <div class="card-body">
-                <iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://map.project-osrm.org/?z=13&center=47.656311%2C-122.129345&loc=47.694660%2C-122.070479&loc=47.634460%2C-122.162001&loc=47.672529%2C-122.091444&hl=en&alt=0&srv=0" style="border: 1px solid black"></iframe><br/><small><a href="https://www.openstreetmap.org/#map=13/47.7753/-122.1599">View Larger Map</a></small>
+            <div class="card-header">
+                Length: {{ route['parsedContent']|length - 2 }} stops
+            </div>
+            <div class="card-header">
+                Score: {{ route['weightedScore'] }} <small><a href="javascript:explainScore();">What's this?</a></small>
+            </div>
+            <div class="card-header">
+                <a href="{{ route['google_maps'] }}">View Map</a>
             </div>
         </div>
         <br>
