@@ -22,9 +22,9 @@
             <a class="btn bw-btn" data-toggle="collapse" href="#collapse-volunteer-{{ volunteer['id'] }}" role="button"
                 aria-expanded="false" aria-controls="collapse-volunteer-{{ volunteer['id'] }}">
                 {% if volunteer['userList']|length==1 %}
-                Show 1 order
+                Show 1 stop
                 {% else %}
-                Show {{ volunteer['userList']|length }} orders
+                Show {{ volunteer['userList']|length }} stops
                 {% endif %}
             </a>
         </div>

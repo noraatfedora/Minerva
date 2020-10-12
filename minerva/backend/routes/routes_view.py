@@ -58,14 +58,22 @@ def getVolunteers():
 def getRoutes():
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in routes.columns}
     rp = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
+    scoreAverage = 0
     toReturn = []
     for route_rp in rp:
         routeDict = row2dict(route_rp)
         routeDict['userList'] = getUsers(route_rp.id)
         routeDict['google_maps'] = google_maps_qr.make_url(routeDict['userList'])
         routeDict['parsedContent'] = loads(route_rp.content)
+        score = assign.getRouteCost(routeDict['parsedContent'], datetime.now())
+        scoreAverage += score
+        routeDict['score'] = score
+        routeDict['osm'] = google_maps_qr.osm_url(routeDict['userList'])
         toReturn.append(routeDict)
+    scoreAverage = scoreAverage / len(route_rp)
 
+    for routeDict in toReturn:
+        routeDict['weightedScore'] = round(10 * routeDict['score'] / scoreAverage, 2)
     return toReturn
 
 # Returns a list of users based off the given route ID

@@ -18,6 +18,16 @@ def make_url(userList):
     link += slash.join(addresses)
     return link
 
+def osm_url(userList):
+    link = "https://map.project-osrm.org/?z=12&center="
+    separator = '&loc='
+    coordsList = []
+    for user in userList:
+        coordsList.append(user['latitude'] + '%2C' + user['longitude'])
+    link += separator.join(coordsList)
+    footer = "&hl=en&alt=0&srv=0"
+    return link + footer
+
 # This is a separate function because
 # I know at some point we're gonna have
 # weird edge cases and this is the best
