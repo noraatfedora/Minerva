@@ -25,13 +25,6 @@
                         <strong>About us</strong>
                         {% endif %}
                     </a>
-                    <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id="navtext">
-                        {% if request.path == "/volunteer" %}
-                        <strong style="color:white;">Volunteer</strong>
-                        {% else %}
-                        <strong>Volunteer</strong>
-                        {% endif %}
-                    </a>
                     {% if g.user and g.user['role'].lower() == "reciever" %}
                     <a class="nav-item nav-link" href="{{ url_for('request_items.request_items') }}" id="navtext">
                         {% if request.path == "/request_items" %}
@@ -41,7 +34,6 @@
                         {% endif %}
                     </a>
                     {% endif %}
-                    <a class="nav-item nav-link" href="#" id="navtext"><strong>Donate</strong></a>
                     {% if g.user and g.user['role'].lower() == "volunteer" %}
                     <a class="nav-item nav-link" href="{{ url_for('dashboard.dashboard') }}" id="navtext">
                         {% if request.path == "/dashboard" %}
@@ -54,9 +46,9 @@
                     {% if g.user and g.user['role'].lower() == "admin" %}
                     <a class="nav-item nav-link" href="{{ url_for('view_all_orders.allOrders') }}" id="navtext">
                         {% if request.path == "/allorders" %}
-                        <strong style="color:white;">View Orders</strong>
+                        <strong style="color:white;">All users</strong>
                         {% else %}
-                        <strong>View Orders</strong>
+                        <strong>All users</strong>
                         {% endif %}
                     </a>
                     <a class="nav-item nav-link" href="{{ url_for('modify.dashboard') }}" id="navtext">
@@ -64,6 +56,13 @@
                         <strong style="color:white;">Volunteer Settings</strong>
                         {% else %}
                         <strong>Volunteer Settings</strong>
+                        {% endif %}
+                    </a>
+                    <a class="nav-item nav-link" href="routes" id="navtext">
+                        {% if request.path == "/routes" %}
+                        <strong style="color:white;">Manage Routes</strong>
+                        {% else %}
+                        <strong>Manage Routes</strong>
                         {% endif %}
                     </a>
                     <a class="nav-item nav-link" href="{{ url_for('auth.all_users') }}" id="navtext">

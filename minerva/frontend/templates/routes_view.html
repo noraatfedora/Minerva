@@ -2,17 +2,25 @@
 {% block content %}
 <script>
     function explainScore(){
-        var message = "The score is calculated through the amount of time it has been " +
-            "since each stop on the route has been last delivered. The higher the score, " +
-            "the sooner this route should be done. When a volunteer claims the next route, they're " +
-            "given the route with the highest score."
+        var message = "The priority is calculated by the amount of time it has been " +
+            "since each stop on the route has been last delivered. " +
+            "The higher the priority, the more urgent this route is. When a volunteer claims the next route, they're " +
+            "given the route with the highest priority."
         window.alert(message)
     }
 </script>
 <center>
     <h2>Routes</h2>
-    <br>
-    <a href="/allorders?assignall=1" name="assign-all" class="btn bw-btn blue-hover">Generate new routes for this week</a>
+    <form name="generate-routes" id="generate-routes" class="form" action="" method="post" onsubmit="return verifyForm()">
+    Number of vehicles: <input type="number" class="form-control col-md-1" value="40" id="num-vehicles" name="num-vehicles"> 
+    <div class="spacer"> </div>
+    Note: The number of vehicles is a rough estimate, the route planning algorithm might make a couple of empty routes.
+    <div class="spacer"> </div>
+    <input type="hidden" name="redirect" value="loading">
+    <button type="submit" name="submit" class="btn bw-btn center-block blue-hover">Generate new routes</button>
+    </form>
+    <div class="spacer"> </div>
+    <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover">Download routes as spreadsheet</a>
     <div class="spacer"> </div>
     {% for route in routes %}
     <div class="card bg-success text-left task-incomplete">
@@ -24,7 +32,7 @@
                 Length: {{ route['parsedContent']|length - 2 }} stops
             </div>
             <div class="card-header">
-                Score: {{ route['weightedScore'] }} <small><a href="javascript:explainScore();">What's this?</a></small>
+                Priority: {{ route['weightedScore'] }} <small><a href="javascript:explainScore();">What's this?</a></small>
             </div>
             <div class="card-header">
                 <a href="{{ route['google_maps'] }}">View Map</a>

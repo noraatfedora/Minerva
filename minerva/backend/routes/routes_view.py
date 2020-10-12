@@ -20,12 +20,21 @@ bp = Blueprint('routes', __name__)
 def allOrders():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
     routeList = getRoutes()
-    if request.method == "GET" and "assignall" in request.args.keys():
-        assign.createAllRoutes(foodBankId=g.user.id)
-        return redirect('/allorders')
+    if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
+        print(request.values.to_dict())
+        if 'redirect' in request.values.to_dict().keys():
+            return loadingScreen(num_vehicles=request.values.get('num-vehicles'))
+        else:
+            assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')))
+            return redirect('/routes')
+ 
     volunteers = getVolunteers()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
     return render_template("routes_view.html", routes=routeList)
+
+@bp.route('/loading', methods=(['GET', 'POST']))
+def loadingScreen(num_vehicles=40):
+    return render_template("loading.html", num_vehicles=40)
 
 @login_required
 @admin_required
