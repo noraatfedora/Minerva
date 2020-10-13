@@ -6,6 +6,8 @@
     {% block content %}
     <p class="intro-text">Welcome to</p>
     <h1 id="jumbomain">Minerva</h1>
+    <h3 class="intro-text">Volunteer register</h3>
+    <div class="spacer"></div>
     {% endblock %}
     <div id="login">
         <div id="login-column" class="register-form-text justify-content-center align-items-center row">
@@ -30,11 +32,10 @@
                     </div>
                     <div class="dropdown">
                         <div class="form-group">
-                            <select class="form-control form-group" id="inputGroupSelect" name="volunteerRole">
-                                <option selected>Role</option>
+                            <select class="form-control form-group" hidden id="inputGroupSelect" name="volunteerRole">
+                                <option value="BOTH" id="Bagger" selected>Both driver and bagger</option>
                                 <option value="BAGGER" id="Bagger">Bagger</option>
                                 <option value="DRIVER" id="Driver">Driver</option>
-                                <option value="BOTH" id="Bagger">Both driver and bagger</option>
                             </select>
                         </div>
                     </div>

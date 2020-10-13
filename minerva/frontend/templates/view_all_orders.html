@@ -3,8 +3,9 @@
 <center>
     <h2>All users</h2>
     <div class="spacer"></div>
+    <div class="card-container">
     {% for user in users %}
-    <div class="card bg-success text-left task-incomplete" id="card-{{ user['id'] }}" >
+    <div class="card bg-success grid-card text-left task-incomplete" id="card-{{ user['id'] }}" >
         <div class="card text-left task-incomplete">
             <div class="card-header">
                 Name: {{ user['name'] }}
@@ -18,18 +19,15 @@
             <div class="card-header">
                 Phone: {{ user['cellPhone']}}
             </div>
-            {% if user['bagged']!='1' %}
             <div class="card-header">
                 <form action="" method="POST">
                     <button type="submit" value="Delete user" name="delete-{{ user['id'] }}"
                         class="btn bw-btn">Delete user</button>
                 </form>
             </div>
-            {% else %}
-            {% endif %}
         </div>
     </div>
-    <br>
     {% endfor %}
+    </div>
 </center>
 {% endblock content %}
