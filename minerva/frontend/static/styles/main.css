@@ -446,6 +446,18 @@ a:not([href]):not([tabindex]):hover {
   margin-bottom: 0;
 }
 
+.grid-card {
+  margin: 1%;
+}
+
+.card-container {
+  flex-direction: row;
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .card.item {
   margin-bottom: 2em;
 }
