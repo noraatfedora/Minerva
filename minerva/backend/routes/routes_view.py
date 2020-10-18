@@ -67,6 +67,8 @@ def getVolunteers():
 def getRoutes():
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in routes.columns}
     rp = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
+    if len(rp) == 0:
+        return []
     scoreAverage = 0
     toReturn = []
     for route_rp in rp:
@@ -79,7 +81,7 @@ def getRoutes():
         routeDict['score'] = score
         routeDict['osm'] = google_maps_qr.osm_url(routeDict['userList'])
         toReturn.append(routeDict)
-    scoreAverage = scoreAverage / len(route_rp)
+    scoreAverage = scoreAverage / len(rp)
 
     for routeDict in toReturn:
         routeDict['weightedScore'] = round(10 * routeDict['score'] / scoreAverage, 2)
@@ -94,10 +96,10 @@ def getUsers(routeId):
     content = loads(route_rp.content)
     toReturn = []
     for userId in content:
-        if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
-            user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
-            userObj = row2dict(user_rp)
-            userObj['doneToday'] = user_rp['lastDelivered'].date() == datetime.today().date()
-            toReturn.append(userObj)
+        #if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
+        user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+        userObj = row2dict(user_rp)
+        userObj['doneToday'] = user_rp['lastDelivered'].date() == datetime.today().date()
+        toReturn.append(userObj)
 
     return toReturn
