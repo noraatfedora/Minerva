@@ -35,7 +35,7 @@ def create_data(num_vehicles):
     data['users'].insert(0, g.user)
 
     data['vehicle_capacities'] = []
-    maximumStops = len(data['users'])/data['num_vehicles'] + 5
+    maximumStops = len(data['users'])/data['num_vehicles'] + 3
     print("Maximum stops: " + str(maximumStops))
     #maximumStops = 500
     for vehicleNum in range(data['num_vehicles']):
@@ -146,17 +146,18 @@ def get_solution(data, manager, routing, solution):
     max_route_distance = 0
     toReturn = []
     for vehicle_id in range(data['num_vehicles']):
-        toAppend = []
+        combined = [[], 0]
         index = routing.Start(vehicle_id)
         route_distance = 0
         while not routing.IsEnd(index):
-            toAppend.append(data['users'][manager.IndexToNode(index)])
+            combined[0].append(data['users'][manager.IndexToNode(index)])
             previous_index = index
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(
                 previous_index, index, vehicle_id)
-        toAppend.append(data['users'][manager.IndexToNode(index)])
-        toReturn.append(toAppend)
+        combined[0].append(data['users'][manager.IndexToNode(index)])
+        combined[1] = route_distance
+        toReturn.append(combined)
     return toReturn
 
 
@@ -199,7 +200,7 @@ def get_order_assignments(num_vehicles, data):
 
         to_node = manager.IndexToNode(to_index)
 
-        return data['distance_matrix'][from_node][to_node]
+        return data['distance_matrix'][from_node][to_node] + 1000
 
 
 
@@ -223,7 +224,7 @@ def get_order_assignments(num_vehicles, data):
 
         0,  # no slack
 
-        90000,  # vehicle maximum travel distance
+        45000,  # vehicle maximum travel distance
 
         True,  # start cumul to zero
 
@@ -233,6 +234,11 @@ def get_order_assignments(num_vehicles, data):
 
     distance_dimension.SetGlobalSpanCostCoefficient(100)
 
+    #distance_dimension.SetSpanCostCoefficientForAllVehicles(10000)
+    distance_dimension.SetCumulVarSoftLowerBound(transit_callback_index, 10000, 100000000)
+    #distance_dimension.SetCumulVarSoftUpperBound(transit_callback_index, 15000, 100000000)
+
+    '''
     routing.AddDimensionWithVehicleCapacity(
         demand_callback_index,
         0,
@@ -240,7 +246,7 @@ def get_order_assignments(num_vehicles, data):
         True,
         'Capacity'
     )
-
+    '''
 
 
     # Setting first solution heuristic.
@@ -272,12 +278,16 @@ def createAllRoutes(foodBankId, num_vehicles=40):
     routeList = []
     for i in range(len(assignments)):
         userIdList = []  # sorted list to store as column with volunteer
-        for user in assignments[i]:
+        for user in assignments[i][0]:
             userIdList.append(user['id'])
         routeList.append(userIdList)
     conn.execute(routes.delete().where(routes.c.foodBankId==foodBankId))
-    for route in routeList:
-        conn.execute(routes.insert().values(foodBankId=foodBankId, content=json.dumps(route), volunteerId=-1))
+    for routeNum in range(len(routeList)):
+        route = routeList[routeNum]
+        length = assignments[routeNum][1]
+        if length == 0:
+            continue
+        conn.execute(routes.insert().values(foodBankId=foodBankId, length=length, content=json.dumps(route), volunteerId=-1))
     routesToSpreadsheet(foodBankId)
 
 def routesToSpreadsheet(foodBankId):
@@ -314,10 +324,10 @@ def getUsers(routeId):
     content = loads(route_rp.content)
     toReturn = []
     for userId in content:
-        if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
-            user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
-            userObj = row2dict(user_rp)
-            toReturn.append(userObj)
+        #if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
+        user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+        userObj = row2dict(user_rp)
+        toReturn.append(userObj)
 
     print("Users: " + str(toReturn))
     return toReturn

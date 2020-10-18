@@ -69,6 +69,9 @@
           Length: {{ route['parsedContent']|length - 2 }} stops
         </div>
         <div class="card-header">
+          Bird's eye view distance: {{ route['length']|int /1000 }} KM
+        </div>
+        <div class="card-header">
           Priority: {{ route['weightedScore'] }}
           <small><a href="javascript:explainScore()">What's this?</a></small>
         </div>
@@ -97,7 +100,7 @@
               rel="noopener noreferrer"
               href="/allorders#card-{{ user['id'] }}"
             >
-              {{ user['address'] }}
+              {{ user['formattedAddress'] }}
             </a>
           </div>
           {% endfor %}

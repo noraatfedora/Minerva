@@ -80,6 +80,7 @@ routes = Table(
     'routes', meta,
     Column('id', Integer, primary_key=True),
     Column('volunteerId', Integer),
+    Column('length', Integer), # in meters
     Column('foodBankId', Integer),
     Column('content', String(255))
 )
