@@ -25,13 +25,6 @@
                         <strong>About us</strong>
                         {% endif %}
                     </a>
-                    <a class="nav-item nav-link" href="{{ url_for('volunteer') }}" id="navtext">
-                        {% if request.path == "/volunteer" %}
-                        <strong style="color:white;">Volunteer</strong>
-                        {% else %}
-                        <strong>Volunteer</strong>
-                        {% endif %}
-                    </a>
                     {% if g.user and g.user['role'].lower() == "reciever" %}
                     <a class="nav-item nav-link" href="{{ url_for('request_items.request_items') }}" id="navtext">
                         {% if request.path == "/request_items" %}
@@ -41,7 +34,6 @@
                         {% endif %}
                     </a>
                     {% endif %}
-                    <a class="nav-item nav-link" href="#" id="navtext"><strong>Donate</strong></a>
                     {% if g.user and g.user['role'].lower() == "volunteer" %}
                     <a class="nav-item nav-link" href="{{ url_for('dashboard.dashboard') }}" id="navtext">
                         {% if request.path == "/dashboard" %}
@@ -54,9 +46,9 @@
                     {% if g.user and g.user['role'].lower() == "admin" %}
                     <a class="nav-item nav-link" href="{{ url_for('view_all_orders.allOrders') }}" id="navtext">
                         {% if request.path == "/allorders" %}
-                        <strong style="color:white;">View Orders</strong>
+                        <strong style="color:white;">All users</strong>
                         {% else %}
-                        <strong>View Orders</strong>
+                        <strong>All users</strong>
                         {% endif %}
                     </a>
                     <a class="nav-item nav-link" href="{{ url_for('modify.dashboard') }}" id="navtext">
@@ -64,6 +56,13 @@
                         <strong style="color:white;">Volunteer Settings</strong>
                         {% else %}
                         <strong>Volunteer Settings</strong>
+                        {% endif %}
+                    </a>
+                    <a class="nav-item nav-link" href="routes" id="navtext">
+                        {% if request.path == "/routes" %}
+                        <strong style="color:white;">Manage Routes</strong>
+                        {% else %}
+                        <strong>Manage Routes</strong>
                         {% endif %}
                     </a>
                     <a class="nav-item nav-link" href="{{ url_for('auth.all_users') }}" id="navtext">
@@ -111,15 +110,8 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </body>
 {% endblock %}
