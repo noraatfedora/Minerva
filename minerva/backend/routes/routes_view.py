@@ -23,9 +23,13 @@ def allOrders():
     if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
         print(request.values.to_dict())
         if 'redirect' in request.values.to_dict().keys():
-            return loadingScreen(num_vehicles=request.values.get('num-vehicles'))
+            return loadingScreen(num_vehicles=request.values.get('num-vehicles'),
+                global_span_cost=request.values.get('global-span-cost'),
+                stopConversion=request.values.get('stop-conversion'))
         else:
-            assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')))
+            assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
+                globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
+                stopConversion=int(request.values.get('stop_conversion')))
             return redirect('/routes')
  
     volunteers = getVolunteers()
@@ -33,8 +37,8 @@ def allOrders():
     return render_template("routes_view.html", routes=routeList)
 
 @bp.route('/loading', methods=(['GET', 'POST']))
-def loadingScreen(num_vehicles=40):
-    return render_template("loading.html", num_vehicles=40)
+def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000):
+    return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stopConversion)
 
 @login_required
 @admin_required
