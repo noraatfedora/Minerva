@@ -1,0 +1,178 @@
+{% extends "base.html" %} {% block content %}
+<script>
+  function explainScore() {
+    var message =
+      "The priority is calculated by the amount of time it has been " +
+      "since each stop on the route has been last delivered. " +
+      "The higher the priority, the more urgent this route is. When a volunteer claims the next route, they're " +
+      "given the route with the highest priority.";
+    window.alert(message);
+  }
+
+  function explainLength() {
+    var message = 
+      "The length of each route is estimated by the geographic coordinates of each address, " +
+      "ignoring any roads, highways, or speeed limits. This significantly cuts down on " +
+      "computation time, while still being a good enough strategy to find routes. It also "+
+      "saves money that would be sent to Google Maps, as it would cost about $3 to add each" +
+      "new client."
+    window.alert(message);
+
+  }
+
+  function explainGSC() {
+    var message =
+      "Increasing the Global Span Cost creates shorter routes. It also creates more routes. " +
+      "If you increase the Global Span Cost and it's taking a lot of time to calculate, increase " +
+      "the maximum number of routes."
+    window.alert(message);
+  }
+
+  function explainStopConversion() {
+    var message =
+      "Increase this number if it takes volunteers a long time to park their car, get out, and deliver."
+    window.alert(message);
+  }
+
+  function explainMaxRoutes() {
+    var message = 
+      "Usually, the routing algorithm creates many empty routes that it deletes later. " +
+      "Increase this number if you also increase the global span cost."
+    window.alert(message);
+  }
+</script>
+<!--
+<style>
+  .card-container {
+      flex-direction: row;
+      display:flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: flex-start;
+  }
+  .card {
+      margin: 1%;
+  }
+</style>
+-->
+<center>
+  <h2>Routes</h2>
+  <form
+    name="generate-routes"
+    id="generate-routes"
+    class="form"
+    action=""
+    method="post"
+    onsubmit="return verifyForm()"
+  >
+    <div class="spacer"></div>
+    <input type="hidden" name="redirect" value="loading" />
+    <button
+      type="submit"
+      name="submit"
+      class="btn bw-btn center-block blue-hover"
+    >
+      Generate new routes
+    </button>
+    <div class="spacer"></div>
+    <a
+      class="btn bw-btn"
+      data-toggle="collapse"
+      href="#collapse-advanced"
+      role="button"
+      aria-expanded="false"
+      aria-controls="collapse-advanced"
+    >
+      Advanced options
+    </a>
+    <div id="collapse-advanced" class="collapse">
+    <div class="spacer"></div>
+      <div class="card text-left task-incomplete">
+        <div class="card-header">
+          Maximum number of routes:
+          <input
+            type="number"
+            class="form-control-aesthetic col-md-2"
+            value="100"
+            id="num-vehicles"
+            name="num-vehicles"
+          />
+          <small><a href="javascript:explainMaxRoutes()">What's this?</a></small>
+        </div>
+        <div class="card-header">
+          Each delivery is equivalent to driving
+          <input
+            type="number"
+            class="form-control-aesthetic col-md-3"
+            value="1000"
+            id="stop-conversion"
+            name="stop-conversion"
+          />
+          meters
+          <small><a href="javascript:explainStopConversion()">What's this?</a></small>
+        </div>
+        <div class="card-header">
+          Global Span Cost
+          <input
+            type="number"
+            class="form-control-aesthetic col-md-3"
+            value="4000"
+            id="global-span-cost"
+            name="global-span-cost"
+          />
+          <small><a href="javascript:explainGSC()">What's this?</a></small>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="spacer"></div>
+  <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover"
+    >Download routes as spreadsheet</a
+  >
+  <div class="spacer"></div>
+  <div class="card-container">
+    {% for route in routes %}
+    <div class="card grid-card text-left task-incomplete">
+      <div class="card-header">Route ID: {{ route['id'] }}</div>
+      <div class="card-header">
+        Length (bird's eye view distance): {{ route['length']|int /1000 }} KM <small>What's this?</small>
+      </div>
+      <div class="card-header">
+        Priority: {{ route['weightedScore'] }}
+        <small><a href="javascript:explainScore()">What's this?</a></small>
+      </div>
+      <div class="card-header">
+        <a href="{{ route['google_maps'] }}">View Map</a>
+      </div>
+      <div class="card-header">
+        <a
+          class="btn bw-btn"
+          data-toggle="collapse"
+          href="#collapse-route-{{ route['id'] }}"
+          role="button"
+          aria-expanded="false"
+          aria-controls="collapse-route-{{ route['id'] }}"
+        >
+          {% if route['userList']|length==1 %} Show 1 stop {% else %} Show {{
+          route['userList']|length - 2 }} stops {% endif %}
+        </a>
+      </div>
+      <div id="collapse-route-{{ route['id'] }}" class="collapse">
+        {% for user in route['userList'] %}
+        <div class="card bg-light" id="user-header-{{ user['id'] }}">
+          <a
+            class="btn btn-link"
+            target="_bland"
+            rel="noopener noreferrer"
+            href="/allorders#card-{{ user['id'] }}"
+          >
+            {{ user['formattedAddress'] }}
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</center>
+{% endblock content %}

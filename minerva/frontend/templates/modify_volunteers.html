@@ -13,8 +13,9 @@
         </a>
         {% endfor %}
     </div>
+    <div class="card-container">
     {% for volunteer in volunteers %}
-    <div class="card text-left task-incomplete bg-primary item">
+    <div class="card grid-card text-left task-incomplete bg-primary item">
         <div class="card-header">
             {{ volunteer['name'] }} ({{ volunteer['email'] }})
         </div>
@@ -22,9 +23,9 @@
             <a class="btn bw-btn" data-toggle="collapse" href="#collapse-volunteer-{{ volunteer['id'] }}" role="button"
                 aria-expanded="false" aria-controls="collapse-volunteer-{{ volunteer['id'] }}">
                 {% if volunteer['userList']|length==1 %}
-                Show 1 order
+                Show 1 stop
                 {% else %}
-                Show {{ volunteer['userList']|length }} orders
+                Show {{ volunteer['userList']|length }} stops
                 {% endif %}
             </a>
         </div>
@@ -93,6 +94,7 @@
                     Volunteer</button>
             </form>
         </div>
+    </div>
     </div>
     <br>
     {% endfor %}

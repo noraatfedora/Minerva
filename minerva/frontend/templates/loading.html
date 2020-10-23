@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<center>
+    <h2>Generating new routes, please wait...</h2>
+    <div class="spacer"></div>
+    <img src="/static/loading-1.gif">
+    <div class="spacer"></div>
+    Please do not exit or refresh this page. This may take a few minutes.
+    <form method='POST' action='routes' id="form" name="generate-routes">
+        <input type="hidden" name="num-vehicles" value="{{ num_vehicles }}">
+        <input type="hidden" name="global_span_cost" value="{{ global_span_cost }}">
+        <input type="hidden" name="stop_conversion" value="{{ stop_conversion }}">
+    </form>
+    <script>
+        setTimeout(() => { document.getElementById("form").submit(); }, 500);
+    </script>
+</center>
+{% endblock content %}

@@ -4,9 +4,10 @@ from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, volunteer_required
 from json import loads
 from datetime import datetime
-from minerva.backend.apis.db import users, conn
+from minerva.backend.apis.db import users, conn, routes
 from sqlalchemy import and_, select
 from os import environ
+from minerva.backend.routes.dashboard import getUsers
 from order_assignment import unassign
 from minerva.backend.apis.email import send_volunteer_acceptance_notification
 
@@ -55,22 +56,6 @@ def dashboard():
         '''
     return render_template("modify_volunteers.html", volunteers=getVolunteerInfoList(g.user.id), unassigned=unassigned)
 
-# Returns a list of users based off the volunteer's ordering column
-def getUsers(volunteer):
-    row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in users.columns}
-    # Get the ID's that our volunteer is assigned to
-    ordering = loads(volunteer['ordering'])
-    toReturn = []
-    for userId in ordering:
-        if userId != volunteer['foodBankId']: # Stupid to put the food bank on the user's list of orders
-            user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
-            userObj = row2dict(user_rp)
-            userObj['doneToday'] = user_rp['lastDelivered'].date() == datetime.today().date()
-            toReturn.append(userObj)
-
-    print("Users: " + str(toReturn))
-    return toReturn
-
 
 
 def getVolunteerInfoList(foodBankId):
@@ -79,6 +64,10 @@ def getVolunteerInfoList(foodBankId):
     toReturn = []
     for volunteer_rp in volunteerList:
         volunteerDict = row2dict(volunteer_rp)
-        volunteerDict['userList'] = getUsers(volunteerDict)
+        route = conn.execute(routes.select().where(routes.c.volunteerId==volunteerDict['id'])).fetchone()
+        if route != None:
+            volunteerDict['userList'] = getUsers(route.id)
+        else:
+            volunteerDict['userList'] = []
         toReturn.append(volunteerDict)
     return toReturn

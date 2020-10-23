@@ -1,8 +1,8 @@
 from flask import ( Blueprint, flash, g, redirect, render_template,
-    request, session, url_for, Flask, make_response
+    request, session, url_for, Flask, make_response, send_file
 )
 from werkzeug.exceptions import abort
-from minerva.backend.routes.auth import login_required, admin_required 
+from minerva.backend.routes.auth import login_required, admin_required
 from json import loads, dumps
 from collections import OrderedDict
 from db import users, conn, items
@@ -20,9 +20,13 @@ bp = Blueprint('view_all_orders', __name__)
 def allOrders():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
     userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
-    if request.method == "GET" and "assignall" in request.args.keys():
-        assign.createAllRoutes(foodBankId=g.user.id)
-        return redirect('/allorders')
+    if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
+        print(request.values.to_dict())
+        if 'redirect' in request.values.to_dict().keys():
+            return loadingScreen(num_vehicles=request.values.get('num-vehicles'))
+        else:
+            assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')))
+            return redirect('/allorders')
     if request.method == "GET" and "volunteer" in request.args.keys():
         volunteerId = int(request.args.get("volunteer"))
         orderId = int(request.args.get("order"))
@@ -38,6 +42,16 @@ def allOrders():
     today = datetime.date.today()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
     return render_template("view_all_orders.html", users=userList, volunteers=volunteers)
+
+@bp.route('/loading', methods=(['GET', 'POST']))
+def loadingScreen(num_vehicles=40):
+    return render_template("loading.html", num_vehicles=40)
+
+@login_required
+@admin_required
+@bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
+def send_spreadsheet():
+    return send_file(environ['INSTANCE_PATH'] + 'routes.xlsx', as_attachment=True)
 
 @login_required
 @admin_required

@@ -9,12 +9,14 @@ from os import environ
 from datetime import date, datetime, timedelta
 import math
 from flask import g
+import pandas as pd
 import geopy
+from json import loads, dumps
 from db import users, conn, routes
 from sqlalchemy import select, and_
 
 
-def create_data(num_vehicles):
+def create_data(num_vehicles, gscce, stopConversion):
 
     '''
     with open("minerva/data.json", "r") as jsonFile:
@@ -29,11 +31,14 @@ def create_data(num_vehicles):
         users.select().where(users.c.role=="RECIEVER")).fetchall()
 
     data['num_vehicles'] = num_vehicles
+    data['globalSpanCostCoefficient'] = gscce
+    data['stopConversion'] = stopConversion
+
     data['depot'] = 0
     data['users'].insert(0, g.user)
 
     data['vehicle_capacities'] = []
-    maximumStops = len(data['users'])/data['num_vehicles'] + 5
+    maximumStops = len(data['users'])/data['num_vehicles'] + 3
     print("Maximum stops: " + str(maximumStops))
     #maximumStops = 500
     for vehicleNum in range(data['num_vehicles']):
@@ -104,6 +109,8 @@ def getNextRoute(volunteerId, foodBankId):
 def getRouteCost(route, time):
     cost = 0
     for userId in route:
+        if userId == g.user.id or userId == g.user.foodBankId:
+            continue
         lastDelivered = conn.execute(select([users.c.lastDelivered]).where(users.c.id==userId)).fetchone()
         #print(lastDelivered)
         # Uncomment this line to fix the cold start problem
@@ -142,29 +149,28 @@ def get_solution(data, manager, routing, solution):
     max_route_distance = 0
     toReturn = []
     for vehicle_id in range(data['num_vehicles']):
-        toAppend = []
+        combined = [[], 0]
         index = routing.Start(vehicle_id)
         route_distance = 0
         while not routing.IsEnd(index):
-            toAppend.append(data['users'][manager.IndexToNode(index)])
+            combined[0].append(data['users'][manager.IndexToNode(index)])
             previous_index = index
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(
-                previous_index, index, vehicle_id)
-        toAppend.append(data['users'][manager.IndexToNode(index)])
-        toReturn.append(toAppend)
+                previous_index, index, vehicle_id) - data['stopConversion']
+        combined[0].append(data['users'][manager.IndexToNode(index)])
+        combined[1] = route_distance
+        toReturn.append(combined)
     return toReturn
 
 
-def get_order_assignments(num_vehicles, data):
+def get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoefficient):
 
     """Solve the CVRP problem."""
 
     # Instantiate the data problem.
 
     #sdfdsfljk = spreadsheet[spreadsheet['Address 1'] != start_address]
-
-    data = create_data(num_vehicles=40)
 
     #add_coords_to_df(spreadsheet, data)
 
@@ -195,7 +201,7 @@ def get_order_assignments(num_vehicles, data):
 
         to_node = manager.IndexToNode(to_index)
 
-        return data['distance_matrix'][from_node][to_node]
+        return data['distance_matrix'][from_node][to_node] + data['stopConversion']
 
 
 
@@ -219,7 +225,7 @@ def get_order_assignments(num_vehicles, data):
 
         0,  # no slack
 
-        90000,  # vehicle maximum travel distance
+        45000,  # vehicle maximum travel distance
 
         True,  # start cumul to zero
 
@@ -227,8 +233,14 @@ def get_order_assignments(num_vehicles, data):
 
     distance_dimension = routing.GetDimensionOrDie(dimension_name)
 
-    distance_dimension.SetGlobalSpanCostCoefficient(100)
+    # Default should be around 4000
+    distance_dimension.SetGlobalSpanCostCoefficient(data['globalSpanCostCoefficient'])
 
+    #distance_dimension.SetSpanCostCoefficientForAllVehicles(10000)
+    #distance_dimension.SetCumulVarSoftLowerBound(transit_callback_index, 10000, 100000000)
+    #distance_dimension.SetCumulVarSoftUpperBound(transit_callback_index, 20000, 100000000)
+
+    '''
     routing.AddDimensionWithVehicleCapacity(
         demand_callback_index,
         0,
@@ -236,7 +248,7 @@ def get_order_assignments(num_vehicles, data):
         True,
         'Capacity'
     )
-
+    '''
 
 
     # Setting first solution heuristic.
@@ -255,23 +267,70 @@ def get_order_assignments(num_vehicles, data):
 
     return get_solution(data, manager, routing, solution)
 
-def createAllRoutes(foodBankId, num_vehicles=40):
+def createAllRoutes(foodBankId, num_vehicles=100, stopConversion=1000, globalSpanCostCoefficient=4000):
+    print("Number of vehicles: " + str(num_vehicles))
     #routeList = [[2, 114, 264, 454, 327, 405, 137, 144, 474, 333, 229, 456, 321, 128, 216, 59, 178, 2], [2, 207, 19, 407, 147, 256, 159, 162, 208, 226, 233, 426, 65, 97, 244, 261, 205, 2], [2, 2], [2, 67, 54, 379, 290, 484, 53, 422, 113, 259, 357, 373, 72, 268, 439, 32, 491, 2], [2, 2], [2, 319, 110, 429, 461, 265, 496, 112, 196, 306, 184, 223, 73, 432, 352, 427, 2], [2, 170, 483, 466, 478, 402, 120, 366, 325, 14, 160, 41, 221, 359, 250, 451, 117, 2], [2, 2], [2, 2], [2, 413, 75, 328, 384, 86, 236, 382, 386, 311, 145, 436, 192, 279, 218, 371, 294, 2], [2, 2], [2, 476, 198, 18, 376, 37, 421, 377, 324, 182, 142, 455, 314, 135, 133, 181, 166, 2], [2, 392, 358, 83, 475, 187, 11, 431, 46, 287, 109, 237, 430, 16, 411, 497, 2], [2, 353, 156, 68, 81, 344, 343, 85, 445, 390, 313, 447, 401, 469, 355, 155, 275, 2], [2, 416, 43, 202, 100, 249, 316, 354, 485, 305, 462, 22, 394, 477, 89, 60, 138, 2], [2, 406, 200, 481, 317, 124, 271, 492, 235, 482, 273, 246, 212, 161, 152, 98, 301, 2], [2, 408, 149, 365, 220, 225, 136, 468, 228, 154, 26, 87, 312, 172, 381, 277, 410, 2], [2, 24, 336, 397, 42, 121, 267, 38, 52, 39, 307, 163, 254, 260, 171, 320, 393, 2], [2, 443, 219, 460, 280, 12, 148, 418, 95, 241, 472, 21, 435, 335, 168, 23, 104, 2], [2, 91, 186, 134, 173, 276, 295, 299, 349, 378, 310, 82, 115, 334, 340, 158, 193, 2], [2, 63, 346, 467, 369, 195, 243, 58, 404, 329, 197, 270, 464, 288, 2], [2, 213, 169, 175, 350, 361, 217, 179, 118, 27, 201, 274, 131, 177, 165, 126, 36, 2], [2, 92, 209, 248, 238, 490, 440, 428, 423, 420, 412, 370, 341, 283, 50, 130, 356, 2], [2, 106, 141, 266, 47, 206, 232, 143, 389, 459, 13, 380, 94, 293, 318, 326, 194, 2], [2, 227, 479, 330, 29, 364, 296, 342, 372, 69, 214, 257, 398, 102, 96, 286, 486, 2], [2, 2], [2, 493, 132, 444, 80, 111, 77, 425, 190, 323, 167, 203, 119, 176, 40, 400, 140, 2], [2, 239, 363, 230, 450, 442, 298, 247, 494, 231, 189, 446, 234, 285, 64, 488, 269, 2], [2, 183, 84, 463, 368, 292, 93, 116, 403, 304, 272, 51, 453, 174, 433, 419, 2], [2, 2], [2, 281, 284, 291, 108, 282, 78, 458, 331, 424, 332, 57, 415, 17, 452, 473, 258, 2], [2, 180, 123, 337, 263, 127, 204, 125, 99, 252, 79, 414, 278, 211, 30, 387, 367, 2], [2, 351, 224, 395, 480, 300, 48, 15, 157, 90, 103, 245, 347, 471, 215, 66, 251, 2], [2, 146, 441, 242, 345, 139, 45, 240, 437, 495, 385, 315, 338, 107, 457, 35, 188, 2], [2, 44, 49, 210, 191, 129, 465, 302, 489, 28, 374, 308, 222, 88, 2], [2, 62, 399, 417, 438, 61, 74, 164, 262, 255, 34, 388, 150, 375, 322, 348, 55, 2], [2, 105, 185, 56, 76, 309, 449, 122, 434, 487, 391, 448, 362, 71, 396, 383, 253, 2], [2, 101, 199, 409, 339, 151, 31, 303, 70, 153, 297, 25, 360, 470, 20, 33, 289, 2], [2, 2], [2, 2]]
-    data = create_data(num_vehicles)
+    print(environ['INSTANCE_PATH'])
+    data = create_data(num_vehicles, globalSpanCostCoefficient, stopConversion)
     usersList = conn.execute(users.select().where(
         users.c.role=="RECIEVER"
     )).fetchall()
     print("Calculating routes...")
-    assignments = get_order_assignments(num_vehicles, data)
+    assignments = get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoefficient)
     routeList = []
     for i in range(len(assignments)):
         userIdList = []  # sorted list to store as column with volunteer
-        for user in assignments[i]:
+        for user in assignments[i][0]:
             userIdList.append(user['id'])
         routeList.append(userIdList)
-    for route in routeList:
-        conn.execute(routes.insert().values(foodBankId=g.user.id, content=json.dumps(route)))
+    conn.execute(routes.delete().where(routes.c.foodBankId==foodBankId))
+    for routeNum in range(len(routeList)):
+        route = routeList[routeNum]
+        length = assignments[routeNum][1]
+        if length == 0:
+            continue
+        conn.execute(routes.insert().values(foodBankId=foodBankId, length=length, content=json.dumps(route), volunteerId=-1))
+    routesToSpreadsheet(foodBankId)
+
+def routesToSpreadsheet(foodBankId):
+    routesList = conn.execute(routes.select().where(routes.c.foodBankId==foodBankId))
+    pdList = []
+    for route in routesList:
+        df = pd.DataFrame(getUsers(route.id))
+        pdList.append(df)
+
+    fileName = environ['INSTANCE_PATH'] + 'routes.xlsx'
+    writer = pd.ExcelWriter(fileName)
+
+    for index in range(0, len(pdList)):
+        pdList[index].to_excel(writer, sheet_name="Route " + str(index))
+
+    writer.save()
+
+    return fileName
 
 
+# Returns a list of users based off the given route ID
+def getUsers(routeId):
+    print("Route ID:" + str(routeId))
+    columns = [users.c.name, users.c.email,
+        users.c.cellPhone, users.c.instructions,
+        users.c.homePhone, users.c.formattedAddress,
+        users.c.address, users.c.address2,
+        users.c.zipCode, users.c.lastDelivered,
+        users.c.city, users.c.state,
+        users.c.householdSize]
+    row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in columns}
+    # Get the ID's that our volunteer is assigned to
+    route_rp = conn.execute(routes.select().where(routes.c.id==routeId)).fetchone()
+    content = loads(route_rp.content)
+    toReturn = []
+    for userId in content:
+        #if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
+        user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+        userObj = row2dict(user_rp)
+        toReturn.append(userObj)
 
-# assignAllOrders(2)
+    print("Users: " + str(toReturn))
+    return toReturn
+
