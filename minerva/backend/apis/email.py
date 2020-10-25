@@ -62,6 +62,8 @@ def send_recieved_notification(reciever_email):
 			</td>
 		</tr>
 	""" + endHTML()
+	if reciever_email == None:
+		return
 	print("Email: " + reciever_email)
 	send_email(to = reciever_email, contents = html, subject = "Your Food Bank Order is Here")
 
