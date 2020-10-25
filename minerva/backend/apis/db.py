@@ -9,6 +9,8 @@ import os
 
 Session = sessionmaker(autocommit=True)
 
+print("RDS_CONNECT: " + os.environ['EMAIL_SENDER'])
+
 if os.environ.get('RDS_CONNECT') is not None:
     url = os.environ.get('RDS_CONNECT')
     engine = create_engine(url, pool_recycle=28700)

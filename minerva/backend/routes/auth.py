@@ -141,8 +141,6 @@ def all_users():
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == "POST":
-        with open("minerva/backend/apis/database/supported_zip_codes", 'r') as f:
-            supportedZipCodes = f.read()
 
         form = request.form.to_dict()
 
@@ -168,6 +166,7 @@ def register():
 
         if error == "":
             password_hash = generate_password_hash(password)
+            print("Length of password hash:" + str(len(password_hash)))
 
             conn.execute(users.insert(), name=name, birthday=birthday, email=email, password=password_hash, address=address,
                          role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,

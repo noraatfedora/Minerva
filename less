@@ -1,0 +1,57 @@
+    ERROR: Command errored out with exit status 1:
+     command: /usr/bin/python3 -c 'import sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-brsxe7hf/dotenv/setup.py'"'"'; __file__='"'"'/tmp/pip-install-brsxe7hf/dotenv/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' egg_info --egg-base /tmp/pip-install-brsxe7hf/dotenv/pip-egg-info
+         cwd: /tmp/pip-install-brsxe7hf/dotenv/
+    Complete output (51 lines):
+        ERROR: Command errored out with exit status 1:
+         command: /usr/bin/python3 -c 'import sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-wheel-pzg1qw6b/distribute/setup.py'"'"'; __file__='"'"'/tmp/pip-wheel-pzg1qw6b/distribute/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' egg_info --egg-base /tmp/pip-wheel-pzg1qw6b/distribute/pip-egg-info
+             cwd: /tmp/pip-wheel-pzg1qw6b/distribute/
+        Complete output (15 lines):
+        Traceback (most recent call last):
+          File "<string>", line 1, in <module>
+          File "/tmp/pip-wheel-pzg1qw6b/distribute/setuptools/__init__.py", line 2, in <module>
+            from setuptools.extension import Extension, Library
+          File "/tmp/pip-wheel-pzg1qw6b/distribute/setuptools/extension.py", line 5, in <module>
+            from setuptools.dist import _get_unpatched
+          File "/tmp/pip-wheel-pzg1qw6b/distribute/setuptools/dist.py", line 7, in <module>
+            from setuptools.command.install import install
+          File "/tmp/pip-wheel-pzg1qw6b/distribute/setuptools/command/__init__.py", line 8, in <module>
+            from setuptools.command import install_scripts
+          File "/tmp/pip-wheel-pzg1qw6b/distribute/setuptools/command/install_scripts.py", line 3, in <module>
+            from pkg_resources import Distribution, PathMetadata, ensure_directory
+          File "/tmp/pip-wheel-pzg1qw6b/distribute/pkg_resources.py", line 1518, in <module>
+            register_loader_type(importlib_bootstrap.SourceFileLoader, DefaultProvider)
+        AttributeError: module 'importlib._bootstrap' has no attribute 'SourceFileLoader'
+        ----------------------------------------
+    ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.
+    Traceback (most recent call last):
+      File "/usr/lib/python3/dist-packages/setuptools/installer.py", line 128, in fetch_build_egg
+        subprocess.check_call(cmd)
+      File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+        raise CalledProcessError(retcode, cmd)
+    subprocess.CalledProcessError: Command '['/usr/bin/python3', '-m', 'pip', '--disable-pip-version-check', 'wheel', '--no-deps', '-w', '/tmp/tmpanxaj8lk', '--quiet', 'distribute']' returned non-zero exit status 1.
+    
+    During handling of the above exception, another exception occurred:
+    
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+      File "/tmp/pip-install-brsxe7hf/dotenv/setup.py", line 13, in <module>
+        setup(name='dotenv',
+      File "/usr/lib/python3/dist-packages/setuptools/__init__.py", line 143, in setup
+        _install_setup_requires(attrs)
+      File "/usr/lib/python3/dist-packages/setuptools/__init__.py", line 138, in _install_setup_requires
+        dist.fetch_build_eggs(dist.setup_requires)
+      File "/usr/lib/python3/dist-packages/setuptools/dist.py", line 718, in fetch_build_eggs
+        resolved_dists = pkg_resources.working_set.resolve(
+      File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 781, in resolve
+        dist = best[req.key] = env.best_match(
+      File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 1066, in best_match
+        return self.obtain(req, installer)
+      File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 1078, in obtain
+        return installer(requirement)
+      File "/usr/lib/python3/dist-packages/setuptools/dist.py", line 777, in fetch_build_egg
+        return fetch_build_egg(self, req)
+      File "/usr/lib/python3/dist-packages/setuptools/installer.py", line 130, in fetch_build_egg
+        raise DistutilsError(str(e))
+    distutils.errors.DistutilsError: Command '['/usr/bin/python3', '-m', 'pip', '--disable-pip-version-check', 'wheel', '--no-deps', '-w', '/tmp/tmpanxaj8lk', '--quiet', 'distribute']' returned non-zero exit status 1.
+    ----------------------------------------
+ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.
