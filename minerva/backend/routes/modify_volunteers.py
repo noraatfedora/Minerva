@@ -38,6 +38,9 @@ def dashboard():
         if "unassign" in key:
             orderId = key[len('unassign-'):]
             unassign(int(orderId))
+        elif "remove" in key:
+            volunteerId = int(key[len('remove-')])
+            conn.execute(users.delete().where(users.c.id==volunteerId))
         '''
         userId = next(request.form.keys())
         print(userId)
@@ -60,7 +63,7 @@ def dashboard():
 
 def getVolunteerInfoList(foodBankId):
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in users.columns}
-    volunteerList = conn.execute(users.select().where(and_(users.c.role=="VOLUNTEER", users.c.foodBankId==foodBankId)))
+    volunteerList = conn.execute(users.select().where(and_(users.c.role=="VOLUNTEER", users.c.foodBankId==foodBankId, users.c.approved==True)))
     toReturn = []
     for volunteer_rp in volunteerList:
         volunteerDict = row2dict(volunteer_rp)
