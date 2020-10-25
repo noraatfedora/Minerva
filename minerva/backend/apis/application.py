@@ -2,10 +2,12 @@ import os
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
-from db import  conn, users
+from minerva.backend.apis.db import  conn, users
 from barcode.writer import ImageWriter
 from babel.dates import format_datetime
 from datetime import datetime
+
+print("In application.py!")
 
 def format_datetime(value):
     format = "%Y-%m-%d %H:%M:%S.%f"
@@ -34,6 +36,7 @@ def create_app(test_config=None):
     # a simple page that says hello
     @app.route('/')
     def home():
+        print("in home!")
         if g.user != None:
             defaults = {
                 'RECIEVER': '/request_items',
@@ -63,8 +66,9 @@ def create_app(test_config=None):
         except:
             return "Fail!"
 
+    print("About to register blueprints...")
 
-    import db
+    from minerva.backend.apis import db
     db.init_app(app)
     
     from minerva.backend.routes import auth
@@ -88,8 +92,11 @@ def create_app(test_config=None):
 
     app.jinja_env.filters['datetime'] = format_datetime
 
+    print("Blueprints registered!")
+
     return app
 
 # Uncomment the below lines if you want debugging tools
 app = create_app()
+print("Created app!")
 # toolbar.init_app(app)

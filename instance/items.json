@@ -1,0 +1,54 @@
+{
+    "Ramen" :{
+            "name" : "Ramen",
+            "category" : "food",
+            "subcategory": "packaged",
+            "max": "20",
+            "units": "packets",
+            "picture": "ramen.jpg"
+    },
+
+    "Apples" :{
+            "name": "Apples",
+            "category" : "food",
+            "subcategory": "produce",
+            "units": "apples",
+            "max": "3",
+            "picture": "apple.jpg"
+    },
+
+    "Bananas" :{
+            "name": "Bananas",
+            "category" : "food",
+            "subcategory": "produce",
+            "max": "3",
+            "units": "bunches",
+            "picture": "banana.jpg"
+    },
+
+    "Potatoes" :{
+            "name": "Potatoes",
+            "category" : "food",
+            "subcategory": "produce",
+            "max": "5",
+            "picture": "potato.jpg"
+    },
+    
+    "Milk" : {
+        "name": "Milk",
+        "category" : "drink",
+        "subcategory": "dairy",
+        "max": "3",
+        "units": "cartons",
+        "picture" : "milk.jpg"
+    },
+
+    "Toothpaste" : {
+        "name": "Toothpaste",
+        "category": "hygiene",
+        "subcategory": "dental",
+        "max": "2",
+        "units": "tubes",
+        "picture" : "toothpaste.png"
+    }
+}

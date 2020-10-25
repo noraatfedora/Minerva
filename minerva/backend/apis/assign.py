@@ -12,7 +12,7 @@ from flask import g
 import pandas as pd
 import geopy
 from json import loads, dumps
-from db import users, conn, routes
+from minerva.backend.apis.db import users, conn, routes
 from sqlalchemy import select, and_
 
 

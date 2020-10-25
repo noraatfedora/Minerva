@@ -8,7 +8,7 @@ from minerva.backend.apis.db import users, conn, routes
 from sqlalchemy import and_, select
 from os import environ
 from minerva.backend.routes.dashboard import getUsers
-from order_assignment import unassign
+from minerva.backend.apis.order_assignment import unassign
 from minerva.backend.apis.email import send_volunteer_acceptance_notification
 
 bp = Blueprint('modify', __name__)

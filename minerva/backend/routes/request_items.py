@@ -3,13 +3,13 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required
-from db import users, conn, items
+from minerva.backend.apis.db import users, conn, items
 from minerva.backend.apis.email import send_request_confirmation
 from json import loads, dumps
 import datetime
 from sqlalchemy import select, and_
 from os import environ
-from order_assignment import refreshOrdering
+from minerva.backend.apis.order_assignment import refreshOrdering
 from sys import path
 import json
 

@@ -4,13 +4,14 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, volunteer_required
 from json import loads, dumps
-from db import users, conn, routes
-from assign import getNextRoute
+from minerva.backend.apis.db import users, conn, routes
+from minerva.backend.apis.assign import getNextRoute
 from sqlalchemy import and_, select
 from minerva.backend.apis.email import send_recieved_notification
 from datetime import date, datetime, timedelta
 from os import environ
-import google_maps_qr, pdfkit
+from minerva.backend.apis import google_maps_qr
+import pdfkit
 
 bp = Blueprint('dashboard', __name__)
 

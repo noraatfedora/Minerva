@@ -1,6 +1,6 @@
 from sqlalchemy import select, and_
-from db import conn, users
-from google_api import getOrdering
+from minerva.backend.apis.db import conn, users
+from minerva.backend.apis.google_api import getOrdering
 from json import dumps
 from minerva.backend.apis.email import send_bagged_notification
 

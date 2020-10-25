@@ -5,11 +5,12 @@ from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, admin_required 
 from json import loads, dumps
 from collections import OrderedDict
-from db import users, conn, routes
+from minerva.backend.apis.db import users, conn, routes
 from sqlalchemy import and_, select
 from os import environ
-import assign, io, datetime, order_assignment
-import google_maps_qr
+from minerva.backend.apis import assign
+import io, datetime
+from minerva.backend.apis import google_maps_qr
 from datetime import datetime
 from minerva.backend.apis.email import send_recieved_notification, send_bagged_notification
 bp = Blueprint('routes', __name__)

@@ -3,3 +3,4 @@ database/
 __pycache__/
 .env
 venv/
+minerva.wsgi

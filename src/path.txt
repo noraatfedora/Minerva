@@ -1,0 +1,1 @@
+['/root/Minerva/src', '/root/Minerva/env/bin', '/usr/lib/python36.zip', '/usr/lib/python3.6', '/usr/lib/python3.6/lib-dynload', '/root/Minerva/env/lib/python3.6/site-packages']
