@@ -23,7 +23,7 @@ bp = Blueprint('dashboard', __name__)
 def dashboard():
     # Uncomment this line for testing. This gives everyone mailinator emails,
     # so that you don't accidentally send them conformiation emails while testing.
-    makeAllEmailsMailinator()
+    #makeAllEmailsMailinator()
 
 
     if request.method == "GET" and "claimRoute" in request.args.keys():
