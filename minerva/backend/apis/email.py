@@ -13,7 +13,7 @@ yag = yagmail.SMTP(sender_email, password)
 
 def send_email(subject, contents, to):
 	print("To: " + str(to))
-	yag.send(to = to, subject= subject, contents = [contents])
+	#yag.send(to = to, subject= subject, contents = [contents])
 
 def send_request_confirmation(reciever_email, items, date):
 	html = openHTML() + """
