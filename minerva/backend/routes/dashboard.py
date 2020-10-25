@@ -47,7 +47,6 @@ def dashboard():
             )
         ).fetchone()[0]
         send_recieved_notification(email)
-        userList = getUsers()
 
     routeId = conn.execute(select([routes.c.id]).where(routes.c.volunteerId==g.user.id)).fetchone()
     if routeId == None:
@@ -107,14 +106,19 @@ def getUsers(routeId):
     route_rp = conn.execute(routes.select().where(routes.c.id==routeId)).fetchone()
     content = loads(route_rp.content)
     toReturn = []
+    allDone = True
     for userId in content:
         if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
             user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
             userObj = row2dict(user_rp)
             userObj['doneToday'] = user_rp['lastDelivered'].date() == datetime.today().date()
+            if not userObj['doneToday']:
+                allDone = False
             toReturn.append(userObj)
 
     print("Users: " + str(toReturn))
+    if allDone:
+        conn.execute(routes.update().where(routes.c.id==routeId).values(volunteerId=-1))
     return toReturn
 
 
