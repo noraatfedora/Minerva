@@ -5,7 +5,7 @@ from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, admin_required
 from json import loads, dumps
 from collections import OrderedDict
-from minerva.backend.apis.db import users, conn, items
+from minerva.backend.apis.db import users, conn, items, routes
 from sqlalchemy import and_, select
 from os import environ
 from barcode import Code128
@@ -37,8 +37,17 @@ def allOrders():
         key = next(request.form.keys())
         print("Key: " + str(key))
         if "delete" in key: #TODO
-            userId = int(key[len('bag-'):])
-            userList = conn.execute(users.select().where(users.c.foodBankId == g.user.id)).fetchall()
+            userId = int(key[len('delete-'):])
+            routesList = conn.execute(routes.select().where(routes.c.foodBankId==g.user.foodBankId)).fetchall()
+            for route in routesList:
+                content = loads(route.content)
+                if userId in content:
+                    print("UserID in content!")
+                    content.remove(userId)
+                    conn.execute(routes.update().where(routes.c.id==route.id).values(content=dumps(content)))
+                    conn.execute(users.delete().where(users.c.id==userId))
+                    break
+            userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
     volunteers = getVolunteers()
     today = datetime.date.today()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
