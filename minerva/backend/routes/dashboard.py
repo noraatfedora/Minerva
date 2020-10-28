@@ -55,7 +55,7 @@ def dashboard():
         routeId = routeId[0]
     userList = getUsers(routeId)
     checkedIn = g.user.checkedIn == str(date.today())
-    return render_template("dashboard.html", users=userList, google_maps = google_maps_qr.make_url(userList))
+    return render_template("dashboard.html", users=userList, approved=g.user.approved, google_maps = google_maps_qr.make_url(userList))
 
 def makeAllEmailsMailinator():
     userList = conn.execute(users.select()).fetchall()
