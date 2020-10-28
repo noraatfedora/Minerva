@@ -18,6 +18,9 @@ def make_url(userList):
     link += slash.join(addresses)
     return link
 
+def make_single_url(address):
+    return "https://google.com/maps/place/" + prep_address(address)
+
 def osm_url(userList):
     link = "https://map.project-osrm.org/?z=12&center="
     separator = '&loc='
