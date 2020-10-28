@@ -115,6 +115,7 @@ def getUsers(routeId):
             if not userObj['doneToday']:
                 allDone = False
             toReturn.append(userObj)
+            userObj['googleMapsUrl'] = google_maps_qr.make_single_url(userObj['formattedAddress'])
 
     print("Users: " + str(toReturn))
     if allDone:

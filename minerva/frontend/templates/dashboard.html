@@ -22,13 +22,16 @@
             <b>Email: </b>{{ user['email'] }}
         </div>
         <div class="card-header">
-            <b>Address: </b>{{ user['address']}}
+            <b>Address: </b>{{ user['formattedAddress']}}
         </div>
         <div class="card-header">
             <b>Cell phone: </b>{{ user['cellPhone']}}
         </div>
         <div class="card-header">
             <b>Last delivered: </b>{{ user['lastDelivered']|datetime}}
+        </div>
+        <div class="card-header">
+            <a href="{{ user['googleMapsUrl'] }}"><b>View in Google Maps</b></a>
         </div>
         <div class="card-body">
             <form action="" method="POST">
