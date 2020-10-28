@@ -3,6 +3,9 @@
 <center style="min-height: 500px;">
     <h2>Volunteer Dashboard</h2>
     <div class="spacer"></div>
+    {% if not approved %}
+        You'll be able to access this page once your food bank approves you.
+    {% else %}
     <a href="/dashboard?claimRoute=1" name="claim-route" class="btn bw-btn blue-hover">Claim the next route</a>
     <div class="spacer"></div>
     <a href="/driver_printout" target="_blank" name="driver_printout" class="btn bw-btn blue-hover">Generate Driver Printout</a>
@@ -41,5 +44,6 @@
         </div>
     </div>
     {% endfor %}
+    {% endif %}
 </center>
 {% endblock %}
