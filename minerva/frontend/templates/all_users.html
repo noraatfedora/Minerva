@@ -11,7 +11,35 @@
         </h2>
         <form method="post" enctype="multipart/form-data">
             <input type="file" name="users" accept=".csv,.xlsx" />
+            <div class="spacer"></div>
+            Format:
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="spreadsheet-type" id="master-spreadsheet" value="master-spreadsheet" checked>
+                <label class="form-check-label" for="exampleRadios1">
+                    Master list spreadsheet
+                </label>
+            </div>
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="spreadsheet-type" id="routes-spreadsheet" value="routes-spreadsheet" >
+                <label class="form-check-label" for="exampleRadios1">
+                    Routes list spreadsheet
+                </label>
+            </div>
+            <div class="spacer"></div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="delete-checkbox" value="delete-users" id="deleteUsersCheckbox" checked>
+                <label class="form-check-label" for="deleteUsersCheckbox">
+                    Delete all users who aren't on this sheet
+                </label>
+            </div>
+            <label for="header">Header row #</label>
+            <div class="form-group">
+                <input type="number" class="form-control-aesthetic" value="1" name="header" id="header">
+            </div>
+            <div class="spacer"></div>
             <input type="submit" value="Submit">
+            <div class="spacer"></div>
+            After uploading data, it is reccomended you recalculate all routes on the <a href="/routes">routes page.</a>
         </form>
 
         <h2 style="margin-top: 36px">
@@ -22,6 +50,12 @@
             onsubmit="event.preventDefault(); verifyForm()">
             <div class="form-group">
                 <input type="text" name="name" id="name" class="form-control" placeholder="Name">
+                <small>Error message</small>
+            </div>
+            <div class="form-group">
+                <label><b>Date of birth</b></label>
+                <input class="form-control-aesthetic" type="date" id="birthday" name="birthday"
+                    placeholder="yyyy-mm-dd">
                 <small>Error message</small>
             </div>
             <div class="form-group">
