@@ -3,10 +3,13 @@ from flask import ( Blueprint, flash, g, redirect, render_template,
 )
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, admin_required
+import usaddress
 from json import loads, dumps
 from collections import OrderedDict
+from minerva.backend.apis.assign import getUsers
 from minerva.backend.apis.db import users, conn, items, routes
 from sqlalchemy import and_, select
+import pandas as pd
 from os import environ
 from barcode import Code128
 from barcode.writer import ImageWriter
@@ -21,6 +24,7 @@ bp = Blueprint('view_all_orders', __name__)
 def allOrders():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
     userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
+    print(create_master_spreadsheet())
     if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
         print(request.values.to_dict())
         if 'redirect' in request.values.to_dict().keys():
@@ -48,6 +52,8 @@ def allOrders():
                     conn.execute(users.delete().where(users.c.id==userId))
                     break
             userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
+        if "download-master-spreadsheet" in key:
+            return create_master_spreadsheet()
     volunteers = getVolunteers()
     today = datetime.date.today()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
@@ -61,7 +67,92 @@ def loadingScreen(num_vehicles=40):
 @admin_required
 @bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
 def send_spreadsheet():
-    return send_file(environ['INSTANCE_PATH'] + 'routes.xlsx', as_attachment=True)
+    routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
+    pdList = []
+    for route in routesList:
+        usersList = getUsers(route.id)
+        for user in usersList:
+            try:
+                parsed = usaddress.tag(user['Full Address'])[0]
+                user['City'] = parsed['PlaceName']
+                user['Zip'] = parsed['ZipCode']
+                addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetName', 'StreetNamePostType']
+                address = ""
+                for attribute in addressFormat:
+                    if attribute not in parsed.keys():
+                        continue
+                    if address == "":
+                        address = parsed[attribute]
+                    else:
+                        address = address + " " + parsed[attribute]
+            except:
+                address = user['Full Address']
+            user['Address'] = address
+                
+            names = user['Name'].split(" ", maxsplit=1)
+            user['First Name'] = names[0]
+            user['Last Name'] = names[1]
+            if user['Last Name'] == "nan":
+                user['Last Name'] = ''
+        df = pd.DataFrame(usersList)
+        pdList.append(df)
+    fileName = environ['INSTANCE_PATH'] + 'routes.xlsx'
+    writer = pd.ExcelWriter(fileName)
+    for index in range(0, len(pdList)):
+        outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
+        pdList[index].to_excel(writer, sheet_name="Route " + str(index), index=False, columns=outputColumns)
+    writer.save()
+    return send_file(fileName, as_attachment=True)
+
+@login_required
+@admin_required
+@bp.route('/master-spreadsheet', methods=('GET', 'POST'))
+def create_master_spreadsheet():
+    columns = ['name', 'email', 'formattedAddress', 'address2', 'cellPhone', 'instructions']
+    prettyNames = {'formattedAddress': 'Full Address',
+                    'address2': 'Apt',
+                    'name': 'Name',
+                    'email':'Email',
+                    'cellPhone': 'Phone',
+                    'instructions': 'Notes'}
+    row2dict = lambda r: {prettyNames[c]: betterStr(getattr(r, c)) for c in columns}
+    userRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id))).fetchall()
+    userDictList = []
+    for user in userRpList:
+        userDict = row2dict(user)
+        try:
+            parsed = usaddress.tag(userDict['Full Address'])[0]
+            userDict['City'] = parsed['PlaceName']
+            userDict['Zip'] = parsed['ZipCode']
+            addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetName', 'StreetNamePostType']
+            address = ""
+            for attribute in addressFormat:
+                if attribute not in parsed.keys():
+                    continue
+                if address == "":
+                    address = parsed[attribute]
+                else:
+                    address = address + " " + parsed[attribute]
+        except:
+            address = userDict['Full Address']
+        userDict['Address'] = address
+        names = userDict['Name'].split(" ", maxsplit=1)
+        userDict['First Name'] = names[0]
+        userDict['Last Name'] = names[1]
+        if userDict['Last Name'] == "nan":
+            userDict['Last Name'] = ''
+        userDictList.append(userDict)
+    df = pd.DataFrame(userDictList)
+    outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
+    with pd.ExcelWriter(environ['INSTANCE_PATH'] + 'client-master-list.xlsx') as writer:
+        df.to_excel(writer, columns=outputColumns, startrow=0, index=False, na_rep="")
+    return send_file(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', as_attachment=True)
+
+def betterStr(value):
+    if value == None:
+        return ''
+    else:
+        return str(value)
 
 @login_required
 @admin_required
