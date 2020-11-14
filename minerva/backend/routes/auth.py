@@ -124,11 +124,11 @@ def importMasterList(request, filename, fileType, delete, header):
     df = df.dropna(thresh=2)
     for index, row in df.iterrows():
         # This checks to make sure email is not nan
-        if (type(row['Email']) == str):
+        if 'Email' in row.keys() and (type(row['Email']) == str):
             if conn.execute(users.select().where(users.c.email == row['Email'])).fetchone() is not None:
                 continue
         else:
-            if conn.execute(users.select().where(users.c.address == row['Address 1'])).fetchone() is not None and conn.execute(users.select().where(users.c.name == str(row['First Name']) + " " + str(row['Last Name']))).fetchone() is not None:
+            if conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone() is not None:
                 continue
         if 'state' not in row.keys():
             state = 'WA'
@@ -154,6 +154,11 @@ def importMasterList(request, filename, fileType, delete, header):
                     inSpreadsheet=1,
                     foodBankId=g.user.id)
 
+def betterStr(value):
+    if value is None or value=="nan":
+        return ""
+    else:
+        return str(value)
 def importRoutesList(request, filename, fileType, delete):
     print(type(request.files['users']))
     xlFile = pd.ExcelFile(request.files['users'])
