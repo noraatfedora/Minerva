@@ -130,6 +130,15 @@ def importMasterList(request, filename, fileType, delete, header):
         else:
             if conn.execute(users.select().where(users.c.address == row['Address 1'])).fetchone() is not None and conn.execute(users.select().where(users.c.name == str(row['First Name']) + " " + str(row['Last Name']))).fetchone() is not None:
                 continue
+        if 'state' not in row.keys():
+            state = 'WA'
+        else:
+            state = row['state']
+
+        if 'Household Size' not in row.keys():
+            hh_size = -1
+        else:
+            hh_size = row['Household Size']
         conn.execute(users.insert(),
                     name=str(row['First Name']) + " " + str(row['Last Name']),
                     email=row['Email'],
@@ -140,8 +149,8 @@ def importMasterList(request, filename, fileType, delete, header):
                     cellPhone=row['Phone'],
                     zipCode=row['Zip'],
                     city=row['City'],
-                    state=row['State'],
-                    householdSize=row['Household Size'],
+                    state=state,
+                    householdSize=hh_size,
                     inSpreadsheet=1,
                     foodBankId=g.user.id)
 
