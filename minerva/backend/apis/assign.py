@@ -133,6 +133,7 @@ def create_distance_matrix(data):
         #row_list = [row['elements'][j]['distance']['value'] for j in range(len(row['elements']))]
         row_list = []
         for toUser in data['users']:
+            print("From " + str(fromUser.name) + " to " + str(toUser.name))
             distance = measure(
                 fromUser.latitude, fromUser.longitude, toUser.latitude, toUser.longitude)
             row_list.append(distance)
@@ -313,14 +314,19 @@ def routesToSpreadsheet(foodBankId):
 # Returns a list of users based off the given route ID
 def getUsers(routeId):
     print("Route ID:" + str(routeId))
+    prettyNames = {'formattedAddress': 'Full Address',
+                    'address2': 'Apt',
+                    'name': 'Name',
+                    'email':'Email',
+                    'cellPhone': 'Phone',
+                    'instructions': 'Notes',
+                    'householdSize': 'Household Size'}
     columns = [users.c.name, users.c.email,
         users.c.cellPhone, users.c.instructions,
-        users.c.homePhone, users.c.formattedAddress,
-        users.c.address, users.c.address2,
-        users.c.zipCode, users.c.lastDelivered,
-        users.c.city, users.c.state,
+        users.c.formattedAddress,
+        users.c.address2,
         users.c.householdSize]
-    row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in columns}
+    row2dict = lambda r: {prettyNames[c.name]: betterStr(getattr(r, c.name)) for c in columns}
     # Get the ID's that our volunteer is assigned to
     route_rp = conn.execute(routes.select().where(routes.c.id==routeId)).fetchone()
     content = loads(route_rp.content)
@@ -333,4 +339,9 @@ def getUsers(routeId):
 
     print("Users: " + str(toReturn))
     return toReturn
+def betterStr(value):
+    if value == None:
+        return ''
+    else:
+        return str(value)
 

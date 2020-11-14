@@ -110,6 +110,8 @@ def getUsers(routeId):
     for userId in content:
         if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
             user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+            if user_rp == None:
+                continue
             userObj = row2dict(user_rp)
             userObj['doneToday'] = user_rp['lastDelivered'].date() == datetime.today().date()
             if not userObj['doneToday']:
