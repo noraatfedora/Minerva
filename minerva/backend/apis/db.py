@@ -69,6 +69,7 @@ users = Table(
     Column('city', String()),
     Column('state', String()),
     Column('householdSize', Integer),
+    Column('inSpreadsheet', Integer),
 )
 
 family_members = Table(

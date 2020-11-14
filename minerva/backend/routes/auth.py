@@ -5,8 +5,9 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from minerva.backend.apis.db import users, conn, items, family_members
 from datetime import datetime, date
-from sqlalchemy import select, update
+from sqlalchemy import select, update, and_
 from json import loads, dumps
+import xlrd
 from os import environ
 from sys import path
 from minerva.backend.apis.email import send_new_volunteer_request_notification
@@ -104,24 +105,64 @@ def all_users():
         filename = file.filename
         splitname = filename.split(".")
         fileType = splitname[len(splitname) - 1]
-
-        df = pd.DataFrame()
-        if (fileType == 'csv'):
-            df = pd.read_csv(request.files['users'], skiprows=1)
+        print(request.form)
+        delete = 'delete-checkbox' in request.form.keys()
+        header = int(request.form['header'])
+        print("Form: " + str(request.form))
+        if request.form['spreadsheet-type'] == 'master-spreadsheet':
+            importMasterList(request, filename, fileType, delete, header)
         else:
-            df = pd.read_excel(request.files['users'], skiprows=1)
-        df = df.dropna(thresh=2)
+            importRoutesList(request, filename, fileType, delete)
+    return render_template('all_users.html', title='All Users')
 
+def importMasterList(request, filename, fileType, delete, header):
+    df = pd.DataFrame()
+    if (fileType == 'csv'):
+        df = pd.read_csv(request.files['users'], header=header)
+    else:
+        df = pd.read_excel(request.files['users'], header=header)
+    df = df.dropna(thresh=2)
+    for index, row in df.iterrows():
+        # This checks to make sure email is not nan
+        if (type(row['Email']) == str):
+            if conn.execute(users.select().where(users.c.email == row['Email'])).fetchone() is not None:
+                continue
+        else:
+            if conn.execute(users.select().where(users.c.address == row['Address 1'])).fetchone() is not None and conn.execute(users.select().where(users.c.name == str(row['First Name']) + " " + str(row['Last Name']))).fetchone() is not None:
+                continue
+        conn.execute(users.insert(),
+                    name=str(row['First Name']) + " " + str(row['Last Name']),
+                    email=row['Email'],
+                    address=row['Address'],
+                    address2=row['Apt'],
+                    role="RECIEVER",
+                    instructions=row['Notes'],
+                    cellPhone=row['Phone'],
+                    zipCode=row['Zip'],
+                    city=row['City'],
+                    state=row['State'],
+                    householdSize=row['Household Size'],
+                    inSpreadsheet=1,
+                    foodBankId=g.user.id)
+
+def importRoutesList(request, filename, fileType, delete):
+    print(type(request.files['users']))
+    xlFile = pd.ExcelFile(request.files['users'])
+    sheets = xlFile.sheet_names
+    dfDict = pd.read_excel(request.files['users'], sheet_name=sheets, header=0)
+    conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
+    for key in dfDict:
+        df = dfDict[key]
         for index, row in df.iterrows():
-            # This checks to make sure email is not nan
-            if (row['Email'] == row['Email']):
-                if conn.execute(users.select().where(users.c.email == row['Email'])).fetchone() is not None:
-                    continue
-            else:
-                if conn.execute(users.select().where(users.c.address == row['Address 1'])).fetchone() is not None and conn.execute(users.select().where(users.c.name == str(row['First Name']) + " " + str(row['Last Name']))).fetchone() is not None:
-                    continue
-
-            conn.execute(users.insert(),
+            if type(row['First Name']) != float:
+                if type(row['Last Name']) != float:
+                    fullName = row['First Name'] + " " + row['Last Name']
+                else:
+                    fullName = row['First Name']
+                if conn.execute(users.select().where(users.c.name == fullName)).fetchone() is not None:
+                    conn.execute(users.update().where(users.c.name == fullName).values(inSpreadsheet=1))
+                else:
+                    conn.execute(users.insert(),
                         name=str(row['First Name']) + " " + str(row['Last Name']),
                         email=row['Email'],
                         address=row['Address 1'],
@@ -133,10 +174,10 @@ def all_users():
                         city=row['City'],
                         state=row['State'],
                         householdSize=row['Household Size'],
-                        completed=0,
+                        inSpreadsheet=1,
                         foodBankId=getFoodBank(row['Address 1']))
-
-    return render_template('all_users.html', title='All Users')
+    if delete:
+        conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
