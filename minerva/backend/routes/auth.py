@@ -141,7 +141,7 @@ def importMasterList(request, filename, fileType, delete, header):
             hh_size = row['Household Size']
         conn.execute(users.insert(),
                     name=str(row['First Name']) + " " + str(row['Last Name']),
-                    email=betterstr(row['Email']),
+                    email=betterStr(row['Email']),
                     address=row['Address'],
                     address2=betterStr(row['Apt']),
                     role="RECIEVER",
