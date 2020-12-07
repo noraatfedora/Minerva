@@ -61,8 +61,8 @@ def setCoords(API_key):
             coords = googleWrapper.geocode(query=fullAddr, timeout=100)
             if coords == None: # One of the zip codes in the spreadsheet is wrong
                 coords = googleWrapper.geocode(query=user['address'] + " WA", timeout=100)
-            print("Name: " + user['name'])
-            print("Original address: " + user['address'])
+            print("Name: " + str(user['name']))
+            print("Original address: " + str(user['address']))
             print("Coords: " + str(coords))
             conn.execute(users.update().where(users.c.id==user.id).values(
                 formattedAddress=coords[0],
@@ -288,7 +288,8 @@ def createAllRoutes(foodBankId, num_vehicles=100, stopConversion=1000, globalSpa
     for routeNum in range(len(routeList)):
         route = routeList[routeNum]
         length = assignments[routeNum][1]
-        if length == 0:
+        print("Route: " + str(route))
+        if len(route) == 2:
             continue
         conn.execute(routes.insert().values(foodBankId=foodBankId, length=length, content=json.dumps(route), volunteerId=-1))
     routesToSpreadsheet(foodBankId)
@@ -297,7 +298,7 @@ def routesToSpreadsheet(foodBankId):
     routesList = conn.execute(routes.select().where(routes.c.foodBankId==foodBankId))
     pdList = []
     for route in routesList:
-        df = pd.DataFrame(getUsers(route.id))
+        df = pd.DataFrame(getUsers(route.id, addOriginal=True))
         pdList.append(df)
 
     fileName = environ['INSTANCE_PATH'] + 'routes.xlsx'
@@ -312,10 +313,11 @@ def routesToSpreadsheet(foodBankId):
 
 
 # Returns a list of users based off the given route ID
-def getUsers(routeId):
+def getUsers(routeId, addOriginal=False):
     print("Route ID:" + str(routeId))
     prettyNames = {'formattedAddress': 'Full Address',
                     'address2': 'Apt',
+                    'address': 'Original Ajddress',
                     'name': 'Name',
                     'email':'Email',
                     'cellPhone': 'Phone',
@@ -323,6 +325,7 @@ def getUsers(routeId):
                     'householdSize': 'Household Size'}
     columns = [users.c.name, users.c.email,
         users.c.cellPhone, users.c.instructions,
+        users.c.address,
         users.c.formattedAddress,
         users.c.address2,
         users.c.householdSize]
@@ -332,10 +335,10 @@ def getUsers(routeId):
     content = loads(route_rp.content)
     toReturn = []
     for userId in content:
-        #if userId != g.user.foodBankId: # Stupid to put the food bank on the user's list of orders
-        user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
-        userObj = row2dict(user_rp)
-        toReturn.append(userObj)
+        if userId != g.user.id: # Stupid to put the food bank on the user's list of orders
+            user_rp = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+            userObj = row2dict(user_rp)
+            toReturn.append(userObj)
 
     print("Users: " + str(toReturn))
     return toReturn
