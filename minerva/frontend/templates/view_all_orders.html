@@ -10,6 +10,7 @@
     <div class="card-container">
     {% for user in users %}
     <div class="card bg-success grid-card text-left task-incomplete" id="card-{{ user['id'] }}" >
+    {{ loop.index+1 }}
         <div class="card text-left task-incomplete">
             <div class="card-header">
                 Name: {{ user['name'] }}
