@@ -4,3 +4,5 @@ __pycache__/
 .env
 venv/
 minerva.wsgi
+minerva/backend/apis/instance/client-master-list.xlsx
+minerva/backend/apis/instance/routes.xlsx

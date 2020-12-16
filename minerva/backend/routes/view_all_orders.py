@@ -152,9 +152,9 @@ def create_master_spreadsheet():
             userDict['Last Name'] = ''
         userDictList.append(userDict)
     df = pd.DataFrame(userDictList)
+    print(df)
     outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
-    with pd.ExcelWriter(environ['INSTANCE_PATH'] + 'client-master-list.xlsx') as writer:
-        df.to_excel(writer, columns=outputColumns, startrow=0, index=False, na_rep="")
+    df.to_excel(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', columns=outputColumns, startrow=0, index=False, na_rep="")
     return send_file(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', as_attachment=True)
 
 def betterStr(value):

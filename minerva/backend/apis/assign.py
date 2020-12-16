@@ -133,11 +133,11 @@ def create_distance_matrix(data):
         #row_list = [row['elements'][j]['distance']['value'] for j in range(len(row['elements']))]
         row_list = []
         for toUser in data['users']:
-            print("From " + str(fromUser.name) + " to " + str(toUser.name))
+            #print("From " + str(fromUser.name) + " to " + str(toUser.name))
             distance = measure(
                 fromUser.latitude, fromUser.longitude, toUser.latitude, toUser.longitude)
             row_list.append(distance)
-            if distance > 100000:
+            if distance > 50000:
                 print("Distance of " + str(distance) + " between " + fromUser.formattedAddress + " and " + toUser.formattedAddress)
         distance_matrix.append(row_list)
     print(len(distance_matrix))
@@ -165,7 +165,7 @@ def get_solution(data, manager, routing, solution):
     return toReturn
 
 
-def get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoefficient):
+def get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoefficient, defaultRoutes=None):
 
     """Solve the CVRP problem."""
 
@@ -256,15 +256,22 @@ def get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoef
 
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
 
+    # Uncomment for debugging
+    #search_parameters.solution_limit = 1
+
     search_parameters.first_solution_strategy = (
 
-        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
-
+        routing_enums_pb2.FirstSolutionStrategy.PARALLEL_CHEAPEST_INSERTION)
 
 
     # Solve the problem.
-
-    solution = routing.SolveWithParameters(search_parameters)
+    initial_solution = routing.ReadAssignmentFromRoutes(defaultRoutes, True)
+    if initial_solution != None:
+        print("Initial solution:" + str(initial_solution))
+        print(type(initial_solution))
+        solution = routing.SolveWithParameters(initial_solution, search_parameters)
+    else:
+        solution = routing.SolveWithParameters(search_parameters)
 
     return get_solution(data, manager, routing, solution)
 
@@ -276,8 +283,29 @@ def createAllRoutes(foodBankId, num_vehicles=100, stopConversion=1000, globalSpa
     usersList = conn.execute(users.select().where(
         users.c.role=="RECIEVER"
     )).fetchall()
+    missingClientsRaw = conn.execute(select([users.c.id]).where(users.c.foodBankId==g.user.id and users.c.role=="RECIEVER")).fetchall()
+    missingClients = []
+    for client in missingClientsRaw:
+        missingClients.append(client[0])
+    print(missingClients)
+    currentRoutesRaw = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
+    currentRoutes = []
+    for route in currentRoutesRaw:
+        routeContent = loads(route.content)
+        badStuffRemoved = []
+        for userId in routeContent:
+            if userId in missingClients:
+                badStuffRemoved.append(userId)
+        currentRoutes.append(badStuffRemoved)
+    #currentRoutes.append(missingClients)
+    #TODO: Figure out if stuff was necessary
+
+
+    # Add anyone missing
+
     print("Calculating routes...")
-    assignments = get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoefficient)
+    print("Current routes: " + str(currentRoutes))
+    assignments = get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoefficient, currentRoutes)
     routeList = []
     for i in range(len(assignments)):
         userIdList = []  # sorted list to store as column with volunteer
