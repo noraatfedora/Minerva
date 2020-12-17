@@ -227,7 +227,19 @@
                       </th>
                   </tr>
               </table>
-              <a role="button" class="btn bw-btn">Move</a>
+              Move to route:
+              <form name="move-user" method="POST" class="form">
+                <input
+                  type="number"
+                  class="form-control-aesthetic col-md-3"
+                  value="{{ route['id'] }}"
+                  id="to-route"
+                  name="to-route"
+                />
+                <input type="hidden" name="move-user" value="{{ user['id'] }}">
+                <input type="hidden" name="from-route" value="{{ route['id'] }}">
+                <button type="submit" class="btn bw-btn">Select</a>
+              </form>
           </div>
         </div>
         {% endfor %}

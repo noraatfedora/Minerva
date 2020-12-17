@@ -71,6 +71,10 @@ def setCoords(API_key):
             ))
 
 def measure(lat1, lon1, lat2, lon2):
+    lat1 = float(lat1)
+    lat2 = float(lat2)
+    lon1 = float(lon1)
+    lon2 = float(lon2)
     # no idea how this works but stackoverflow does
     R = 6378.137  # radius of earth in KM
     dLat = lat2 * math.pi / 180 - lat1 * math.pi / 180
@@ -356,7 +360,10 @@ def getUsers(routeId, addOriginal=False, columns = [users.c.name, users.c.email,
                     'email':'Email',
                     'cellPhone': 'Phone',
                     'instructions': 'Notes',
-                    'householdSize': 'Household Size'}
+                    'householdSize': 'Household Size',
+                    'id': 'id',
+                    'latitude': 'latitude',
+                    'longitude': 'longitude'}
     row2dict = lambda r: {prettyNames[c.name]: betterStr(getattr(r, c.name)) for c in columns}
     # Get the ID's that our volunteer is assigned to
     route_rp = conn.execute(routes.select().where(routes.c.id==routeId)).fetchone()
@@ -376,15 +383,28 @@ def betterStr(value):
     else:
         return str(value)
     
-def setRotueDistanceMatrix(routeId):
-    routeContent = getUsers(routeId, columns=[users.c.id, users.c.latitude, users.c.longitutde])
-    distanceMatrix=[]
-    
-    for userFrom in routeContent:
-        distanceVector = []
-        for userTo in routeContent:
-            distance = measure(userFrom.latitude, userFrom.longitude,
-                userTo.latitude, userTo.longitude)
-            distanceVector.append(distance)
-        distanceMatrix.append(distanceVector)
-    conn.execute(routes.update().where(routes.c.id==routeId).values(distanceMatrix=json.dumps(distanceMatrix)))
+def assignUserToRoute(toRoute, userId, fromRoute):
+    # Remove from original route first
+    idArr = json.loads(conn.execute(select([routes.c.content]).where(routes.c.id==fromRoute)).fetchone()[0])
+    idArr.remove(userId)
+    conn.execute(routes.update().where(routes.c.id==fromRoute).values(content=json.dumps(idArr)))
+    routeContent = getUsers(toRoute, columns=[users.c.id, users.c.latitude, users.c.longitude])
+    userToInsert = conn.execute(users.select().where(users.c.id==userId)).fetchone()
+    minIndex = 0
+    minDistance = 999999
+    for i in range(0, len(routeContent)-1):
+        userFrom = routeContent[i]
+        print("At user " + str(userFrom))
+        userTo = routeContent[i+1]
+        distanceLeft = measure(userFrom['latitude'], userFrom['longitude'], userToInsert['latitude'], userToInsert['longitude'])
+        distanceRight = measure(userToInsert['latitude'], userToInsert['longitude'], userTo['latitude'], userTo['longitude'])
+        distance = distanceLeft + distanceRight
+        print("Distance at index " + str(i) + ": " + str(distance))
+        if distance < minDistance:
+            minIndex = i
+            minDistance = distance
+    print("Inserting to index " + str(minIndex) + " with distance " + str(minDistance))
+    idArr = json.loads(conn.execute(select([routes.c.content]).where(routes.c.id==toRoute)).fetchone()[0])
+    idArr.insert(minIndex+1, userId)
+    conn.execute(routes.update().where(routes.c.id==toRoute).values(content=json.dumps(idArr)))
+
