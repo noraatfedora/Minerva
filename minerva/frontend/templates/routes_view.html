@@ -40,6 +40,12 @@
       "Increase this number if you also increase the global span cost."
     window.alert(message);
   }
+
+  function explainWarpSpeed() {
+    var message = 
+      "When this box is checked, it will usually take less than a minute to generate routes. These routes will be terrible, but if it's taking more than a minute you'll know if there's addresses in the list that cause it to be unsolvable."
+    window.alert(message);
+  }
 </script>
 <!--
 <style>
@@ -121,6 +127,16 @@
             name="global-span-cost"
           />
           <small><a href="javascript:explainGSC()">What's this?</a></small>
+        </div>
+        <div class="card-header">
+          <input
+            type="checkbox"
+            value="warpSpeed"
+            id="warpSpeed"
+            name="warpSpeed"
+          />
+          Enable Warp Speed
+          <small><a href="javascript:explainWarpSpeed()">What's this?</a></small>
         </div>
       </div>
     </div>
