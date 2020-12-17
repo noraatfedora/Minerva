@@ -20,7 +20,8 @@ bp = Blueprint('routes', __name__)
 @bp.route('/routes', methods=('GET', 'POST'))
 def allOrders():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
-    routeList = getRoutes()
+    if request.method == "POST":
+        print("Values: " + str(request.values.to_dict()))
     if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
         print(request.values.to_dict())
         if 'redirect' in request.values.to_dict().keys():
@@ -32,6 +33,13 @@ def allOrders():
                 globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
                 stopConversion=int(request.values.get('stop_conversion')), warpSpeed=request.values.get('warpSpeed') == 'True')
             return redirect('/routes')
+    elif request.method == "POST" and 'move-user' in request.values.to_dict().keys():
+        userId = int(request.values.to_dict()['move-user'])
+        toRoute = int(request.values.to_dict()['to-route'])
+        fromRoute = int(request.values.to_dict()['from-route'])
+        print("Moving user " + str(userId) + " to route " + str(toRoute))
+        assign.assignUserToRoute(toRoute, userId, fromRoute)
+    routeList = getRoutes()
  
     volunteers = getVolunteers()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
