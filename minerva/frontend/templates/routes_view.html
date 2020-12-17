@@ -178,12 +178,57 @@
         <div class="card bg-light" id="user-header-{{ user['id'] }}">
           <a
             class="btn btn-link"
-            target="_bland"
-            rel="noopener noreferrer"
-            href="/allorders#card-{{ user['id'] }}"
+            data-toggle="collapse"
+            href="#collapse-user-{{ user['id'] }}"
+            role="button"
+            aria-expanded="false"
           >
             {{ user['formattedAddress'] }}
           </a>
+          <div id="collapse-user-{{ user['id'] }}" class="collapse">
+              <table>
+                  <tr>
+                      <th>
+                          Name:
+                      </th>
+                      <th>
+                          {{ user['name'] }}
+                      </th>
+                  <tr>
+                      <th>
+                          Email:
+                      </th>
+                      <th>
+                          {{ user['email'] }}
+                      </th>
+                  </tr>
+                  <tr>
+                      <th>
+                          Cell Phone:
+                      </th>
+                      <th>
+                          {{ user['cellPhone'] }}
+                      </th>
+                  </tr>
+                  <tr>
+                      <th>
+                          Last delivered:
+                      </th>
+                      <th>
+                          {{ user['lastDelivered'] }}
+                      </th>
+                  </tr>
+                  <tr>
+                      <th>
+                          Notes:
+                      </th>
+                      <th>
+                          {{ user['instructions'] }}
+                      </th>
+                  </tr>
+              </table>
+              <a role="button" class="btn bw-btn">Move</a>
+          </div>
         </div>
         {% endfor %}
       </div>
