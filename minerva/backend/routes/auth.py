@@ -53,10 +53,10 @@ def fetch_delete(key, dictionary):
     return value
 
 
-@bp.route('/all_users', methods=('GET', 'POST'))
-def all_users():
+@bp.route('/upload_data', methods=('GET', 'POST'))
+def upload_data():
     if request.method == "GET":
-        return render_template('all_users.html', title='All Users')
+        return render_template('upload_data.html', title='All Users')
 
     if 'name' in request.form:
         form = request.form.to_dict()
@@ -113,7 +113,7 @@ def all_users():
             importMasterList(request, filename, fileType, delete, header)
         else:
             importRoutesList(request, filename, fileType, delete, header)
-    return render_template('all_users.html', title='All Users')
+    return render_template('upload_data.html', title='All Users')
 
 def importMasterList(request, filename, fileType, delete, header):
     df = pd.DataFrame()

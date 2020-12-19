@@ -19,7 +19,7 @@ bp = Blueprint('routes', __name__)
 @login_required
 @admin_required
 @bp.route('/routes', methods=('GET', 'POST'))
-def allOrders():
+def routes():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
     if request.method == "POST":
         print("Values: " + str(request.values.to_dict()))

@@ -24,6 +24,7 @@ setup(
         'sendgrid==6.4.4',
         'yagmail==0.11.224',
         'pandas',
-        'xlrd==1.2.0'
+        'xlrd==1.2.0',
+        'usaddress'
     ],
 )

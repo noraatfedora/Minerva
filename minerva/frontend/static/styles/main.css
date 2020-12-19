@@ -435,7 +435,8 @@ a:not([href]):not([tabindex]):hover {
   border: none;
   background-color: #77b6ea;
   overflow: visible;
-  width: 100%
+  width: 100%;
+  /* margin-bottom: 12px; */
 }
 
 .row .card {

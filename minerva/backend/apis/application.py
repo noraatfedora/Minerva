@@ -41,7 +41,7 @@ def create_app(test_config=None):
             defaults = {
                 'RECIEVER': '/request_items',
                 'VOLUNTEER': '/dashboard',
-                'ADMIN': '/allorders'
+                'ADMIN': '/all_users'
             }
             return redirect(defaults[g.user.role])
         return render_template('home.html', title = 'Home')
@@ -84,8 +84,8 @@ def create_app(test_config=None):
     from minerva.backend.routes import modify_volunteers
     app.register_blueprint(modify_volunteers.bp)
 
-    from minerva.backend.routes import view_all_orders
-    app.register_blueprint(view_all_orders.bp)
+    from minerva.backend.routes import view_all_users
+    app.register_blueprint(view_all_users.bp)
 
     from minerva.backend.routes import routes_view
     app.register_blueprint(routes_view.bp)
