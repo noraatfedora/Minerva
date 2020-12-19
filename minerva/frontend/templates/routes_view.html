@@ -161,6 +161,9 @@
         <a href="{{ route['google_maps'] }}">View Map</a>
       </div>
       <div class="card-header">
+        <a href="{{ route['google_maps'] }}">Print</a>
+      </div>
+      <div class="card-header">
         <a
           class="btn bw-btn"
           data-toggle="collapse"
@@ -243,6 +246,26 @@
           </div>
         </div>
         {% endfor %}
+      </div>
+      <div class="card-header">
+        Move all to route:
+          <form name="move-user" method="POST" class="form">
+            <input
+              type="number"
+              class="form-control-aesthetic col-md-3"
+              value="{{ route['id'] }}"
+              id="to-route"
+              name="to-route"
+            />
+            <input type="hidden" name="move-route" value="{{ route['id'] }}">
+            <button type="submit" class="btn bw-btn">Select</a>
+          </form>
+      </div>
+      <div class="card-header">
+        <form name="split-form" method="POST" class="form">
+          <input type="hidden" name="split-route" value="{{ route['id'] }}">
+          <button type="submit" class="btn bw-btn">Split route in half</button>
+        </form>
       </div>
     </div>
     {% endfor %}

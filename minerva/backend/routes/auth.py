@@ -122,14 +122,19 @@ def importMasterList(request, filename, fileType, delete, header):
     else:
         df = pd.read_excel(request.files['users'], header=header, keep_default_na=False)
     df = df.dropna(thresh=2)
+    conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
     for index, row in df.iterrows():
         # This checks to make sure email is not nan
         if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email']=="":
-            if conn.execute(users.select().where(users.c.email == row['Email'])).fetchone() is not None:
+            emailUser = conn.execute(users.select().where(users.c.email == row['Email'])).fetchone()
+            if emailUser is not None:
                 print("Skipping " + str(row) + " because of a duplicate email")
+                conn.execute(users.update().where(users.c.id == emailUser.id).values(inSpreadsheet=1))
                 continue
         else:
-            if conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone() is not None:
+            nameUser = conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
+            if nameUser is not None:
+                conn.execute(users.update().where(users.c.id == nameUser.id).values(inSpreadsheet=1))
                 print("Skipping " + str(row) + " because of a duplicate name")
                 continue
         if 'state' not in row.keys():
@@ -155,6 +160,8 @@ def importMasterList(request, filename, fileType, delete, header):
                     householdSize=hh_size,
                     inSpreadsheet=1,
                     foodBankId=g.user.id)
+    if delete:
+        conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
 
 def betterStr(value):
     if value is None or value=="nan":
