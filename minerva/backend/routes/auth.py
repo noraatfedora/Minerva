@@ -108,22 +108,33 @@ def upload_data():
         print(request.form)
         delete = 'delete-checkbox' in request.form.keys()
         header = int(request.form['header'])
+        disabledUsers = 'disabled-checkbox' in request.form.keys()
         print("Form: " + str(request.form))
         if request.form['spreadsheet-type'] == 'master-spreadsheet':
-            importMasterList(request, filename, fileType, delete, header)
+            importMasterList(request, filename, fileType, delete, header, disabledUsers)
         else:
             importRoutesList(request, filename, fileType, delete, header)
     return render_template('upload_data.html', title='All Users')
 
-def importMasterList(request, filename, fileType, delete, header):
-    df = pd.DataFrame()
-    if (fileType == 'csv'):
-        df = pd.read_csv(request.files['users'], header=header, keep_default_na=False)
-    else:
-        df = pd.read_excel(request.files['users'], header=header, keep_default_na=False)
-    df = df.dropna(thresh=2)
+def importMasterList(request, filename, fileType, delete, header, disabledSheet=True):
+    masterDf = pd.DataFrame()
     conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
-    for index, row in df.iterrows():
+    if (fileType == 'csv'):
+        masterDf = pd.read_csv(request.files['users'], header=header, keep_default_na=False)
+    else:
+        masterDf = pd.read_excel(request.files['users'], sheet_name="Master list", header=header, keep_default_na=False)
+        masterDf = masterDf.dropna(thresh=2)
+        if disabledSheet:
+            disabledDf = pd.read_excel(request.files['users'], sheet_name="Disabled clients", header=header, keep_default_na=False)
+            disabledDf = disabledDf.dropna(thresh=2)
+            addUsersFromDf(disabledDf, True)
+    addUsersFromDf(masterDf, False)
+
+    if delete:
+        conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
+
+def addUsersFromDf(df, disabled):
+     for index, row in df.iterrows():
         # This checks to make sure email is not nan
         if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email']=="":
             emailUser = conn.execute(users.select().where(users.c.email == row['Email'])).fetchone()
@@ -159,9 +170,9 @@ def importMasterList(request, filename, fileType, delete, header):
                     state=state,
                     householdSize=hh_size,
                     inSpreadsheet=1,
-                    foodBankId=g.user.id)
-    if delete:
-        conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
+                    foodBankId=g.user.id,
+                    disabled=disabled)
+    
 
 def betterStr(value):
     if value is None or value=="nan":
