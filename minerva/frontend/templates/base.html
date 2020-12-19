@@ -44,11 +44,11 @@
                     </a>
                     {% endif %}
                     {% if g.user and g.user['role'].lower() == "admin" %}
-                    <a class="nav-item nav-link" href="{{ url_for('view_all_orders.allOrders') }}" id="navtext">
-                        {% if request.path == "/allorders" %}
+                    <a class="nav-item nav-link" href="{{ url_for('view_all_users.all_users') }}" id="navtext">
+                        {% if request.path == "/all_users" %}
                         <strong style="color:white;">All users</strong>
                         {% else %}
-                        <strong>All users</strong>
+                        <strong>All Users</strong>
                         {% endif %}
                     </a>
                     <a class="nav-item nav-link" href="{{ url_for('modify.dashboard') }}" id="navtext">
@@ -65,8 +65,8 @@
                         <strong>Manage Routes</strong>
                         {% endif %}
                     </a>
-                    <a class="nav-item nav-link" href="{{ url_for('auth.all_users') }}" id="navtext">
-                        {% if request.path == "/all_users" %}
+                    <a class="nav-item nav-link" href="{{ url_for('auth.upload_data') }}" id="navtext">
+                        {% if request.path == "/upload_data" %}
                         <strong style="color:white;">Upload Users</strong>
                         {% else %}
                         <strong>Upload Users</strong>

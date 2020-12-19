@@ -9,7 +9,7 @@ from collections import OrderedDict
 from minerva.backend.apis import google_maps_qr
 from minerva.backend.apis.assign import getUsers
 from minerva.backend.apis.db import users, conn, items, routes
-from sqlalchemy import and_, select
+from sqlalchemy import and_, select, desc
 import pandas as pd
 from os import environ
 from barcode import Code128
@@ -17,14 +17,14 @@ from barcode.writer import ImageWriter
 from minerva.backend.apis import assign, order_assignment
 import io, pdfkit, base64, qrcode, datetime
 from minerva.backend.apis.email import send_recieved_notification, send_bagged_notification
-bp = Blueprint('view_all_orders', __name__)
+bp = Blueprint('view_all_users', __name__)
 
 @login_required
 @admin_required
-@bp.route('/allorders', methods=('GET', 'POST'))
-def allOrders():
+@bp.route('/all_users', methods=('GET', 'POST'))
+def all_users():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
-    userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
+    userList = conn.execute(users.select().order_by(desc(users.c.disabled)).where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
     print(create_master_spreadsheet())
     if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
         print(request.values.to_dict())
@@ -32,12 +32,12 @@ def allOrders():
             return loadingScreen(num_vehicles=request.values.get('num-vehicles'))
         else:
             assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')))
-            return redirect('/allorders')
+            return redirect('/all_orders')
     if request.method == "GET" and "volunteer" in request.args.keys():
         volunteerId = int(request.args.get("volunteer"))
         orderId = int(request.args.get("order"))
         order_assignment.assign(orderId=orderId, volunteerId=volunteerId)
-        return redirect("/allorders")
+        return redirect("/all_users")
     if request.method == "POST":
         key = next(request.form.keys())
         print("Key: " + str(key))
