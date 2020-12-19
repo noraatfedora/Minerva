@@ -41,8 +41,19 @@ def allOrders():
     if request.method == "POST":
         key = next(request.form.keys())
         print("Key: " + str(key))
-        if "delete" in key: #TODO
+        if "delete" in key:
             userId = int(key[len('delete-'):])
+            conn.execute(users.delete().where(users.c.id==userId))
+            userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
+        if "enable" in key:
+            userId = int(key[len('enable-'):])
+            conn.execute(users.update().where(users.c.id==userId).values(disabled=False))
+            userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
+        if "download-master-spreadsheet" in key:
+            return create_master_spreadsheet()
+        if "disable" in key:
+            userId = int(key[len('disable-'):])
+            conn.execute(users.update().where(users.c.id==userId).values(disabled=True))
             routesList = conn.execute(routes.select().where(routes.c.foodBankId==g.user.foodBankId)).fetchall()
             for route in routesList:
                 content = loads(route.content)
@@ -50,11 +61,9 @@ def allOrders():
                     print("UserID in content!")
                     content.remove(userId)
                     conn.execute(routes.update().where(routes.c.id==route.id).values(content=dumps(content)))
-                    conn.execute(users.delete().where(users.c.id==userId))
                     break
             userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
-        if "download-master-spreadsheet" in key:
-            return create_master_spreadsheet()
+
     volunteers = getVolunteers()
     today = datetime.date.today()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
@@ -124,8 +133,26 @@ def create_master_spreadsheet():
                     'email':'Email',
                     'cellPhone': 'Phone',
                     'instructions': 'Notes'}
+    enabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==False))).fetchall()
+    enabled = generateUserDataFrame(enabledRpList)
+    disabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==True))).fetchall()
+    disabled = generateUserDataFrame(disabledRpList)
+    outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
+    writer = pd.ExcelWriter(environ['INSTANCE_PATH'] + 'client-master-list.xlsx')
+    enabled.to_excel(writer, sheet_name="Master list", columns=outputColumns, startrow=0, index=False, na_rep="")
+    disabled.to_excel(writer, sheet_name="Disabled clients", columns=outputColumns, startrow=0, index=False, na_rep="")
+    writer.save()
+    return send_file(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', as_attachment=True)
+
+def generateUserDataFrame(userRpList):
+    columns = ['name', 'email', 'formattedAddress', 'address2', 'cellPhone', 'instructions']
+    prettyNames = {'formattedAddress': 'Full Address',
+                    'address2': 'Apt',
+                    'name': 'Name',
+                    'email':'Email',
+                    'cellPhone': 'Phone',
+                    'instructions': 'Notes'}
     row2dict = lambda r: {prettyNames[c]: betterStr(getattr(r, c)) for c in columns}
-    userRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id))).fetchall()
     userDictList = []
     for user in userRpList:
         userDict = row2dict(user)
@@ -152,10 +179,7 @@ def create_master_spreadsheet():
             userDict['Last Name'] = ''
         userDictList.append(userDict)
     df = pd.DataFrame(userDictList)
-    print(df)
-    outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
-    df.to_excel(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', columns=outputColumns, startrow=0, index=False, na_rep="")
-    return send_file(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', as_attachment=True)
+    return df
 
 def betterStr(value):
     if value == None:

@@ -10,8 +10,11 @@
     <div class="card-container">
     {% for user in users %}
     <div class="card bg-success grid-card text-left task-incomplete" id="card-{{ user['id'] }}" >
-    {{ loop.index+1 }}
-        <div class="card text-left task-incomplete">
+        {% if user['disabled'] %}
+            <div class="card text-left bg-secondary">    
+        {% else %}
+            <div class="card text-left task-incomplete">
+        {% endif %}
             <div class="card-header">
                 Name: {{ user['name'] }}
             </div>
@@ -24,12 +27,29 @@
             <div class="card-header">
                 Phone: {{ user['cellPhone']}}
             </div>
-            <div class="card-header">
-                <form action="" method="POST">
-                    <button type="submit" value="Delete user" name="delete-{{ user['id'] }}"
-                        class="btn bw-btn">Delete user</button>
-                </form>
-            </div>
+            {% if user['disabled'] %}
+                <div class="card-header">
+                    <form action="" method="POST">
+                        <button type="submit" value="Delete user" name="delete-{{ user['id'] }}"
+                            class="btn bw-btn bg-danger">Fully delete user</button>
+                    </form>
+                </div>
+                <div class="card-header">
+                    <form action="" method="POST">
+                        <button type="submit" value="Enable user" name="enable-{{ user['id'] }}"
+                            class="btn bw-btn">Enable user</button>
+                    </form>
+                </div>
+
+            {% else %}
+                <div class="card-header">
+                    <form action="" method="POST">
+                        <button type="submit" value="Disable user" name="disable-{{ user['id'] }}"
+                            class="btn bw-btn">Disable user</button>
+                    </form>
+                </div>
+            {% endif %}
+
         </div>
     </div>
     {% endfor %}
