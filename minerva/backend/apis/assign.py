@@ -387,7 +387,10 @@ def assignUserToRoute(toRoute, userId, fromRoute):
     # Remove from original route first
     idArr = json.loads(conn.execute(select([routes.c.content]).where(routes.c.id==fromRoute)).fetchone()[0])
     idArr.remove(userId)
-    conn.execute(routes.update().where(routes.c.id==fromRoute).values(content=json.dumps(idArr)))
+    if len(idArr) == 2:
+        conn.execute(routes.delete().where(routes.c.id==fromRoute))
+    else:
+        conn.execute(routes.update().where(routes.c.id==fromRoute).values(content=json.dumps(idArr)))
     routeContent = getUsers(toRoute, columns=[users.c.id, users.c.latitude, users.c.longitude])
     userToInsert = conn.execute(users.select().where(users.c.id==userId)).fetchone()
     minIndex = 0
