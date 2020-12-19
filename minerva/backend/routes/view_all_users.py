@@ -24,7 +24,7 @@ bp = Blueprint('view_all_users', __name__)
 @bp.route('/all_users', methods=('GET', 'POST'))
 def all_users():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
-    userList = conn.execute(users.select().order_by(desc(users.c.disabled)).where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
+    userList = getUserList()
     print(create_master_spreadsheet())
     if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
         print(request.values.to_dict())
@@ -44,11 +44,9 @@ def all_users():
         if "delete" in key:
             userId = int(key[len('delete-'):])
             conn.execute(users.delete().where(users.c.id==userId))
-            userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
         if "enable" in key:
             userId = int(key[len('enable-'):])
             conn.execute(users.update().where(users.c.id==userId).values(disabled=False))
-            userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
         if "download-master-spreadsheet" in key:
             return create_master_spreadsheet()
         if "disable" in key:
@@ -62,12 +60,15 @@ def all_users():
                     content.remove(userId)
                     conn.execute(routes.update().where(routes.c.id==route.id).values(content=dumps(content)))
                     break
-            userList = conn.execute(users.select().where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
+        userList = getUserList()
 
     volunteers = getVolunteers()
     today = datetime.date.today()
     #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
     return render_template("view_all_orders.html", users=userList, volunteers=volunteers)
+
+def getUserList():
+    return conn.execute(users.select().order_by(desc(users.c.disabled)).where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
 
 @bp.route('/loading', methods=(['GET', 'POST']))
 def loadingScreen(num_vehicles=40):

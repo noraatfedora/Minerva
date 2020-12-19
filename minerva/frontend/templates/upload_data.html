@@ -20,21 +20,28 @@
                 </label>
             </div>
             <div class="form-check">
-            <input class="form-check-input" type="radio" name="spreadsheet-type" id="routes-spreadsheet" value="routes-spreadsheet" >
+            <input class="form-check-input" type="radio" name="spreadsheet-type" id="routes-spreadsheet" value="routes-spreadsheet">
                 <label class="form-check-label" for="exampleRadios1">
                     Routes list spreadsheet
                 </label>
             </div>
             <div class="spacer"></div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="delete-checkbox" value="delete-users" id="deleteUsersCheckbox" checked>
+                <input class="form-check-input" type="checkbox" name="delete-checkbox" value="delete-users" id="deleteUsersCheckbox">
                 <label class="form-check-label" for="deleteUsersCheckbox">
                     Delete all users who aren't on this sheet
                 </label>
             </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="disabled-checkbox" value="disabled-checkbox" id="disabledCheckbox">
+                <label class="form-check-label" for="disabledCheckbox">
+                    Create disabled users from the second sheet
+                </label>
+            </div>
+
             <label for="header">Header row #</label>
             <div class="form-group">
-                <input type="number" class="form-control-aesthetic" value="1" name="header" id="header">
+                <input type="number" class="form-control-aesthetic" value="0" name="header" id="header">
             </div>
             <div class="spacer"></div>
             <input type="submit" value="Submit">
