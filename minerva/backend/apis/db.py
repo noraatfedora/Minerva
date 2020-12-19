@@ -31,6 +31,7 @@ users = Table(
     Column('id', Integer, primary_key=True),
     Column('name', String(60)),
     Column('email', String(60)),
+    Column('disabled', Boolean, default=False),
     Column('password', String(255)),
     # Either RECIEVER, VOLUNTEER, or ADMIN
     # yes I know reciever is spelled wrong but it's too late to change that
