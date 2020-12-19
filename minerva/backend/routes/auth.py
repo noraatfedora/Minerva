@@ -78,7 +78,7 @@ def all_users():
                 restrictions.append(restriction)
         error = ""
 
-        if conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
+        if (not email == "") and conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
             error += '\nUser {} is already registered.'.format(email)
 
         if error == "":
@@ -112,23 +112,30 @@ def all_users():
         if request.form['spreadsheet-type'] == 'master-spreadsheet':
             importMasterList(request, filename, fileType, delete, header)
         else:
-            importRoutesList(request, filename, fileType, delete)
+            importRoutesList(request, filename, fileType, delete, header)
     return render_template('all_users.html', title='All Users')
 
 def importMasterList(request, filename, fileType, delete, header):
     df = pd.DataFrame()
     if (fileType == 'csv'):
-        df = pd.read_csv(request.files['users'], header=header)
+        df = pd.read_csv(request.files['users'], header=header, keep_default_na=False)
     else:
-        df = pd.read_excel(request.files['users'], header=header)
+        df = pd.read_excel(request.files['users'], header=header, keep_default_na=False)
     df = df.dropna(thresh=2)
+    conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
     for index, row in df.iterrows():
         # This checks to make sure email is not nan
-        if 'Email' in row.keys() and (type(row['Email']) == str):
-            if conn.execute(users.select().where(users.c.email == row['Email'])).fetchone() is not None:
+        if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email']=="":
+            emailUser = conn.execute(users.select().where(users.c.email == row['Email'])).fetchone()
+            if emailUser is not None:
+                print("Skipping " + str(row) + " because of a duplicate email")
+                conn.execute(users.update().where(users.c.id == emailUser.id).values(inSpreadsheet=1))
                 continue
         else:
-            if conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone() is not None:
+            nameUser = conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
+            if nameUser is not None:
+                conn.execute(users.update().where(users.c.id == nameUser.id).values(inSpreadsheet=1))
+                print("Skipping " + str(row) + " because of a duplicate name")
                 continue
         if 'state' not in row.keys():
             state = 'WA'
@@ -140,9 +147,9 @@ def importMasterList(request, filename, fileType, delete, header):
         else:
             hh_size = row['Household Size']
         conn.execute(users.insert(),
-                    name=str(row['First Name']) + " " + str(row['Last Name']),
+                    name=betterStr(row['First Name']) + " " + betterStr(row['Last Name']),
                     email=betterStr(row['Email']),
-                    address=row['Address'],
+                    address=betterStr(row['Address']),
                     address2=betterStr(row['Apt']),
                     role="RECIEVER",
                     instructions=betterStr(row['Notes']),
@@ -153,21 +160,24 @@ def importMasterList(request, filename, fileType, delete, header):
                     householdSize=hh_size,
                     inSpreadsheet=1,
                     foodBankId=g.user.id)
+    if delete:
+        conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
 
 def betterStr(value):
     if value is None or value=="nan":
         return ""
     else:
         return str(value)
-def importRoutesList(request, filename, fileType, delete):
+def importRoutesList(request, filename, fileType, delete, header):
     print(type(request.files['users']))
     xlFile = pd.ExcelFile(request.files['users'])
     sheets = xlFile.sheet_names
-    dfDict = pd.read_excel(request.files['users'], sheet_name=sheets, header=0)
+    dfDict = pd.read_excel(request.files['users'], sheet_name=sheets, header=header)
     conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
     for key in dfDict:
         df = dfDict[key]
         for index, row in df.iterrows():
+            print(df.columns)
             if type(row['First Name']) != float:
                 if type(row['Last Name']) != float:
                     fullName = row['First Name'] + " " + row['Last Name']
@@ -178,16 +188,16 @@ def importRoutesList(request, filename, fileType, delete):
                 else:
                     conn.execute(users.insert(),
                         name=str(row['First Name']) + " " + str(row['Last Name']),
-                        email=row['Email'],
+                        email="",
                         address=row['Address 1'],
-                        address2=row['Address 2'],
+                        address2=row['Apt'],
                         role="RECIEVER",
                         instructions=row['Notes'],
                         cellPhone=row['Phone Number'],
                         zipCode=row['Zip'],
                         city=row['City'],
                         state=row['State'],
-                        householdSize=row['Household Size'],
+                        householdSize=-1,
                         inSpreadsheet=1,
                         foodBankId=getFoodBank(row['Address 1']))
     if delete:

@@ -40,6 +40,12 @@
       "Increase this number if you also increase the global span cost."
     window.alert(message);
   }
+
+  function explainWarpSpeed() {
+    var message = 
+      "When this box is checked, it will usually take less than a minute to generate routes. These routes will be terrible, but if it's taking more than a minute you'll know if there's addresses in the list that cause it to be unsolvable."
+    window.alert(message);
+  }
 </script>
 <!--
 <style>
@@ -122,6 +128,16 @@
           />
           <small><a href="javascript:explainGSC()">What's this?</a></small>
         </div>
+        <div class="card-header">
+          <input
+            type="checkbox"
+            value="warpSpeed"
+            id="warpSpeed"
+            name="warpSpeed"
+          />
+          Enable Warp Speed
+          <small><a href="javascript:explainWarpSpeed()">What's this?</a></small>
+        </div>
       </div>
     </div>
   </form>
@@ -145,6 +161,9 @@
         <a href="{{ route['google_maps'] }}">View Map</a>
       </div>
       <div class="card-header">
+        <a href="{{ route['google_maps'] }}">Print</a>
+      </div>
+      <div class="card-header">
         <a
           class="btn bw-btn"
           data-toggle="collapse"
@@ -162,14 +181,91 @@
         <div class="card bg-light" id="user-header-{{ user['id'] }}">
           <a
             class="btn btn-link"
-            target="_bland"
-            rel="noopener noreferrer"
-            href="/allorders#card-{{ user['id'] }}"
+            data-toggle="collapse"
+            href="#collapse-user-{{ user['id'] }}"
+            role="button"
+            aria-expanded="false"
           >
             {{ user['formattedAddress'] }}
           </a>
+          <div id="collapse-user-{{ user['id'] }}" class="collapse">
+              <table>
+                  <tr>
+                      <th>
+                          Name:
+                      </th>
+                      <th>
+                          {{ user['name'] }}
+                      </th>
+                  <tr>
+                      <th>
+                          Email:
+                      </th>
+                      <th>
+                          {{ user['email'] }}
+                      </th>
+                  </tr>
+                  <tr>
+                      <th>
+                          Cell Phone:
+                      </th>
+                      <th>
+                          {{ user['cellPhone'] }}
+                      </th>
+                  </tr>
+                  <tr>
+                      <th>
+                          Last delivered:
+                      </th>
+                      <th>
+                          {{ user['lastDelivered'] }}
+                      </th>
+                  </tr>
+                  <tr>
+                      <th>
+                          Notes:
+                      </th>
+                      <th>
+                          {{ user['instructions'] }}
+                      </th>
+                  </tr>
+              </table>
+              Move to route:
+              <form name="move-user" method="POST" class="form">
+                <input
+                  type="number"
+                  class="form-control-aesthetic col-md-3"
+                  value="{{ route['id'] }}"
+                  id="to-route"
+                  name="to-route"
+                />
+                <input type="hidden" name="move-user" value="{{ user['id'] }}">
+                <input type="hidden" name="from-route" value="{{ route['id'] }}">
+                <button type="submit" class="btn bw-btn">Select</a>
+              </form>
+          </div>
         </div>
         {% endfor %}
+      </div>
+      <div class="card-header">
+        Move all to route:
+          <form name="move-user" method="POST" class="form">
+            <input
+              type="number"
+              class="form-control-aesthetic col-md-3"
+              value="{{ route['id'] }}"
+              id="to-route"
+              name="to-route"
+            />
+            <input type="hidden" name="move-route" value="{{ route['id'] }}">
+            <button type="submit" class="btn bw-btn">Select</a>
+          </form>
+      </div>
+      <div class="card-header">
+        <form name="split-form" method="POST" class="form">
+          <input type="hidden" name="split-route" value="{{ route['id'] }}">
+          <button type="submit" class="btn bw-btn">Split route in half</button>
+        </form>
       </div>
     </div>
     {% endfor %}

@@ -6,6 +6,7 @@ from minerva.backend.routes.auth import login_required, admin_required
 import usaddress
 from json import loads, dumps
 from collections import OrderedDict
+from minerva.backend.apis import google_maps_qr
 from minerva.backend.apis.assign import getUsers
 from minerva.backend.apis.db import users, conn, items, routes
 from sqlalchemy import and_, select
@@ -68,9 +69,10 @@ def loadingScreen(num_vehicles=40):
 @bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
 def send_spreadsheet():
     routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
+    outputColumns = ['First Name', "Last Name", "Email", "Original Address", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
     pdList = []
     for route in routesList:
-        usersList = getUsers(route.id)
+        usersList = getUsers(route.id, addOriginal=True)
         for user in usersList:
             try:
                 parsed = usaddress.tag(user['Full Address'])[0]
@@ -94,12 +96,19 @@ def send_spreadsheet():
             user['Last Name'] = names[1]
             if user['Last Name'] == "nan":
                 user['Last Name'] = ''
+            user['Google Maps'] = google_maps_qr.make_single_url(user['Full Address'])
+        google_maps_link = google_maps_qr.make_url(usersList)
+        row = {}
+        row[outputColumns[0]] = "Google maps link:"
+        row[outputColumns[1]] = google_maps_link
+        for x in range(2, len(outputColumns)):
+            row[outputColumns[x]] = ""
+        usersList.append(row)
         df = pd.DataFrame(usersList)
         pdList.append(df)
     fileName = environ['INSTANCE_PATH'] + 'routes.xlsx'
     writer = pd.ExcelWriter(fileName)
     for index in range(0, len(pdList)):
-        outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
         pdList[index].to_excel(writer, sheet_name="Route " + str(index), index=False, columns=outputColumns)
     writer.save()
     return send_file(fileName, as_attachment=True)
@@ -143,9 +152,9 @@ def create_master_spreadsheet():
             userDict['Last Name'] = ''
         userDictList.append(userDict)
     df = pd.DataFrame(userDictList)
+    print(df)
     outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
-    with pd.ExcelWriter(environ['INSTANCE_PATH'] + 'client-master-list.xlsx') as writer:
-        df.to_excel(writer, columns=outputColumns, startrow=0, index=False, na_rep="")
+    df.to_excel(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', columns=outputColumns, startrow=0, index=False, na_rep="")
     return send_file(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', as_attachment=True)
 
 def betterStr(value):

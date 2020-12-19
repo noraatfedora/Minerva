@@ -14,7 +14,11 @@ def make_url(userList):
     slash = '/'
     addresses = []
     for user in userList:
-        addresses.append(prep_address(user['formattedAddress']))
+        if 'formattedAddress' in user.keys():
+            addr = user['formattedAddress']
+        else:
+            addr = user['Full Address'] # if this is in spreadsheet form or something
+        addresses.append(prep_address(addr))
     link += slash.join(addresses)
     return link
 
