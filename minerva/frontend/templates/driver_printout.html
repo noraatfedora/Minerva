@@ -8,9 +8,12 @@
             font-size: 20px;
             font-family: sans-serif;
             line-height: 40px;
+            background-color: white
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid black;
             border-collapse: collapse;
         }
@@ -28,32 +31,54 @@
         .shipping-label {
             border: 1px solid black;
             padding: 10px;
+            column-count: 2;
         }
 
         .shipping-label:not(:last-of-type) {
             margin-bottom: 24px;
         }
+        
+        .data {
+            float: left;
+            width: 70%;
+        }
+        .user-qr-div {
+            float: right;
+            width: 30%;
+        }
     </style>
-        <h2>Summary for {{ volunteer.name }}</h2>
-        {% for user in users %}
-            <div class="shipping-label">
-                <div class="card-header">
-                    <b>Name: </b>{{ user['name'] }}
-                </div>
-                <div class="card-header">
-                    <b>Email: </b>{{ user['email'] }}
-                </div>
-                <div class="card-header">
-                    <b>Address: </b>{{ user['address']}}
-                </div>
-                <div class="card-header">
-                    <b>Phone number: </b>{{ user['cellPhone']}}
-                </div>
-                <div class="card-header">
-                    <b>Instructions: </b>{{ user['instructions'] }}
-                </div>
+    <h2>{{ headerText }}</h2>
+    <img src="data:image/png;base64, {{ qr | safe}}" height=200px />
+    {% for user in users if not user['id']==user['foodBankId'] %}
+    <div class="shipping-label">
+        <div class="data">
+            <div class="card-header">
+                <b>Name: </b>{{ user['name'] }}
             </div>
-        {% endfor %}
+            {% if user['email'] %}
+            <div class="card-header">
+                <b>Email: </b>{{ user['email'] }}
+            </div>
+            {% endif %}
+            <div class="card-header">
+                <b>Address: </b>{{ user['formattedAddress']}}
+            </div>
+            {% if user['cellPhone'] %}
+            <div class="card-header">
+                <b>Phone number: </b>{{ user['cellPhone']}}
+            </div>
+            {% endif %}
+            {% if user['instructions'] %}
+            <div class="card-header">
+                <b>Instructions: </b>{{ user['instructions'] }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="user-qr-div">
+            <img src="data:image/png;base64, {{ user['qr_data'] | safe }}" class="user-qr" height=200px />
+        </div>
+    </div>
+    {% endfor %}
 
 
 </body>
