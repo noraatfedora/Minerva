@@ -126,15 +126,18 @@ def getUsers(routeId):
 
     return toReturn
 
+@bp.route('/driver_printout/<int:routeId>')
 def driver_printout(routeId):
-    routeId = conn.execute(routes.select().where(routes.c.id==routeId)).fetchone()
-    if routeId == None:
-        return redirect('/dashboard')
-    else:
-        routeId = routeId[0]
     usersList = getUsers(routeId)
+    
+    # Generate QR codes for each user
+    for user in usersList:
+        qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
+        user['qr_data'] = qr_data
 
-    html = render_template("driver_printout.html", users=usersList, volunteer="Route " + str(routeId))
+    qr = google_maps_qr.make_qr_code(usersList, routeId)
+
+    html = render_template("driver_printout.html", users=usersList, headerText="Route " + str(routeId), routeId=routeId, qr=qr)
 
     pdf = pdfkit.from_string(html, False)
 
