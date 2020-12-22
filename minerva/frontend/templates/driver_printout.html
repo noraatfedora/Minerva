@@ -32,6 +32,8 @@
             border: 1px solid black;
             padding: 10px;
             column-count: 2;
+            height: 200px;
+            page-break-inside: avoid;
         }
 
         .shipping-label:not(:last-of-type) {
@@ -45,7 +47,7 @@
 
         .user-qr-div {
             float: right;
-            width: 30%;
+            width: 25%;
         }
         
         .full-route {
@@ -55,7 +57,7 @@
     {% for route in routes %}
     <div class="full-route">
         <h2>{{ route['headerText'] }}</h2>
-        <img src="data:image/png;base64, {{ route['qr'] | safe}}" height=200px />
+        <img src="data:image/png;base64, {{ route['qr'] | safe}}" height=175px style="margin-bottom: 10px;" />
         {% for user in route['usersList'] if not user['id']==user['foodBankId'] %}
         <div class="shipping-label">
             <div class="data">
