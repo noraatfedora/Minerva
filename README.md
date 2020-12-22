@@ -1,6 +1,6 @@
 # Minerva
 
-A service for free groceries delivery during the coronavirus pandemic
+A website that plans delivery routes for food banks.
 
 https://minervagroceries.org/
 
