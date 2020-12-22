@@ -117,16 +117,18 @@ def getUsers(routeId):
 @admin_required
 @bp.route('/driver_printout/<int:routeId>')
 def driver_printout(routeId):
-    usersList = getUsers(routeId)
+    route = {}
+    route['usersList'] = getUsers(routeId)
     
     # Generate QR codes for each user
-    for user in usersList:
+    for user in route['usersList']:
         qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
         user['qr_data'] = qr_data
 
-    qr = google_maps_qr.make_qr_code(usersList, routeId)
+    route['qr'] = google_maps_qr.make_qr_code(route['usersList'], routeId)
+    route['headerText'] = "Route " + str(routeId)
 
-    html = render_template("driver_printout.html", users=usersList, headerText="Route " + str(routeId), routeId=routeId, qr=qr)
+    html = render_template("driver_printout.html", routes=[route])
 
     pdf = pdfkit.from_string(html, False)
 
@@ -142,24 +144,23 @@ def driver_printout(routeId):
 @bp.route('/driver_printout/all')
 def master_driver_printout():
     print("ID" + str(g.user.id))
-    routeList = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
-    arr  = []
-    for route in routeList:
-        usersList = getUsers(route.id)
-        
-        # Generate QR codes for each user
-        for user in usersList:
+    routesList = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
+    routeDictList = []
+    for route in routesList:
+        routeDict = {}
+        routeDict['usersList'] = getUsers(route.id)
+        for user in routeDict['usersList']:
             qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
             user['qr_data'] = qr_data
+        routeDict['qr'] = google_maps_qr.make_qr_code(routeDict['usersList'], route.id)
+        routeDict['headerText'] = "Route " + str(route.id)
+        routeDictList.append(routeDict)
 
-        qr = google_maps_qr.make_qr_code(usersList, route.id)
-
-        html = render_template("driver_printout.html", users=usersList, headerText="Route " + str(route.id), routeId=route.id, qr=qr)
-        pdf = pdfkit.from_string(html, environ['INSTANCE_PATH'] + 'output.pdf')
-        name = environ['INSTANCE_PATH'] + "route-" + str(route.id) + ".pdf"
-        arr.append(name)
-
-    pdf = pdfkit.from_file(arr, False)
+    options = {
+        'header-right': '[page]/[toPage]'
+    }
+    html = render_template("driver_printout.html", routes=routeDictList)
+    pdf = pdfkit.from_string(html, False, options=options)
     response = make_response(pdf)
     response.headers['Content-type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'inline;'
