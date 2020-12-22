@@ -1,11 +1,12 @@
 from flask import ( Blueprint, flash, g, redirect, render_template,
-    request, session, url_for, Flask, make_response
+    request, session, url_for, Flask, make_response, send_file
 )
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, admin_required 
 from json import loads, dumps
 from collections import OrderedDict
 import pdfkit
+from PyPDF2 import PdfFileMerger
 from minerva.backend.apis.db import users, conn, routes
 from sqlalchemy import and_, select
 from os import environ
@@ -58,26 +59,12 @@ def manageRoutes():
         splitRoute(routeId)
 
     routeList = getRoutes()
- 
-    volunteers = getVolunteers()
-    #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
+
     return render_template("routes_view.html", routes=routeList)
 
 @bp.route('/loading', methods=(['GET', 'POST']))
 def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000, warpSpeed=False):
     return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stopConversion, warpSpeed=warpSpeed)
-
-def getVolunteers():
-    proxy = conn.execute(users.select(and_(users.c.role=="VOLUNTEER", users.c.approved==True, users.c.volunteerRole=="DRIVER"))).fetchall()
-    dictList = []
-    for volunteer in proxy:
-        volunteerDict = {}
-        columns = conn.execute(users.select()).keys()
-        for column in columns:
-            volunteerDict[column] = getattr(volunteer, column)
-        volunteerDict['numOrders'] = len(conn.execute(orders.select(and_(orders.c.volunteerId==volunteer.id, orders.c.completed==0))).fetchall())
-        dictList.append(volunteerDict)
-    return dictList
 
 def getRoutes():
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in routes.columns}
@@ -126,15 +113,20 @@ def getUsers(routeId):
 
     return toReturn
 
+@login_required
+@admin_required
+@bp.route('/driver_printout/<int:routeId>')
 def driver_printout(routeId):
-    routeId = conn.execute(routes.select().where(routes.c.id==routeId)).fetchone()
-    if routeId == None:
-        return redirect('/dashboard')
-    else:
-        routeId = routeId[0]
     usersList = getUsers(routeId)
+    
+    # Generate QR codes for each user
+    for user in usersList:
+        qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
+        user['qr_data'] = qr_data
 
-    html = render_template("driver_printout.html", users=usersList, volunteer="Route " + str(routeId))
+    qr = google_maps_qr.make_qr_code(usersList, routeId)
+
+    html = render_template("driver_printout.html", users=usersList, headerText="Route " + str(routeId), routeId=routeId, qr=qr)
 
     pdf = pdfkit.from_string(html, False)
 
@@ -143,6 +135,35 @@ def driver_printout(routeId):
     response.headers['Content-Disposition'] = 'inline;'
 
     #return html
+    return response
+
+@login_required
+@admin_required
+@bp.route('/driver_printout/all')
+def master_driver_printout():
+    print("ID" + str(g.user.id))
+    routeList = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
+    arr  = []
+    for route in routeList:
+        usersList = getUsers(route.id)
+        
+        # Generate QR codes for each user
+        for user in usersList:
+            qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
+            user['qr_data'] = qr_data
+
+        qr = google_maps_qr.make_qr_code(usersList, route.id)
+
+        html = render_template("driver_printout.html", users=usersList, headerText="Route " + str(route.id), routeId=route.id, qr=qr)
+        pdf = pdfkit.from_string(html, environ['INSTANCE_PATH'] + 'output.pdf')
+        name = environ['INSTANCE_PATH'] + "route-" + str(route.id) + ".pdf"
+        arr.append(name)
+
+    pdf = pdfkit.from_file(arr, False)
+    response = make_response(pdf)
+    response.headers['Content-type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline;'
+
     return response
 
 def splitRoute(routeId):

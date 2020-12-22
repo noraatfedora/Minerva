@@ -1,12 +1,25 @@
 import qrcode
 from minerva.backend.apis.db import users, conn
 from sqlalchemy import select
+from flask import url_for
+from io import BytesIO
+import base64
 
-# Takes a list of order IDs, saves image to static/google_maps_qr.png
-def make_qr_code(orderIds):
-    link = make_url(orderIds)
+# Takes a list of order IDs, returns base64 data
+def make_qr_code(userList, routeId):
+    link = make_url(userList)
+    buffered = BytesIO()
     img = qrcode.make(link)
-    img.save('static/google_maps_qr.png')
+    img.save(buffered, format="PNG")
+    data = base64.b64encode(buffered.getvalue())
+    return str(data)[2:len(data)-2]
+def make_user_qr(addr):
+    link = make_single_url(addr)
+    buffered = BytesIO()
+    img = qrcode.make(link)
+    img.save(buffered, format="PNG")
+    data = base64.b64encode(buffered.getvalue())
+    return str(data)[2:len(data)-2]
 
 def make_url(userList):
     link = "https://google.com/maps/dir/"
