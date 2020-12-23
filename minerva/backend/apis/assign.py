@@ -28,7 +28,7 @@ def create_data(num_vehicles, gscce, stopConversion, solutionLimit):
     data['API_key'] = environ['GOOGLE_API']
     print("Google api key: " + str(data['API_key']))
     data['users'] = conn.execute(
-        users.select().where(users.c.role=="RECIEVER")).fetchall()
+        users.select().where(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==False))).fetchall()
 
     data['num_vehicles'] = num_vehicles
     data['globalSpanCostCoefficient'] = gscce
@@ -290,29 +290,11 @@ def createAllRoutes(foodBankId, num_vehicles=100, stopConversion=1000, globalSpa
         users.c.foodBankId==g.user.id,
         users.c.disabled==False
     ))).fetchall()
-    missingClientsRaw = conn.execute(select([users.c.id]).where(users.c.foodBankId==g.user.id and users.c.role=="RECIEVER")).fetchall()
-    missingClients = []
-    for client in missingClientsRaw:
-        missingClients.append(client[0])
-    print(missingClients)
-    currentRoutesRaw = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
-    currentRoutes = []
-    for route in currentRoutesRaw:
-        routeContent = loads(route.content)
-        badStuffRemoved = []
-        for userId in routeContent:
-            if userId in missingClients:
-                badStuffRemoved.append(userId)
-        currentRoutes.append(badStuffRemoved)
-    #currentRoutes.append(missingClients)
-    #TODO: Figure out if stuff was necessary
-
 
     # Add anyone missing
 
     print("Calculating routes...")
-    print("Current routes: " + str(currentRoutes))
-    assignments = get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoefficient, currentRoutes)
+    assignments = get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoefficient, solutionLimit)
     routeList = []
     for i in range(len(assignments)):
         userIdList = []  # sorted list to store as column with volunteer
