@@ -41,9 +41,9 @@
     window.alert(message);
   }
 
-  function explainWarpSpeed() {
+  function explainSolutionLimit() {
     var message = 
-      "When this box is checked, it will usually take less than a minute to generate routes. These routes will be terrible, but if it's taking more than a minute you'll know if there's addresses in the list that cause it to be unsolvable."
+      "The smaller you set this, the worse the routes will be (but it will run faster). If you just want to check that it's solvable, set this to 1."
     window.alert(message);
   }
 </script>
@@ -129,14 +129,15 @@
           <small><a href="javascript:explainGSC()">What's this?</a></small>
         </div>
         <div class="card-header">
+          Solution limit
           <input
-            type="checkbox"
-            value="warpSpeed"
-            id="warpSpeed"
-            name="warpSpeed"
+            type="number"
+            class="form-control-aesthetic col-md-3"
+            value="10000"
+            id="solution-limit"
+            name="solution-limit"
           />
-          Enable Warp Speed
-          <small><a href="javascript:explainWarpSpeed()">What's this?</a></small>
+          <small><a href="javascript:explainSolutionLimit()">What's this?</a></small>
         </div>
       </div>
     </div>
