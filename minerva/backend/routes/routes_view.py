@@ -31,11 +31,11 @@ def manageRoutes():
         if 'redirect' in request.values.to_dict().keys():
             return loadingScreen(num_vehicles=request.values.get('num-vehicles'),
                 global_span_cost=request.values.get('global-span-cost'),
-                stopConversion=request.values.get('stop-conversion'), warpSpeed='warpSpeed' in request.values)
+                stopConversion=request.values.get('stop-conversion'), solutionLimit=request.values.get('solution-limit'))
         else:
             assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
                 globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
-                stopConversion=int(request.values.get('stop_conversion')), warpSpeed=request.values.get('warpSpeed') == 'True')
+                stopConversion=int(request.values.get('stop_conversion')), solutionLimit=int(request.values.get('solution-limit')))
             return redirect('/routes')
     elif request.method == "POST" and 'move-user' in request.values.to_dict().keys():
         userId = int(request.values.to_dict()['move-user'])
@@ -63,8 +63,8 @@ def manageRoutes():
     return render_template("routes_view.html", routes=routeList)
 
 @bp.route('/loading', methods=(['GET', 'POST']))
-def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000, warpSpeed=False):
-    return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stopConversion, warpSpeed=warpSpeed)
+def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000, solutionLimit=10000):
+    return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stopConversion, solutionLimit=solutionLimit)
 
 def getRoutes():
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in routes.columns}
