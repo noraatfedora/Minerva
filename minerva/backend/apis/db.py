@@ -71,6 +71,7 @@ users = Table(
     Column('state', String()),
     Column('householdSize', Integer),
     Column('inSpreadsheet', Integer),
+    Column('apiKey', String(255))
 )
 
 family_members = Table(

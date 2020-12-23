@@ -5,14 +5,27 @@ from flask import url_for
 from io import BytesIO
 import base64
 
-# Takes a list of order IDs, returns base64 data
-def make_qr_code(userList, routeId):
-    link = make_url(userList)
-    buffered = BytesIO()
-    img = qrcode.make(link)
-    img.save(buffered, format="PNG")
-    data = base64.b64encode(buffered.getvalue())
-    return str(data)[2:len(data)-2]
+# Takes a list of user IDs, returns array of base64 data, with multiple QR codes
+def make_qr_code(usersList, apiKey):
+    # Maximum route length of a google maps thing is 8
+    userIdList = []
+    for user in usersList:
+        userIdList.append(user['id'])
+    maxLength = 8 
+    toReturn = []
+    for coarse in range(0, int(len(userIdList)/maxLength)):
+        link = "https://minervagroceries.org/route_link/"
+        for fine in range(0, 8):
+            index = (coarse * maxLength) + fine
+            if index <= len(userIdList) - 1:
+                link += str(userIdList[index]) + "+"
+        link = link[:len(link)-1] + "-" + apiKey
+        buffered = BytesIO()
+        img = qrcode.make(link)
+        img.save(buffered, format="PNG")
+        data = base64.b64encode(buffered.getvalue())
+        toReturn.append(str(data)[2:len(data)-2])
+    return toReturn
 def make_user_qr(addr):
     link = make_single_url(addr)
     buffered = BytesIO()
