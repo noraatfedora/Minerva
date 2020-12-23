@@ -166,7 +166,7 @@ def master_driver_printout():
         for user in routeDict['usersList']:
             qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
             user['qr_data'] = qr_data
-        routeDict['qr'] = google_maps_qr.make_qr_code(routeDict['usersList'])
+        routeDict['qr'] = google_maps_qr.make_qr_code(routeDict['usersList'], g.user.apiKey)
         routeDict['headerText'] = "Route " + str(route.id)
         routeDictList.append(routeDict)
 
