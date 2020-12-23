@@ -319,7 +319,7 @@ def createAllRoutes(foodBankId, num_vehicles=100, stopConversion=1000, globalSpa
         for user in assignments[i][0]:
             userIdList.append(user['id'])
         routeList.append(userIdList)
-    #conn.execute(routes.delete().where(routes.c.foodBankId==foodBankId))
+    conn.execute(routes.delete().where(routes.c.foodBankId==foodBankId))
     for routeNum in range(len(routeList)):
         route = routeList[routeNum]
         length = assignments[routeNum][1]
