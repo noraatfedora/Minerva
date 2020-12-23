@@ -66,6 +66,19 @@ def manageRoutes():
 def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000, solutionLimit=10000):
     return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stopConversion, solutionLimit=solutionLimit)
 
+@bp.route('/route_link/<query>')
+def google_maps_redirect(query):
+    splitQuery = query.split('-')
+    userIdList=splitQuery[0].split('+')
+    api_key = splitQuery[1]
+    foodBank = conn.execute(users.select().where(users.c.apiKey==api_key)).fetchall()
+    if foodBank == None:
+        return "Sorry, that URL contains an invalid API key."
+    userList = []
+    for id in userIdList:
+        userList.append(conn.execute(users.select().where(users.c.id==id)).fetchone())
+    return redirect(google_maps_qr.make_url(userList))
+
 def getRoutes():
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in routes.columns}
     rp = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
@@ -117,6 +130,7 @@ def getUsers(routeId):
 @admin_required
 @bp.route('/driver_printout/<int:routeId>')
 def driver_printout(routeId):
+    print("getting driver printout")
     route = {}
     route['usersList'] = getUsers(routeId)
     
@@ -125,7 +139,7 @@ def driver_printout(routeId):
         qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
         user['qr_data'] = qr_data
 
-    route['qr'] = google_maps_qr.make_qr_code(route['usersList'], routeId)
+    route['qr'] = google_maps_qr.make_qr_code(route['usersList'], g.user.apiKey)
     route['headerText'] = "Route " + str(routeId)
 
     html = render_template("driver_printout.html", routes=[route])
@@ -152,7 +166,7 @@ def master_driver_printout():
         for user in routeDict['usersList']:
             qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
             user['qr_data'] = qr_data
-        routeDict['qr'] = google_maps_qr.make_qr_code(routeDict['usersList'], route.id)
+        routeDict['qr'] = google_maps_qr.make_qr_code(routeDict['usersList'])
         routeDict['headerText'] = "Route " + str(route.id)
         routeDictList.append(routeDict)
 

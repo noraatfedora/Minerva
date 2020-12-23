@@ -57,7 +57,9 @@
     {% for route in routes %}
     <div class="full-route">
         <h2>{{ route['headerText'] }}</h2>
-        <img src="data:image/png;base64, {{ route['qr'] | safe}}" height=175px style="margin-bottom: 10px;" />
+        {% for qr in route['qr'] %}
+            <img src="data:image/png;base64, {{ qr | safe}}" height=175px style="margin-bottom: 10px;" />
+        {% endfor %}
         {% for user in route['usersList'] if not user['id']==user['foodBankId'] %}
         <div class="shipping-label">
             <div class="data">
