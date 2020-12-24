@@ -231,7 +231,7 @@ def get_order_assignments(num_vehicles, data, stopConversion, globalSpanCostCoef
 
         0,  # no slack
 
-        45000,  # vehicle maximum travel distance
+        99000,  # vehicle maximum travel distance
 
         True,  # start cumul to zero
 
