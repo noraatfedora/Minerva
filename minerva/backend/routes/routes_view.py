@@ -160,6 +160,7 @@ def master_driver_printout():
     print("ID" + str(g.user.id))
     routesList = conn.execute(routes.select().where(routes.c.foodBankId==g.user.id)).fetchall()
     routeDictList = []
+    count = 0
     for route in routesList:
         routeDict = {}
         routeDict['usersList'] = getUsers(route.id)
@@ -167,7 +168,8 @@ def master_driver_printout():
             qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
             user['qr_data'] = qr_data
         routeDict['qr'] = google_maps_qr.make_qr_code(routeDict['usersList'], g.user.apiKey)
-        routeDict['headerText'] = "Route " + str(route.id)
+        routeDict['headerText'] = "Route " + str(count)
+        count += 1
         routeDictList.append(routeDict)
 
     options = {
