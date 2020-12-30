@@ -31,11 +31,18 @@ def manageRoutes():
         if 'redirect' in request.values.to_dict().keys():
             return loadingScreen(num_vehicles=request.values.get('num-vehicles'),
                 global_span_cost=request.values.get('global-span-cost'),
-                stopConversion=request.values.get('stop-conversion'), solutionLimit=request.values.get('solution-limit'))
+                stopConversion=request.values.get('stop-conversion'), solutionLimit=request.values.get('solution-limit'), separateCities=request.values.get('separateCities'))
         else:
-            assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
-                globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
-                stopConversion=int(request.values.get('stop_conversion')), solutionLimit=int(request.values.get('solution-limit')))
+            if request.values['separateCities'] == '':
+                print("Not separating cities")
+                assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
+                    globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
+                    stopConversion=int(request.values.get('stop_conversion')), solutionLimit=int(request.values.get('solution-limit')))
+            else:
+                print("Seperating cities")
+                assign.createAllRoutesSeparatedCities(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
+                    globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
+                    stopConversion=int(request.values.get('stop_conversion')), solutionLimit=int(request.values.get('solution-limit')))
             return redirect('/routes')
     elif request.method == "POST" and 'move-user' in request.values.to_dict().keys():
         userId = int(request.values.to_dict()['move-user'])
@@ -63,8 +70,8 @@ def manageRoutes():
     return render_template("routes_view.html", routes=routeList)
 
 @bp.route('/loading', methods=(['GET', 'POST']))
-def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000, solutionLimit=10000):
-    return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stopConversion, solutionLimit=solutionLimit)
+def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000, solutionLimit=10000, separateCities=False):
+    return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stopConversion, solutionLimit=solutionLimit, separateCities=separateCities)
 
 @bp.route('/route_link/<query>')
 def google_maps_redirect(query):

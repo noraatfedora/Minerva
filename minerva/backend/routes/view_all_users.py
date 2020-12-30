@@ -82,7 +82,7 @@ def send_spreadsheet():
     outputColumns = ['First Name', "Last Name", "Email", "Original Address", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
     pdList = []
     for route in routesList:
-        usersList = getUsers(route.id, addOriginal=True)
+        usersList = getUsers(route.id, addOriginal=True, includeDepot=True)
         for user in usersList:
             try:
                 parsed = usaddress.tag(user['Full Address'])[0]

@@ -46,6 +46,12 @@
       "The smaller you set this, the worse the routes will be (but it will run faster). If you just want to check that it's solvable, set this to 1."
     window.alert(message);
   }
+
+  function explainSeparateCities() {
+    var message = 
+      "This will split up the list of clients by city, create routes for them, and then combine them. Cities that have less than 5 people will be merged into the city with the most people."
+    window.alert(message);
+  }
 </script>
 <!--
 <style>
@@ -139,6 +145,14 @@
           />
           <small><a href="javascript:explainSolutionLimit()">What's this?</a></small>
         </div>
+        <div class="card-header">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="separateCities" value="separateCities" id="separateCities">
+            <label class="form-check-label" for="separateCities">One city per route</label>
+            <small><a href="javascript:explainSeparateCities()">What's this?</a></small>
+          </div>
+        </div>
+
       </div>
     </div>
   </form>
