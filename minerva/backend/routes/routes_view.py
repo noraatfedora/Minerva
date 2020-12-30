@@ -151,7 +151,12 @@ def driver_printout(routeId):
 
     html = render_template("driver_printout.html", routes=[route])
 
-    pdf = pdfkit.from_string(html, False)
+    options = {
+        'orientation': 'Landscape',
+        'margin-top': '0',
+        'margin-bottom': '0'
+    }
+    pdf = pdfkit.from_string(html, False, options=options)
 
     response = make_response(pdf)
     response.headers['Content-type'] = 'application/pdf'
@@ -175,12 +180,15 @@ def master_driver_printout():
             qr_data = google_maps_qr.make_user_qr(user['formattedAddress'])
             user['qr_data'] = qr_data
         routeDict['qr'] = google_maps_qr.make_qr_code(routeDict['usersList'], g.user.apiKey)
-        routeDict['headerText'] = "Route " + str(count)
+        routeDict['headerText'] = "Route " + str(count) #+ "(ID: " + str(route['id']) + ")"
         count += 1
         routeDictList.append(routeDict)
 
     options = {
-        'header-right': '[page]/[toPage]'
+        'header-right': '[page]/[toPage]',
+        'orientation': 'Landscape',
+        'margin-top': '0',
+        'margin-bottom': '0'
     }
     html = render_template("driver_printout.html", routes=routeDictList)
     pdf = pdfkit.from_string(html, False, options=options)

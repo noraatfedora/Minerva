@@ -13,7 +13,7 @@ def make_qr_code(usersList, apiKey):
         userIdList.append(user['id'])
     maxLength = 8 
     toReturn = []
-    for coarse in range(0, int(len(userIdList)/maxLength)):
+    for coarse in range(0, int(len(userIdList)/maxLength)+1):
         link = "https://minervagroceries.org/route_link/"
         for fine in range(0, 8):
             index = (coarse * maxLength) + fine
