@@ -14,6 +14,7 @@ from minerva.backend.apis import assign
 import io, datetime
 from minerva.backend.apis import google_maps_qr
 from datetime import datetime
+import statistics
 from minerva.backend.apis.email import send_recieved_notification, send_bagged_notification
 bp = Blueprint('routes', __name__)
 
@@ -33,7 +34,7 @@ def manageRoutes():
                 global_span_cost=request.values.get('global-span-cost'),
                 stopConversion=request.values.get('stop-conversion'), solutionLimit=request.values.get('solution-limit'), separateCities=request.values.get('separateCities'))
         else:
-            if request.values['separateCities'] == '':
+            if request.values['separateCities'] == 'None':
                 print("Not separating cities")
                 assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
                     globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
@@ -66,8 +67,9 @@ def manageRoutes():
         splitRoute(routeId)
 
     routeList = getRoutes()
+    stats = getStats(routeList)
 
-    return render_template("routes_view.html", routes=routeList)
+    return render_template("routes_view.html", routes=routeList, stats=stats)
 
 @bp.route('/loading', methods=(['GET', 'POST']))
 def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000, solutionLimit=10000, separateCities=False):
@@ -85,6 +87,30 @@ def google_maps_redirect(query):
     for id in userIdList:
         userList.append(conn.execute(users.select().where(users.c.id==id)).fetchone())
     return redirect(google_maps_qr.make_url(userList))
+
+def getStats(routeList):
+    if len(routeList) == 0:
+        return {}
+    stats = {}
+    clientNumberList = []
+    distanceList = []
+
+    for route in routeList:
+        clientNumberList.append(len(route['userList']))
+        distanceList.append(float(route['length']))
+    
+    stats['numRoutes'] = len(routeList)
+    stats['meanClients'] = round(statistics.mean(clientNumberList), 2)
+    stats['stdevClients'] = round(statistics.pstdev(clientNumberList), 2)
+    stats['maxClients'] = max(clientNumberList)
+    stats['minClients'] = min(clientNumberList)
+    stats['meanDist'] = round(statistics.mean(distanceList), 2)
+    stats['stdevDist'] = round(statistics.pstdev(clientNumberList), 2)
+    stats['sumDist'] = sum(clientNumberList)
+    stats['maxDist'] = max(distanceList)
+    stats['minDist'] = min(distanceList)
+    
+    return stats
 
 def getRoutes():
     row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in routes.columns}

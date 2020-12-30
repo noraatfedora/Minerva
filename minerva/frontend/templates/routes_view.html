@@ -161,6 +161,33 @@
     >Download routes as spreadsheet</a
   >
   <div class="spacer"></div>
+  <a
+    class="btn bw-btn"
+    data-toggle="collapse"
+    href="#collapse-stats"
+    role="button"
+    aria-expanded="false"
+    aria-controls="collapse-stats"
+  >
+    Route statistics
+  </a>
+  <div class="collapse" id="collapse-stats">
+    <div class="spacer"></div>
+    <div class="card text-left task-incomplete">
+      <div class="card-header">Number of routes: {{ stats['numRoutes'] }}</div>
+      <div class="card-header">Average number of clients (mean): {{ stats['meanClients'] }}</div>
+      <div class="card-header">Standard deviation of clients: {{ stats['stdevClients'] }}</div>
+      <div class="card-header">Maximum number of clients: {{ stats['maxClients'] }}</div>
+      <div class="card-header">Minimum number of clients: {{ stats['minClients'] }}</div>
+      <div class="card-header">Average distance (mean): {{ stats['meanDist'] }} KM</div>
+      <div class="card-header">Standard deviation of distance (mean): {{ stats['stdevDist'] }} KM</div>
+      <div class="card-header">Maximum distance: {{ stats['maxDist'] }} KM</div>
+      <div class="card-header">Minimum distance: {{ stats['minDist'] }} KM</div>
+      <div class="card-header">Total distance: {{ stats['sumDist'] }} KM</div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
   <div class="card-container">
     {% for route in routes %}
     <div class="card grid-card text-left task-incomplete">
