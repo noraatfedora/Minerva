@@ -11,33 +11,28 @@
             background-color: white
         }
 
+        .stats-table {
+            width: 20%;
+            float: right;
+        }
         table,
         th,
         td {
             border: 1px solid black;
             border-collapse: collapse;
         }
-
-        td {
-            padding: 5px;
-        }
-
-        .container {
-            padding-left: 30px;
-            padding-top: 30px;
-            padding-bottom: 30px;
+        
+        th, td {
+            padding: 3px;
         }
 
         .shipping-label {
             border: 1px solid black;
             padding: 10px;
+            width: 100%;
             column-count: 2;
             height: 200px;
             page-break-inside: avoid;
-        }
-
-        .shipping-label:not(:last-of-type) {
-            margin-bottom: 24px;
         }
 
         .data {
@@ -50,7 +45,7 @@
             width: 25%;
         }
         
-        .full-route {
+        .full-route:not(:last-child) {
             page-break-after: always;
         }
     </style>
@@ -58,38 +53,58 @@
     <div class="full-route">
         <h2>{{ route['headerText'] }}</h2>
         {% for qr in route['qr'] %}
-            <img src="data:image/png;base64, {{ qr | safe}}" height=175px style="margin-bottom: 10px;" />
+            <img src="data:image/png;base64, {{ qr | safe}}" height=125px style="margin-bottom: 0px; padding-right: 150px;" />
         {% endfor %}
+        <table class="stats-table">
+           <tr><td><b>Total Stops</b></td><td>{{ route['usersList'] | length - 2}}</td></tr> 
+        </table>
+        <table class="shipping-label">
+        <tr>
+            <th>
+                <b>Name</b>
+            </th>
+            <th>
+                <b>Email</b>
+            </th>
+            <th>
+                <b>Address</b>
+            </th>
+            <th>
+                <b>Apt</b>
+            </th>
+            <th>
+                <b>Phone</b>
+            <th>
+                <b>Notes</b>
+            </th>
+        </tr>
         {% for user in route['usersList'] if not user['id']==user['foodBankId'] %}
-        <div class="shipping-label">
-            <div class="data">
-                <div class="card-header">
-                    <b>Name: </b>{{ user['name'] }}
-                </div>
-                {% if user['email'] %}
-                <div class="card-header">
-                    <b>Email: </b>{{ user['email'] }}
-                </div>
-                {% endif %}
-                <div class="card-header">
-                    <b>Address: </b>{{ user['formattedAddress']}}
-                </div>
-                {% if user['cellPhone'] %}
-                <div class="card-header">
-                    <b>Phone number: </b>{{ user['cellPhone']}}
-                </div>
-                {% endif %}
-                {% if user['instructions'] %}
-                <div class="card-header">
-                    <b>Instructions: </b>{{ user['instructions'] }}
-                </div>
-                {% endif %}
-            </div>
+        <tr>
+            <td>
+                {{ user['name'] }}
+            </td>
+            <td>
+                {{ user['email'] }}
+            </td>
+            <td>
+                {{ user['formattedAddress']}}
+            </td>
+            <td>
+                {{ user['address2']}}
+            </td>
+
+            <td>
+                {{ user['cellPhone']}}
+            </td>
+            <td>
+                {{ user['instructions'] }}
+            </td>
+        <!--
             <div class="user-qr-div">
                 <img src="data:image/png;base64, {{ user['qr_data'] | safe }}" class="user-qr" height=200px />
-            </div>
-        </div>
+            </div>-->
         {% endfor %}
+    </table>
     </div>
     {% endfor %}
 
