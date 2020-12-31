@@ -10,10 +10,10 @@
   }
 
   function explainLength() {
-    var message = 
+    var message =
       "The length of each route is estimated by the geographic coordinates of each address, " +
       "ignoring any roads, highways, or speeed limits. This significantly cuts down on " +
-      "computation time, while still being a good enough strategy to find routes. It also "+
+      "computation time, while still being a good enough strategy to find routes. It also " +
       "saves money that would be sent to Google Maps, as it would cost about $3 to add each" +
       "new client."
     window.alert(message);
@@ -35,66 +35,50 @@
   }
 
   function explainMaxRoutes() {
-    var message = 
+    var message =
       "Usually, the routing algorithm creates many empty routes that it deletes later. " +
       "Increase this number if you also increase the global span cost."
     window.alert(message);
   }
 
   function explainSolutionLimit() {
-    var message = 
+    var message =
       "The smaller you set this, the worse the routes will be (but it will run faster). If you just want to check that it's solvable, set this to 1."
     window.alert(message);
   }
 
   function explainSeparateCities() {
-    var message = 
+    var message =
       "This will split up the list of clients by city, create routes for them, and then combine them. Cities that have less than 5 people will be merged into the city with the most people."
     window.alert(message);
   }
 </script>
-<!--
+
 <style>
-  .card-container {
-      flex-direction: row;
-      display:flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: flex-start;
+  .collapse-container {
+    display: flex;
+    justify-content: center;
   }
-  .card {
-      margin: 1%;
+
+  .collapse-container > div:not(:first-child) {
+    margin-left: 24px;
+  }
+
+  .inline {
+    display: inline-block;
   }
 </style>
--->
+
 <center>
   <h2>Routes</h2>
-  <form
-    name="generate-routes"
-    id="generate-routes"
-    class="form"
-    action=""
-    method="post"
-    onsubmit="return verifyForm()"
-  >
+  <form name="generate-routes" id="generate-routes" class="form" action="" method="post" onsubmit="return verifyForm()">
     <div class="spacer"></div>
     <input type="hidden" name="redirect" value="loading" />
-    <button
-      type="submit"
-      name="submit"
-      class="btn bw-btn center-block blue-hover"
-    >
+    <button type="submit" name="submit" class="btn bw-btn center-block blue-hover inline">
       Generate new routes
     </button>
-    <div class="spacer"></div>
-    <a
-      class="btn bw-btn"
-      data-toggle="collapse"
-      href="#collapse-advanced"
-      role="button"
-      aria-expanded="false"
-      aria-controls="collapse-advanced"
-    >
+    <a class="btn bw-btn" data-toggle="collapse" href="#collapse-advanced" role="button" aria-expanded="false"
+      aria-controls="collapse-advanced">
       Advanced options
     </a>
     <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover inline">Download routes as
@@ -103,7 +87,7 @@
       aria-controls="collapse-stats">
       Route statistics
     </a>
-  <div class="spacer"></div>
+    <div class="spacer"></div>
     <div class="collapse-container">
       <div id="collapse-advanced" class="collapse inline">
         <div class="card text-left task-incomplete">
@@ -140,7 +124,7 @@
               <small><a href="javascript:explainSeparateCities()">What's this?</a></small>
             </div>
           </div>
-    
+
         </div>
       </div>
       <div class="collapse inline" id="collapse-stats">
@@ -179,14 +163,8 @@
         <a href="/driver_printout/{{ route['id'] }}">Print</a>
       </div>
       <div class="card-header">
-        <a
-          class="btn bw-btn"
-          data-toggle="collapse"
-          href="#collapse-route-{{ route['id'] }}"
-          role="button"
-          aria-expanded="false"
-          aria-controls="collapse-route-{{ route['id'] }}"
-        >
+        <a class="btn bw-btn" data-toggle="collapse" href="#collapse-route-{{ route['id'] }}" role="button"
+          aria-expanded="false" aria-controls="collapse-route-{{ route['id'] }}">
           {% if route['userList']|length==1 %} Show 1 stop {% else %} Show {{
           route['userList']|length - 2 }} stops {% endif %}
         </a>
@@ -194,87 +172,72 @@
       <div id="collapse-route-{{ route['id'] }}" class="collapse">
         {% for user in route['userList'] %}
         <div class="card bg-light" id="user-header-{{ user['id'] }}">
-          <a
-            class="btn btn-link"
-            data-toggle="collapse"
-            href="#collapse-user-{{ user['id'] }}"
-            role="button"
-            aria-expanded="false"
-          >
+          <a class="btn btn-link" data-toggle="collapse" href="#collapse-user-{{ user['id'] }}" role="button"
+            aria-expanded="false">
             {{ user['formattedAddress'] }}
           </a>
           <div id="collapse-user-{{ user['id'] }}" class="collapse">
-              <table>
-                  <tr>
-                      <th>
-                          Name:
-                      </th>
-                      <th>
-                          {{ user['name'] }}
-                      </th>
-                  <tr>
-                      <th>
-                          Email:
-                      </th>
-                      <th>
-                          {{ user['email'] }}
-                      </th>
-                  </tr>
-                  <tr>
-                      <th>
-                          Cell Phone:
-                      </th>
-                      <th>
-                          {{ user['cellPhone'] }}
-                      </th>
-                  </tr>
-                  <tr>
-                      <th>
-                          Last delivered:
-                      </th>
-                      <th>
-                          {{ user['lastDelivered'] }}
-                      </th>
-                  </tr>
-                  <tr>
-                      <th>
-                          Notes:
-                      </th>
-                      <th>
-                          {{ user['instructions'] }}
-                      </th>
-                  </tr>
-              </table>
-              Move to route:
-              <form name="move-user" method="POST" class="form">
-                <input
-                  type="number"
-                  class="form-control-aesthetic col-md-3"
-                  value="{{ route['id'] }}"
-                  id="to-route"
-                  name="to-route"
-                />
-                <input type="hidden" name="move-user" value="{{ user['id'] }}">
-                <input type="hidden" name="from-route" value="{{ route['id'] }}">
-                <button type="submit" class="btn bw-btn">Select</a>
-              </form>
+            <table>
+              <tr>
+                <th>
+                  Name:
+                </th>
+                <th>
+                  {{ user['name'] }}
+                </th>
+              <tr>
+                <th>
+                  Email:
+                </th>
+                <th>
+                  {{ user['email'] }}
+                </th>
+              </tr>
+              <tr>
+                <th>
+                  Cell Phone:
+                </th>
+                <th>
+                  {{ user['cellPhone'] }}
+                </th>
+              </tr>
+              <tr>
+                <th>
+                  Last delivered:
+                </th>
+                <th>
+                  {{ user['lastDelivered'] }}
+                </th>
+              </tr>
+              <tr>
+                <th>
+                  Notes:
+                </th>
+                <th>
+                  {{ user['instructions'] }}
+                </th>
+              </tr>
+            </table>
+            Move to route:
+            <form name="move-user" method="POST" class="form">
+              <input type="number" class="form-control-aesthetic col-md-3" value="{{ route['id'] }}" id="to-route"
+                name="to-route" />
+              <input type="hidden" name="move-user" value="{{ user['id'] }}">
+              <input type="hidden" name="from-route" value="{{ route['id'] }}">
+              <button type="submit" class="btn bw-btn">Select</a>
+            </form>
           </div>
         </div>
         {% endfor %}
       </div>
       <div class="card-header">
         Move all to route:
-          <form name="move-user" method="POST" class="form">
-            <input
-              type="number"
-              class="form-control-aesthetic col-md-3"
-              value="{{ route['id'] }}"
-              id="to-route"
-              name="to-route"
-            />
-            <input type="hidden" name="move-route" value="{{ route['id'] }}">
-            <button type="submit" class="btn bw-btn">Select</a>
-          </form>
+        <form name="move-user" method="POST" class="form">
+          <input type="number" class="form-control-aesthetic col-md-3" value="{{ route['id'] }}" id="to-route"
+            name="to-route" />
+          <input type="hidden" name="move-route" value="{{ route['id'] }}">
+          <button type="submit" class="btn bw-btn">Select</a>
+        </form>
       </div>
       <div class="card-header">
         <form name="split-form" method="POST" class="form">
