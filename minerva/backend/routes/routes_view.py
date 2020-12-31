@@ -174,6 +174,7 @@ def driver_printout(routeId):
 
     route['qr'] = google_maps_qr.make_qr_code(route['usersList'], g.user.apiKey)
     route['headerText'] = "Route " + str(routeId)
+    route['length'] = conn.execute(select([routes.c.length]).where(routes.c.id==routeId)).fetchone()[0] / 1000.0
 
     html = render_template("driver_printout.html", routes=[route])
 
@@ -207,6 +208,7 @@ def master_driver_printout():
             user['qr_data'] = qr_data
         routeDict['qr'] = google_maps_qr.make_qr_code(routeDict['usersList'], g.user.apiKey)
         routeDict['headerText'] = "Route " + str(count) #+ "(ID: " + str(route['id']) + ")"
+        routeDict['length'] = route['length'] / 1000
         count += 1
         routeDictList.append(routeDict)
 
