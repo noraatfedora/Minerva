@@ -77,7 +77,7 @@ def measure(lat1, lon1, lat2, lon2):
     lon2 = float(lon2)
     # no idea how this works but stackoverflow does
     R = 6378.137  # radius of earth in KM
-    dLat = lat2 * math.pi /  - lat1 * math.pi / 180
+    dLat = lat2 * math.pi / 180  - lat1 * math.pi / 180
     dLon = lon2 * math.pi / 180 - lon1 * math.pi / 180
     a = math.sin(dLat/2) * math.sin(dLat/2) + \
         math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * \
