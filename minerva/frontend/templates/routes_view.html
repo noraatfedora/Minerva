@@ -81,68 +81,68 @@
       aria-controls="collapse-advanced">
       Advanced options
     </a>
-  </form>
-  <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover inline">Download routes as
-    spreadsheet</a>
-  <a class="btn bw-btn inline" data-toggle="collapse" href="#collapse-stats" role="button" aria-expanded="false"
-    aria-controls="collapse-stats">
-    Route statistics
-  </a>
+    <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover inline">Download routes as
+      spreadsheet</a>
+    <a class="btn bw-btn inline" data-toggle="collapse" href="#collapse-stats" role="button" aria-expanded="false"
+      aria-controls="collapse-stats">
+      Route statistics
+    </a>
   <div class="spacer"></div>
-  <div class="collapse-container">
-    <div id="collapse-advanced" class="collapse inline">
-      <div class="card text-left task-incomplete">
-        <div class="card-header">
-          Maximum number of routes:
-          <input type="number" class="form-control-aesthetic col-md-2" value="100" id="num-vehicles"
-            name="num-vehicles" />
-          <small><a href="javascript:explainMaxRoutes()">What's this?</a></small>
-        </div>
-        <div class="card-header">
-          Each delivery is equivalent to driving
-          <input type="number" class="form-control-aesthetic col-md-3" value="1000" id="stop-conversion"
-            name="stop-conversion" />
-          meters
-          <small><a href="javascript:explainStopConversion()">What's this?</a></small>
-        </div>
-        <div class="card-header">
-          Global Span Cost
-          <input type="number" class="form-control-aesthetic col-md-3" value="4000" id="global-span-cost"
-            name="global-span-cost" />
-          <small><a href="javascript:explainGSC()">What's this?</a></small>
-        </div>
-        <div class="card-header">
-          Solution limit
-          <input type="number" class="form-control-aesthetic col-md-3" value="10000" id="solution-limit"
-            name="solution-limit" />
-          <small><a href="javascript:explainSolutionLimit()">What's this?</a></small>
-        </div>
-        <div class="card-header">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="separateCities" value="separateCities"
-              id="separateCities">
-            <label class="form-check-label" for="separateCities">One city per route</label>
-            <small><a href="javascript:explainSeparateCities()">What's this?</a></small>
+    <div class="collapse-container">
+      <div id="collapse-advanced" class="collapse inline">
+        <div class="card text-left task-incomplete">
+          <div class="card-header">
+            Maximum number of routes:
+            <input type="number" class="form-control-aesthetic col-md-2" value="100" id="num-vehicles"
+              name="num-vehicles" />
+            <small><a href="javascript:explainMaxRoutes()">What's this?</a></small>
           </div>
+          <div class="card-header">
+            Each delivery is equivalent to driving
+            <input type="number" class="form-control-aesthetic col-md-3" value="1000" id="stop-conversion"
+              name="stop-conversion" />
+            meters
+            <small><a href="javascript:explainStopConversion()">What's this?</a></small>
+          </div>
+          <div class="card-header">
+            Global Span Cost
+            <input type="number" class="form-control-aesthetic col-md-3" value="4000" id="global-span-cost"
+              name="global-span-cost" />
+            <small><a href="javascript:explainGSC()">What's this?</a></small>
+          </div>
+          <div class="card-header">
+            Solution limit
+            <input type="number" class="form-control-aesthetic col-md-3" value="10000" id="solution-limit"
+              name="solution-limit" />
+            <small><a href="javascript:explainSolutionLimit()">What's this?</a></small>
+          </div>
+          <div class="card-header">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="separateCities" value="separateCities"
+                id="separateCities">
+              <label class="form-check-label" for="separateCities">One city per route</label>
+              <small><a href="javascript:explainSeparateCities()">What's this?</a></small>
+            </div>
+          </div>
+    
         </div>
-  
+      </div>
+      <div class="collapse inline" id="collapse-stats">
+        <div class="card text-left task-incomplete">
+          <div class="card-header">Number of routes: {{ stats['numRoutes'] }}</div>
+          <div class="card-header">Average number of clients (mean): {{ stats['meanClients'] }}</div>
+          <div class="card-header">Standard deviation of clients: {{ stats['stdevClients'] }}</div>
+          <div class="card-header">Maximum number of clients: {{ stats['maxClients'] }}</div>
+          <div class="card-header">Minimum number of clients: {{ stats['minClients'] }}</div>
+          <div class="card-header">Average distance (mean): {{ stats['meanDist'] }} KM</div>
+          <div class="card-header">Standard deviation of distance (mean): {{ stats['stdevDist'] }} KM</div>
+          <div class="card-header">Maximum distance: {{ stats['maxDist'] }} KM</div>
+          <div class="card-header">Minimum distance: {{ stats['minDist'] }} KM</div>
+          <div class="card-header">Total distance: {{ stats['sumDist'] }} KM</div>
+        </div>
       </div>
     </div>
-    <div class="collapse inline" id="collapse-stats">
-      <div class="card text-left task-incomplete">
-        <div class="card-header">Number of routes: {{ stats['numRoutes'] }}</div>
-        <div class="card-header">Average number of clients (mean): {{ stats['meanClients'] }}</div>
-        <div class="card-header">Standard deviation of clients: {{ stats['stdevClients'] }}</div>
-        <div class="card-header">Maximum number of clients: {{ stats['maxClients'] }}</div>
-        <div class="card-header">Minimum number of clients: {{ stats['minClients'] }}</div>
-        <div class="card-header">Average distance (mean): {{ stats['meanDist'] }} KM</div>
-        <div class="card-header">Standard deviation of distance (mean): {{ stats['stdevDist'] }} KM</div>
-        <div class="card-header">Maximum distance: {{ stats['maxDist'] }} KM</div>
-        <div class="card-header">Minimum distance: {{ stats['minDist'] }} KM</div>
-        <div class="card-header">Total distance: {{ stats['sumDist'] }} KM</div>
-      </div>
-    </div>
-  </div>
+  </form>
 
 
   <div class="spacer"></div>
