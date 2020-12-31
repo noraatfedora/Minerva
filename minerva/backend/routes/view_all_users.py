@@ -79,11 +79,13 @@ def loadingScreen(num_vehicles=40):
 @bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
 def send_spreadsheet():
     routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
-    outputColumns = ['First Name', "Last Name", "Email", "Original Address", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
+    outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
     pdList = []
     for route in routesList:
-        usersList = getUsers(route.id, addOriginal=True, includeDepot=True)
+        usersList = getUsers(route.id, addOriginal=True, includeDepot=True, columns=[users.c.id, users.c.name, users.c.email, users.c.formattedAddress, users.c.address2, users.c.cellPhone, users.c.instructions])
         for user in usersList:
+            if user['id'] == g.user.id:
+                continue
             try:
                 parsed = usaddress.tag(user['Full Address'])[0]
                 user['City'] = parsed['PlaceName']
@@ -108,6 +110,8 @@ def send_spreadsheet():
                 user['Last Name'] = ''
             user['Google Maps'] = google_maps_qr.make_single_url(user['Full Address'])
         google_maps_link = google_maps_qr.make_url(usersList)
+        row_num = 18
+        create_blank_rows(row_num - len(usersList), usersList, outputColumns)
         row = {}
         row[outputColumns[0]] = "Google maps link:"
         row[outputColumns[1]] = google_maps_link
@@ -122,6 +126,15 @@ def send_spreadsheet():
         pdList[index].to_excel(writer, sheet_name="Route " + str(index), index=False, columns=outputColumns)
     writer.save()
     return send_file(fileName, as_attachment=True)
+
+def create_blank_rows(num_rows, currentList, outputColumns):
+    for y in range(0, num_rows):
+        toAppend = {}
+        for x in outputColumns:
+            toAppend[x] = ''
+        currentList.append(toAppend)
+
+
 
 @login_required
 @admin_required

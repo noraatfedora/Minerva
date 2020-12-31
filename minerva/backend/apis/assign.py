@@ -388,7 +388,7 @@ def getUsers(routeId, addOriginal=False, columns = [users.c.name, users.c.email,
     print("Route ID:" + str(routeId))
     prettyNames = {'formattedAddress': 'Full Address',
                     'address2': 'Apt',
-                    'address': 'Original Ajddress',
+                    'address': 'Original Address',
                     'name': 'Name',
                     'email':'Email',
                     'cellPhone': 'Phone',
