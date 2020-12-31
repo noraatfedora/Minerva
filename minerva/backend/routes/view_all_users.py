@@ -84,8 +84,6 @@ def send_spreadsheet():
     for route in routesList:
         usersList = getUsers(route.id, addOriginal=True, includeDepot=True, columns=[users.c.id, users.c.name, users.c.email, users.c.formattedAddress, users.c.address2, users.c.cellPhone, users.c.instructions])
         for user in usersList:
-            if user['id'] == g.user.id:
-                continue
             try:
                 parsed = usaddress.tag(user['Full Address'])[0]
                 user['City'] = parsed['PlaceName']
@@ -109,7 +107,10 @@ def send_spreadsheet():
             if user['Last Name'] == "nan":
                 user['Last Name'] = ''
             user['Google Maps'] = google_maps_qr.make_single_url(user['Full Address'])
-        google_maps_link = google_maps_qr.make_url(usersList)
+        google_maps_link = google_maps_qr.make_url(usersList) 
+        # remove food bank
+        usersList.remove(usersList[0])
+        usersList.remove(usersList[len(usersList)-1])
         row_num = 18
         create_blank_rows(row_num - len(usersList), usersList, outputColumns)
         row = {}
