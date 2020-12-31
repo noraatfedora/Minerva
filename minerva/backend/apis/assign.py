@@ -40,7 +40,7 @@ def create_data(num_vehicles, gscce, stopConversion, solutionLimit, users, addTo
     data['users'].insert(0, g.user)
     data['addToMax'] = addToMax
     data['vehicle_capacities'] = []
-    maximumStops = 19
+    maximumStops = 15
     for vehicleNum in range(data['num_vehicles']):
         data['vehicle_capacities'].append(maximumStops)
 
@@ -77,7 +77,7 @@ def measure(lat1, lon1, lat2, lon2):
     lon2 = float(lon2)
     # no idea how this works but stackoverflow does
     R = 6378.137  # radius of earth in KM
-    dLat = lat2 * math.pi / 180 - lat1 * math.pi / 180
+    dLat = lat2 * math.pi / 180  - lat1 * math.pi / 180
     dLon = lon2 * math.pi / 180 - lon1 * math.pi / 180
     a = math.sin(dLat/2) * math.sin(dLat/2) + \
         math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * \
@@ -388,7 +388,7 @@ def getUsers(routeId, addOriginal=False, columns = [users.c.name, users.c.email,
     print("Route ID:" + str(routeId))
     prettyNames = {'formattedAddress': 'Full Address',
                     'address2': 'Apt',
-                    'address': 'Original Ajddress',
+                    'address': 'Original Address',
                     'name': 'Name',
                     'email':'Email',
                     'cellPhone': 'Phone',

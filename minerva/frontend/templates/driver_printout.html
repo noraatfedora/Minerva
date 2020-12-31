@@ -5,7 +5,7 @@
     <style>
         body,
         table.items {
-            font-size: 20px;
+            font-size: 10px;
             font-family: sans-serif;
             line-height: 40px;
             background-color: white
@@ -24,6 +24,7 @@
         
         th, td {
             padding: 3px;
+	    font-size: 12px;
         }
 
         .shipping-label {
@@ -57,6 +58,7 @@
         {% endfor %}
         <table class="stats-table">
            <tr><td><b>Total Stops</b></td><td>{{ route['usersList'] | length - 2}}</td></tr> 
+           <tr><td><b>Distance (bird's eye view)</b></td><td>{{ route['length'] }} KM</td></tr> 
         </table>
         <table class="shipping-label">
         <tr>
