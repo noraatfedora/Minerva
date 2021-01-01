@@ -9,6 +9,7 @@ from sqlalchemy import select, update, and_
 from json import loads, dumps
 import xlrd
 from os import environ
+from assign import setCoords
 from sys import path
 from minerva.backend.apis.email import send_new_volunteer_request_notification
 import pandas as pd
@@ -117,8 +118,13 @@ def upload_data():
                 importMasterList(request, filename, fileType, delete, header, disabledUsers)
             else:
                 importRoutesList(request, filename, fileType, delete, header)
+            
+            setCoords(environ['GOOGLE_API'])
+            cities = ['Tacoma', 'University Place', 'Parkland', 'Spanaway', 'Lakewood', 'Puyallup', 'Fife', 'Federal Way', 'Algona', 'Pacific', 'Joint Base Lewis-McChord', 'Steilacoom']
+            disableOutOfRange(cities)
         except Exception as e:
             message = "Something went wrong while uploading the spreadsheet. You can view the documentation for correct formatting <a href='https://jaredgoodman03.github.io/Minerva-docs/admin-instructions#file-upload'> here. </a> Here's the error message, so you can figure out what's wrong: <br> <code> " + str(e) + "</code>"
+            
     return render_template('upload_data.html', title='All Users', message=message)
 
 def importMasterList(request, filename, fileType, delete, header, disabledSheet=True):
@@ -183,6 +189,15 @@ def addUsersFromDf(df, disabled):
                     disabled=disabled,
                     disabledDate=disabledDate)
     
+def disableOutOfRange(cities):
+    usersList = conn.execute(users.select().where(and_(users.c.foodBankId==g.user.id, users.c.disabled==False, users.c.role=="RECIEVER")))
+    for user in usersList:
+        disable = True
+        for city in cities:
+            if city in user.formattedAddress:
+                disable = False
+        if disable:
+            conn.execute(users.update().where(users.c.id==user.id).values(disabled=True, disabledDate=date.today()))
 
 def betterStr(value):
     if value is None or value=="nan":

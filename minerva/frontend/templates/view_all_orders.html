@@ -7,7 +7,9 @@
     <a href='/master-spreadsheet' value="Download as spreadsheet" name="download-master-spreadsheet"
         class="btn bw-btn">Download as spreadsheet</a>
     <div class="spacer"></div>
-    Total: {{ users | length }} users
+    <b>Enabled users:</b> {{ activeUsersCount }} <br>
+    <b>Disabled users:</b> {{ disabledUsersCount }}<br>
+    <b>Total users:</b> {{ users | length }}<br>
     <div class="card-container">
     {% for user in users %}
     <div class="card bg-success grid-card text-left task-incomplete" id="card-{{ user['id'] }}" >
