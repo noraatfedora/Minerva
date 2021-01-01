@@ -9,7 +9,7 @@ from sqlalchemy import select, update, and_
 from json import loads, dumps
 import xlrd
 from os import environ
-from assign import setCoords
+from minerva.backend.apis.assign import setCoords
 from sys import path
 from minerva.backend.apis.email import send_new_volunteer_request_notification
 import pandas as pd
