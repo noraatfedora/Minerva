@@ -1,4 +1,4 @@
-# Most of the code here isn't mine. I copy pasted it from https://developers.google.com/optimization/routing/vrp.
+# Some of the code here isn't mine. I copy pasted it from https://developers.google.com/optimization/routing/vrp.
 # It's under the Apache 2.0 license.
 from __future__ import division
 from __future__ import print_function
@@ -57,13 +57,13 @@ def setCoords(API_key):
     for user in userList:
         if not (user.latitude and user.longitude and user.formattedAddress):
             fullAddr = str(user['address']) + ", " + str(user['zipCode'])
-            print("Fulladdr: " + fullAddr)
+            #print("Fulladdr: " + fullAddr)
             coords = googleWrapper.geocode(query=fullAddr, timeout=100)
             if coords == None: # One of the zip codes in the spreadsheet is wrong
                 coords = googleWrapper.geocode(query=user['address'] + " WA", timeout=100)
-            print("Name: " + str(user['name']))
-            print("Original address: " + str(user['address']))
-            print("Coords: " + str(coords))
+            #print("Name: " + str(user['name']))
+            #print("Original address: " + str(user['address']))
+            #print("Coords: " + str(coords))
             conn.execute(users.update().where(users.c.id==user.id).values(
                 formattedAddress=coords[0],
                 latitude=coords[1][0],
