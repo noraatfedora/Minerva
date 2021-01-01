@@ -83,6 +83,7 @@
     </a>
     <a href="/routes-spreadsheet" name="assign-all" class="btn bw-btn blue-hover inline">Download routes as
       spreadsheet</a>
+    <a href="/driver_printout/all" class="btn bw-btn blue-hover inline">Export to PDF</a>
     <a class="btn bw-btn inline" data-toggle="collapse" href="#collapse-stats" role="button" aria-expanded="false"
       aria-controls="collapse-stats">
       Route statistics
@@ -160,7 +161,7 @@
         <a href="{{ route['google_maps'] }}">View Map</a>
       </div>
       <div class="card-header">
-        <a href="/driver_printout/{{ route['id'] }}">Print</a>
+        <a href="/driver_printout/{{ route['id'] }}">View as PDF</a>
       </div>
       <div class="card-header">
         <a class="btn bw-btn" data-toggle="collapse" href="#collapse-route-{{ route['id'] }}" role="button"
