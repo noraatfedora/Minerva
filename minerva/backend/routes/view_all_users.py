@@ -79,10 +79,11 @@ def loadingScreen(num_vehicles=40):
 @bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
 def send_spreadsheet():
     routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
-    outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
+    outputColumns = ['Number', 'First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
     pdList = []
     for route in routesList:
         usersList = getUsers(route.id, addOriginal=True, includeDepot=True, columns=[users.c.id, users.c.name, users.c.email, users.c.formattedAddress, users.c.address2, users.c.cellPhone, users.c.instructions])
+        count = 0
         for user in usersList:
             try:
                 parsed = usaddress.tag(user['Full Address'])[0]
@@ -107,18 +108,18 @@ def send_spreadsheet():
             if user['Last Name'] == "nan":
                 user['Last Name'] = ''
             user['Google Maps'] = google_maps_qr.make_single_url(user['Full Address'])
+            user['Number'] = count
+            count += 1
         google_maps_link = google_maps_qr.make_url(usersList) 
         # remove food bank
         usersList.remove(usersList[0])
         usersList.remove(usersList[len(usersList)-1])
         row_num = 18
         create_blank_rows(row_num - len(usersList), usersList, outputColumns)
-        row = {}
-        row[outputColumns[0]] = "Google maps link:"
-        row[outputColumns[1]] = google_maps_link
-        for x in range(2, len(outputColumns)):
-            row[outputColumns[x]] = ""
-        usersList.append(row)
+        footerContent = [['Google maps link:', google_maps_link],
+                        ['Assigned to:'],
+                        ['Date:']]
+        create_footer_rows(footerContent, usersList, outputColumns)
         df = pd.DataFrame(usersList)
         pdList.append(df)
     fileName = environ['INSTANCE_PATH'] + 'routes.xlsx'
@@ -134,7 +135,16 @@ def create_blank_rows(num_rows, currentList, outputColumns):
         for x in outputColumns:
             toAppend[x] = ''
         currentList.append(toAppend)
-
+        
+# Content is a 2D list
+def create_footer_rows(content, currentList, outputColumns):
+    for rowList in content:
+        rowDict = {}
+        for x in range(0, len(rowList)):
+            rowDict[outputColumns[x]] = rowList[x]
+        for x in range(len(rowList), len(outputColumns)):
+            rowDict[outputColumns[x]] = '' 
+        currentList.append(rowDict)
 
 
 @login_required
