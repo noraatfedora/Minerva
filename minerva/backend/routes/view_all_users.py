@@ -64,8 +64,15 @@ def all_users():
 
     volunteers = getVolunteers()
     today = datetime.date.today()
-    #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
-    return render_template("view_all_orders.html", users=userList, volunteers=volunteers)
+    activeUsersCount = 0
+    disabledUsersCount = 0
+    for user in userList:
+        if user['disabled']:
+            disabledUsersCount += 1
+        else:
+            activeUsersCount += 1
+
+    return render_template("view_all_orders.html", users=userList, volunteers=volunteers, activeUsersCount=activeUsersCount, disabledUsersCount=disabledUsersCount)
 
 def getUserList():
     return conn.execute(users.select().order_by(desc(users.c.disabled)).where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
