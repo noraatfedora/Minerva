@@ -134,19 +134,23 @@ def importMasterList(request, filename, fileType, delete, header, disabledSheet=
         conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
 
 def addUsersFromDf(df, disabled):
-     for index, row in df.iterrows():
+    disabledDate = date.today()
+    for index, row in df.iterrows():
+        if row['First Name'].lower() == "removal":
+            disabledDate = row['Last Name'].date()
+            continue
         # This checks to make sure email is not nan
         if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email']=="":
             emailUser = conn.execute(users.select().where(users.c.email == row['Email'])).fetchone()
             if emailUser is not None:
                 print("Skipping " + str(row) + " because of a duplicate email")
-                conn.execute(users.update().where(users.c.id == emailUser.id).values(inSpreadsheet=1))
+                conn.execute(users.update().where(users.c.id == emailUser.id).values(inSpreadsheet=1, disabledDate=disabledDate, disabled=disabled))
                 continue
         else:
             nameUser = conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
             if nameUser is not None:
-                conn.execute(users.update().where(users.c.id == nameUser.id).values(inSpreadsheet=1))
-                print("Skipping " + str(row) + " because of a duplicate name")
+                print("Found duplicate name in " + str(row))
+                conn.execute(users.update().where(users.c.id == nameUser.id).values(inSpreadsheet=1, disabledDate=disabledDate, disabled=disabled))
                 continue
         if 'state' not in row.keys():
             state = 'WA'
@@ -171,7 +175,8 @@ def addUsersFromDf(df, disabled):
                     householdSize=hh_size,
                     inSpreadsheet=1,
                     foodBankId=g.user.id,
-                    disabled=disabled)
+                    disabled=disabled,
+                    disabledDate=disabledDate)
     
 
 def betterStr(value):
