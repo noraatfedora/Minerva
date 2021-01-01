@@ -64,8 +64,15 @@ def all_users():
 
     volunteers = getVolunteers()
     today = datetime.date.today()
-    #checkedInVolunteers = conn.execute(users.select().where(users.c.checkedIn==str(today))).fetchall()
-    return render_template("view_all_orders.html", users=userList, volunteers=volunteers)
+    activeUsersCount = 0
+    disabledUsersCount = 0
+    for user in userList:
+        if user['disabled']:
+            disabledUsersCount += 1
+        else:
+            activeUsersCount += 1
+
+    return render_template("view_all_orders.html", users=userList, volunteers=volunteers, activeUsersCount=activeUsersCount, disabledUsersCount=disabledUsersCount)
 
 def getUserList():
     return conn.execute(users.select().order_by(desc(users.c.disabled)).where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
@@ -160,7 +167,7 @@ def create_master_spreadsheet():
                     'instructions': 'Notes'}
     enabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==False))).fetchall()
     enabled = generateUserDataFrame(enabledRpList)
-    disabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==True))).fetchall()
+    disabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==True)).order_by(users.c.disabledDate)).fetchall()
     disabled = generateUserDataFrame(disabledRpList)
     outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
     writer = pd.ExcelWriter(environ['INSTANCE_PATH'] + 'client-master-list.xlsx')
@@ -179,7 +186,18 @@ def generateUserDataFrame(userRpList):
                     'instructions': 'Notes'}
     row2dict = lambda r: {prettyNames[c]: betterStr(getattr(r, c)) for c in columns}
     userDictList = []
+    disabled = userRpList[0].disabled
+    disabledDate = userRpList[0].disabledDate
+    firstDate = True
     for user in userRpList:
+        if (user.disabledDate != disabledDate or firstDate) and disabled:
+            disabledDate = user.disabledDate
+            blankRow = {'First Name': '', 'Last Name': '', 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
+            removalRow = {'First Name': 'Removal', 'Last Name': disabledDate.strftime('%m-%d-%y'), 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
+            if not firstDate:
+                userDictList.append(blankRow)
+            userDictList.append(removalRow)
+            firstDate = False
         userDict = row2dict(user)
         try:
             parsed = usaddress.tag(userDict['Full Address'])[0]
@@ -204,6 +222,7 @@ def generateUserDataFrame(userRpList):
             userDict['Last Name'] = ''
         userDictList.append(userDict)
     df = pd.DataFrame(userDictList)
+
     return df
 
 def betterStr(value):

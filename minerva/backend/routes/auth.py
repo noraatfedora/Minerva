@@ -9,6 +9,7 @@ from sqlalchemy import select, update, and_
 from json import loads, dumps
 import xlrd
 from os import environ
+from assign import setCoords
 from sys import path
 from minerva.backend.apis.email import send_new_volunteer_request_notification
 import pandas as pd
@@ -55,8 +56,9 @@ def fetch_delete(key, dictionary):
 
 @bp.route('/upload_data', methods=('GET', 'POST'))
 def upload_data():
+    message = ''
     if request.method == "GET":
-        return render_template('upload_data.html', title='All Users')
+        return render_template('upload_data.html', title='All Users', message=message)
 
     if 'name' in request.form:
         form = request.form.to_dict()
@@ -101,20 +103,29 @@ def upload_data():
                              name=form[keys[i]], race=form[keys[i + 1]])
     
     else:
-        file = request.files.get('users')
-        filename = file.filename
-        splitname = filename.split(".")
-        fileType = splitname[len(splitname) - 1]
-        print(request.form)
-        delete = 'delete-checkbox' in request.form.keys()
-        header = int(request.form['header'])
-        disabledUsers = 'disabled-checkbox' in request.form.keys()
-        print("Form: " + str(request.form))
-        if request.form['spreadsheet-type'] == 'master-spreadsheet':
-            importMasterList(request, filename, fileType, delete, header, disabledUsers)
-        else:
-            importRoutesList(request, filename, fileType, delete, header)
-    return render_template('upload_data.html', title='All Users')
+        message = "Successfully uploaded the spreadsheet!"
+        try:
+            file = request.files.get('users')
+            filename = file.filename
+            splitname = filename.split(".")
+            fileType = splitname[len(splitname) - 1]
+            print(request.form)
+            delete = 'delete-checkbox' in request.form.keys()
+            header = int(request.form['header'])
+            disabledUsers = 'disabled-checkbox' in request.form.keys()
+            print("Form: " + str(request.form))
+            if request.form['spreadsheet-type'] == 'master-spreadsheet':
+                importMasterList(request, filename, fileType, delete, header, disabledUsers)
+            else:
+                importRoutesList(request, filename, fileType, delete, header)
+            
+            setCoords(environ['GOOGLE_API'])
+            cities = ['Tacoma', 'University Place', 'Parkland', 'Spanaway', 'Lakewood', 'Puyallup', 'Fife', 'Federal Way', 'Algona', 'Pacific', 'Joint Base Lewis-McChord', 'Steilacoom']
+            disableOutOfRange(cities)
+        except Exception as e:
+            message = "Something went wrong while uploading the spreadsheet. You can view the documentation for correct formatting <a href='https://jaredgoodman03.github.io/Minerva-docs/admin-instructions#file-upload'> here. </a> Here's the error message, so you can figure out what's wrong: <br> <code> " + str(e) + "</code>"
+            
+    return render_template('upload_data.html', title='All Users', message=message)
 
 def importMasterList(request, filename, fileType, delete, header, disabledSheet=True):
     masterDf = pd.DataFrame()
@@ -134,19 +145,23 @@ def importMasterList(request, filename, fileType, delete, header, disabledSheet=
         conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
 
 def addUsersFromDf(df, disabled):
-     for index, row in df.iterrows():
+    disabledDate = date.today()
+    for index, row in df.iterrows():
+        if row['First Name'].lower() == "removal":
+            disabledDate = row['Last Name'].date()
+            continue
         # This checks to make sure email is not nan
         if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email']=="":
             emailUser = conn.execute(users.select().where(users.c.email == row['Email'])).fetchone()
             if emailUser is not None:
                 print("Skipping " + str(row) + " because of a duplicate email")
-                conn.execute(users.update().where(users.c.id == emailUser.id).values(inSpreadsheet=1))
+                conn.execute(users.update().where(users.c.id == emailUser.id).values(inSpreadsheet=1, disabledDate=disabledDate, disabled=disabled))
                 continue
         else:
             nameUser = conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
             if nameUser is not None:
-                conn.execute(users.update().where(users.c.id == nameUser.id).values(inSpreadsheet=1))
-                print("Skipping " + str(row) + " because of a duplicate name")
+                print("Found duplicate name in " + str(row))
+                conn.execute(users.update().where(users.c.id == nameUser.id).values(inSpreadsheet=1, disabledDate=disabledDate, disabled=disabled))
                 continue
         if 'state' not in row.keys():
             state = 'WA'
@@ -171,8 +186,18 @@ def addUsersFromDf(df, disabled):
                     householdSize=hh_size,
                     inSpreadsheet=1,
                     foodBankId=g.user.id,
-                    disabled=disabled)
+                    disabled=disabled,
+                    disabledDate=disabledDate)
     
+def disableOutOfRange(cities):
+    usersList = conn.execute(users.select().where(and_(users.c.foodBankId==g.user.id, users.c.disabled==False, users.c.role=="RECIEVER")))
+    for user in usersList:
+        disable = True
+        for city in cities:
+            if city in user.formattedAddress:
+                disable = False
+        if disable:
+            conn.execute(users.update().where(users.c.id==user.id).values(disabled=True, disabledDate=date.today()))
 
 def betterStr(value):
     if value is None or value=="nan":
