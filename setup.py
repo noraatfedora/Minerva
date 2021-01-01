@@ -25,6 +25,7 @@ setup(
         'yagmail==0.11.224',
         'pandas',
         'xlrd==1.2.0',
-        'usaddress'
+        'usaddress',
+        'StyleFrame'
     ],
 )
