@@ -55,8 +55,9 @@ def fetch_delete(key, dictionary):
 
 @bp.route('/upload_data', methods=('GET', 'POST'))
 def upload_data():
+    message = ''
     if request.method == "GET":
-        return render_template('upload_data.html', title='All Users')
+        return render_template('upload_data.html', title='All Users', message=message)
 
     if 'name' in request.form:
         form = request.form.to_dict()
@@ -101,20 +102,24 @@ def upload_data():
                              name=form[keys[i]], race=form[keys[i + 1]])
     
     else:
-        file = request.files.get('users')
-        filename = file.filename
-        splitname = filename.split(".")
-        fileType = splitname[len(splitname) - 1]
-        print(request.form)
-        delete = 'delete-checkbox' in request.form.keys()
-        header = int(request.form['header'])
-        disabledUsers = 'disabled-checkbox' in request.form.keys()
-        print("Form: " + str(request.form))
-        if request.form['spreadsheet-type'] == 'master-spreadsheet':
-            importMasterList(request, filename, fileType, delete, header, disabledUsers)
-        else:
-            importRoutesList(request, filename, fileType, delete, header)
-    return render_template('upload_data.html', title='All Users')
+        message = "Successfully uploaded the spreadsheet!"
+        try:
+            file = request.files.get('users')
+            filename = file.filename
+            splitname = filename.split(".")
+            fileType = splitname[len(splitname) - 1]
+            print(request.form)
+            delete = 'delete-checkbox' in request.form.keys()
+            header = int(request.form['header'])
+            disabledUsers = 'disabled-checkbox' in request.form.keys()
+            print("Form: " + str(request.form))
+            if request.form['spreadsheet-type'] == 'master-spreadsheet':
+                importMasterList(request, filename, fileType, delete, header, disabledUsers)
+            else:
+                importRoutesList(request, filename, fileType, delete, header)
+        except Exception as e:
+            message = "Something went wrong while uploading the spreadsheet. You can view the documentation for correct formatting <a href='https://jaredgoodman03.github.io/Minerva-docs/admin-instructions#file-upload'> here. </a> Here's the error message, so you can figure out what's wrong: <br> <code> " + str(e) + "</code>"
+    return render_template('upload_data.html', title='All Users', message=message)
 
 def importMasterList(request, filename, fileType, delete, header, disabledSheet=True):
     masterDf = pd.DataFrame()
