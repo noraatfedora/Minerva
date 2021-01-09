@@ -86,7 +86,7 @@ def loadingScreen(num_vehicles=40):
 @bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
 def send_spreadsheet():
     routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
-    outputColumns = ['Number', 'First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
+    outputColumns = ['Number', 'First Name', "Last Name", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
     pdList = []
     for route in routesList:
         usersList = getUsers(route.id, addOriginal=True, includeDepot=True, columns=[users.c.id, users.c.name, users.c.email, users.c.formattedAddress, users.c.address2, users.c.cellPhone, users.c.instructions])
@@ -114,25 +114,30 @@ def send_spreadsheet():
             user['Last Name'] = names[1]
             if user['Last Name'] == "nan":
                 user['Last Name'] = ''
-            user['Google Maps'] = google_maps_qr.make_single_url(user['Full Address'])
+            if 'Google Maps' in outputColumns:
+                user['Google Maps'] = google_maps_qr.make_single_url(user['Full Address'])
             user['Number'] = count
             count += 1
         google_maps_link = google_maps_qr.make_url(usersList) 
         # remove food bank
         usersList.remove(usersList[0])
         usersList.remove(usersList[len(usersList)-1])
-        row_num = 18
+        row_num = 15
         create_blank_rows(row_num - len(usersList), usersList, outputColumns)
-        footerContent = [['Google maps link:', google_maps_link],
-                        ['Assigned to:'],
-                        ['Date:']]
-        create_footer_rows(footerContent, usersList, outputColumns)
+        if 'Google Maps' in outputColumns:
+            footerContent = [['Google maps link:', google_maps_link]]
+            create_footer_rows(footerContent, usersList, outputColumns)
         df = pd.DataFrame(usersList)
         pdList.append(df)
     fileName = environ['INSTANCE_PATH'] + 'routes.xlsx'
-    writer = pd.ExcelWriter(fileName)
+    writer = pd.ExcelWriter(fileName, engine="openpyxl")
     for index in range(0, len(pdList)):
         pdList[index].to_excel(writer, sheet_name="Route " + str(index), index=False, columns=outputColumns)
+        workbook = writer.book
+        print(workbook)
+        worksheet = writer.sheets["Route " + str(index)]
+        wbFormat = workbook.add_format({'text_wrap': True})
+        worksheet.set_column('A:P', None, wbFormat)
     writer.save()
     return send_file(fileName, as_attachment=True)
 
@@ -193,7 +198,11 @@ def generateUserDataFrame(userRpList):
         if (user.disabledDate != disabledDate or firstDate) and disabled:
             disabledDate = user.disabledDate
             blankRow = {'First Name': '', 'Last Name': '', 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
-            removalRow = {'First Name': 'Removal', 'Last Name': disabledDate.strftime('%m-%d-%y'), 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
+            if type(disabledDate) == str: # Type changes depending on if you're using mysql or sqlite apparently
+                removalRow = {'First Name': 'Removal', 'Last Name': disabledDate, 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
+            else:
+                removalRow = {'First Name': 'Removal', 'Last Name': disabledDate.strftime('%m-%d-%y'), 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
+
             if not firstDate:
                 userDictList.append(blankRow)
             userDictList.append(removalRow)
