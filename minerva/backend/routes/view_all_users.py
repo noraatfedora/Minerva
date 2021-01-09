@@ -144,9 +144,10 @@ def send_spreadsheet():
         for col in ws.iter_cols():
             maxWidth = ''
             for cell in col:
+                cell.font = styles.Font(name='Times New Roman', size=10)
                 if len(str(cell.value)) > len(maxWidth) and cell.value is not None and 'oogle.com' not in cell.value:
                     maxWidth = str(cell.value)
-            ws.column_dimensions[col[0].column_letter].width = len(maxWidth)+2
+            ws.column_dimensions[col[0].column_letter].width = len(maxWidth)
     writer.save()
     return send_file(fileName, as_attachment=True)
 
