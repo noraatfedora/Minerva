@@ -125,7 +125,7 @@ def send_spreadsheet():
         usersList.remove(usersList[len(usersList)-1])
         row_num = 15
         create_blank_rows(row_num - len(usersList), usersList, outputColumns)
-        footerContent = [['', 'Google maps link:', google_maps_link]]
+        footerContent = [['', 'Google maps link:', google_maps_link], ['', 'Assigned to: ', ''], ['', 'Date:', ''], ['', 'Route ' + str(count)]]
         create_footer_rows(footerContent, usersList, outputColumns)
         df = pd.DataFrame(usersList)
         pdList.append(df)
