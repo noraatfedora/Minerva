@@ -13,6 +13,7 @@ from sqlalchemy import and_, select, desc
 import pandas as pd
 from os import environ
 from barcode import Code128
+from openpyxl import load_workbook, styles
 from barcode.writer import ImageWriter
 from minerva.backend.apis import assign, order_assignment
 import io, pdfkit, base64, qrcode, datetime
@@ -86,7 +87,7 @@ def loadingScreen(num_vehicles=40):
 @bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
 def send_spreadsheet():
     routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
-    outputColumns = ['Number', 'First Name', "Last Name", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
+    outputColumns = ['Number', 'First Name', "Last Name", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
     pdList = []
     for route in routesList:
         usersList = getUsers(route.id, addOriginal=True, includeDepot=True, columns=[users.c.id, users.c.name, users.c.email, users.c.formattedAddress, users.c.address2, users.c.cellPhone, users.c.instructions])
@@ -124,20 +125,28 @@ def send_spreadsheet():
         usersList.remove(usersList[len(usersList)-1])
         row_num = 15
         create_blank_rows(row_num - len(usersList), usersList, outputColumns)
-        if 'Google Maps' in outputColumns:
-            footerContent = [['Google maps link:', google_maps_link]]
-            create_footer_rows(footerContent, usersList, outputColumns)
+        footerContent = [['', 'Google maps link:', google_maps_link]]
+        create_footer_rows(footerContent, usersList, outputColumns)
         df = pd.DataFrame(usersList)
         pdList.append(df)
     fileName = environ['INSTANCE_PATH'] + 'routes.xlsx'
     writer = pd.ExcelWriter(fileName, engine="openpyxl")
     for index in range(0, len(pdList)):
         pdList[index].to_excel(writer, sheet_name="Route " + str(index), index=False, columns=outputColumns)
-        workbook = writer.book
-        print(workbook)
-        worksheet = writer.sheets["Route " + str(index)]
-        wbFormat = workbook.add_format({'text_wrap': True})
-        worksheet.set_column('A:P', None, wbFormat)
+    writer.save()
+    
+    # set formatting
+    workbook = load_workbook(fileName)
+    writer = pd.ExcelWriter(fileName, engine="openpyxl")
+    writer.book = workbook
+    for ws in workbook.worksheets:
+        print(ws.title)
+        for col in ws.iter_cols():
+            maxWidth = ''
+            for cell in col:
+                if len(str(cell.value)) > len(maxWidth) and cell.value is not None and 'oogle.com' not in cell.value:
+                    maxWidth = str(cell.value)
+            ws.column_dimensions[col[0].column_letter].width = len(maxWidth)+2
     writer.save()
     return send_file(fileName, as_attachment=True)
 
