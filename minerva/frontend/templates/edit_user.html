@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block content %}
+<center>
+<h2>{{ user['name'] }}</h2>
+<small><a href="https://jaredgoodman03.github.io/Minerva-docs/admin-instructions#route-planning" target="_blank">Click to view instructions</a></small>
+<div class="card-container">
+    <form name="move-user" method="POST" class="form">
+    <div class="card grid-card text-left task-incomplete" style="width: 50rem;">
+    <div class="card-header">Address:
+        <input type="text" class="form-control-aesthetic col-sm" value="{{ user['formattedAddress'] }}" id="address" name="address" /></div>
+    <div class="card-header">Apt:
+        <input type="text" class="form-control-aesthetic col-sm" value="{{ user['address2'] }}" id="address2" name="address2" /></div>
+    <div class="card-header">Email:
+        <input type="text" class="form-control-aesthetic col-sm" value="{{ user['email'] }}" id="email" name="email" /></div>
+    <div class="card-header">Phone:
+        <input type="text" class="form-control-aesthetic col-sm" value="{{ user['cellPhone'] }}" id="cellPhone" name="cellPhone" /></div>
+    <div class="card-header">Notes:
+        <input type="text" class="form-control-aesthetic col-sm" value="{{ user['instructions'] }}" id="instructions" name="instructions" /></div>
+    <div class="card-header">
+        <button type="submit" class="btn bw-btn">Save changes</button>
+    </div>
+    </form>
+    </div>
+</div>
+</center>
+{% endblock content %}
