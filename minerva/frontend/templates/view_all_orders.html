@@ -34,6 +34,9 @@
             <div class="card-header">
                 Phone: {{ user['cellPhone']}}
             </div>
+            <div class="card-header">
+                Notes: {{ user['instructions']}}
+            </div>
             {% if user['disabled'] %}
                 <div class="card-header">
                     <form action="" method="POST">
@@ -56,9 +59,9 @@
                     </form>
                 </div>
             {% endif %}
-            <div class="class-header">
+            <div class="card-header">
                 <form action="" method="POST">
-                    <a href="/edit_user/{{ user['name'] }}" class="btn bw-btn">Edit user data</a>
+                    <a href="/edit_user/{{ user['id'] }}" class="btn bw-btn">Edit user data</a>
                 </form>
             </div>
         </div>

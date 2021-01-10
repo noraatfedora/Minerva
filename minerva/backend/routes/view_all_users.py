@@ -84,10 +84,13 @@ def loadingScreen(num_vehicles=40):
 
 @login_required
 @admin_required
-@bp.route('/routes-spreadsheet', methods=('GET', 'POST'))
+@bp.route('/routes-spreadsheet/', methods=('GET', 'POST'))
 def send_spreadsheet():
+    google_maps = request.args.get('map') == 'true'
     routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
-    outputColumns = ['Number', 'First Name', "Last Name", "Address", "Apt", "City", "Zip", "Phone", "Notes", "Google Maps"]
+    outputColumns = ['Number', 'First Name', "Last Name", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
+    if google_maps:
+        outputColumns.append("Google Maps")
     pdList = []
     for route in routesList:
         usersList = getUsers(route.id, addOriginal=True, includeDepot=True, columns=[users.c.id, users.c.name, users.c.email, users.c.formattedAddress, users.c.address2, users.c.cellPhone, users.c.instructions])
@@ -125,7 +128,11 @@ def send_spreadsheet():
         usersList.remove(usersList[len(usersList)-1])
         row_num = 15
         create_blank_rows(row_num - len(usersList), usersList, outputColumns)
-        footerContent = [['', 'Google maps link:', google_maps_link], ['', 'Assigned to: ', ''], ['', 'Date:', ''], ['', 'Route ' + str(count)]]
+        if google_maps:
+            footerContent = [['', 'Google maps link:', google_maps_link], ['', 'Assigned to: ', ''], ['', 'Date:', ''], ['', 'Route ' + str(count)]]
+        else:
+            footerContent = [['', 'Assigned to: ', ''], ['', 'Date:', ''], ['', 'Route ' + str(count)]]
+            
         create_footer_rows(footerContent, usersList, outputColumns)
         df = pd.DataFrame(usersList)
         pdList.append(df)
