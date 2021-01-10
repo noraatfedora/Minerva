@@ -29,6 +29,9 @@
                 Address: {{ user['formattedAddress']}}
             </div>
             <div class="card-header">
+                Apt: {{ user['address2']}}
+            </div>
+            <div class="card-header">
                 Phone: {{ user['cellPhone']}}
             </div>
             {% if user['disabled'] %}
@@ -53,7 +56,11 @@
                     </form>
                 </div>
             {% endif %}
-
+            <div class="class-header">
+                <form action="" method="POST">
+                    <a href="/edit_user/{{ user['name'] }}" class="btn bw-btn">Edit user data</a>
+                </form>
+            </div>
         </div>
     </div>
     {% endfor %}
