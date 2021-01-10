@@ -13,7 +13,7 @@ setup(
         'barcode_generator==0.1rc15',
         'click==7.1.2',
         'babel',
-        'ortools==7.7.7810',
+        'ortools',
         'pdfkit==0.6.1',
         'geopy',
         'python-barcode==0.13.1',
