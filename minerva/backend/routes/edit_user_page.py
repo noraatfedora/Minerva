@@ -18,13 +18,6 @@ def edit_users(userId):
         address = request.form['address']
         latitude = user['latitude']
         longitude = user['longitude']
-        '''
-        conn.execute(users.update().where(users.c.id==user.id).values(
-                formattedAddress=coords[0],
-                latitude=coords[1][0],
-                longitude=coords[1][1]
-            ))
-        '''
 
         if address != user['formattedAddress']:
             API_KEY = environ['GOOGLE_API']
