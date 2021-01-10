@@ -16,7 +16,7 @@ def edit_users(userId):
     else:
         print(request.form.to_dict())
         address = request.form['address']
-        laitude = user['latitude']
+        latitude = user['latitude']
         longitude = user['longitude']
         '''
         conn.execute(users.update().where(users.c.id==user.id).values(
