@@ -14,7 +14,12 @@
         <input type="hidden" name="separateCities" value="{{ separateCities }}">
     </form>
     <script>
-        setTimeout(() => { document.getElementById("form").submit(); }, 500);
+        var url = 'http://{{ host }}/generate_new_routes?num_vehicles={{ num_vehicles }}&global_span_cost={{ global_span_cost }}&stop_conversion={{ stop_conversion }}&solution_limit={{ solution_limit }}&separate_cities={{ separate_cities }}'
+
+        fetch(url).then(result => {
+            window.location = window.location.href;
+        })
+
     </script>
 </center>
 {% endblock content %}
