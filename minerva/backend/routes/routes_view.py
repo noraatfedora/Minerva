@@ -27,24 +27,26 @@ def manageRoutes():
     print("Attributes: " + str(dir(routes)))
     if request.method == "POST":
         print("Values: " + str(request.values.to_dict()))
-    if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
+    if request.method == "POST" and 'num_vehicles' in request.values.to_dict().keys():
         print(request.values.to_dict())
-        if 'redirect' in request.values.to_dict().keys():
-            return loadingScreen(num_vehicles=request.values.get('num-vehicles'),
-                global_span_cost=request.values.get('global-span-cost'),
-                stopConversion=request.values.get('stop-conversion'), solutionLimit=request.values.get('solution-limit'), separateCities=request.values.get('separateCities'))
+        separateCities = 'separate_cities' in request.values.keys()
+        return loadingScreen(num_vehicles=int(request.values.get('num_vehicles')),
+            global_span_cost=int(request.values.get('global_span_cost')),
+            stop_conversion=int(request.values.get('stop_conversion')),
+            solution_limit=int(request.values.get('solution_limit')),
+            separate_cities=separateCities)
+        '''
+        if request.values['separateCities'] == 'None':
+            print("Not separating cities")
+            assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
+                globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
+                stopConversion=int(request.values.get('stop_conversion')), solutionLimit=int(request.values.get('solution-limit')))
         else:
-            if request.values['separateCities'] == 'None':
-                print("Not separating cities")
-                assign.createAllRoutes(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
-                    globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
-                    stopConversion=int(request.values.get('stop_conversion')), solutionLimit=int(request.values.get('solution-limit')))
-            else:
-                print("Seperating cities")
-                assign.createAllRoutesSeparatedCities(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
-                    globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
-                    stopConversion=int(request.values.get('stop_conversion')), solutionLimit=int(request.values.get('solution-limit')))
-            return redirect('/routes')
+            print("Seperating cities")
+            assign.createAllRoutesSeparatedCities(foodBankId=g.user.id, num_vehicles=int(request.values.get('num-vehicles')),
+                globalSpanCostCoefficient=int(request.values.get('global_span_cost')),
+                stopConversion=int(request.values.get('stop_conversion')), solutionLimit=int(request.values.get('solution-limit')))
+        '''
     elif request.method == "POST" and 'move-user' in request.values.to_dict().keys():
         userId = int(request.values.to_dict()['move-user'])
         toRoute = int(request.values.to_dict()['to-route'])
@@ -72,8 +74,37 @@ def manageRoutes():
     return render_template("routes_view.html", routes=routeList, stats=stats)
 
 @bp.route('/loading', methods=(['GET', 'POST']))
-def loadingScreen(num_vehicles=100, global_span_cost=4000, stopConversion=1000, solutionLimit=10000, separateCities=False):
-    return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stopConversion, solutionLimit=solutionLimit, separateCities=separateCities)
+def loadingScreen(num_vehicles=100, global_span_cost=4000, stop_conversion=1000, solution_limit=10000, separate_cities=False):
+    return render_template("loading.html", num_vehicles=num_vehicles, global_span_cost=global_span_cost, stop_conversion=stop_conversion, solution_limit=solution_limit, separate_cities=separate_cities, foodBankId=g.user.id, host=request.host)
+
+@bp.route('/generate_new_routes')
+def generate_new_routes():
+    print("ASDFLIJSDJKLDSFJDSFKLJ")
+    num_vehicles = int(request.values.get('num_vehicles'))
+    global_span_cost = int(request.values.get('global_span_cost'))
+    stop_conversion = int(request.values.get('stop_conversion'))
+    solution_limit = int(request.values.get('solution_limit'))
+    separate_cities = bool(request.values.get('separate_cities'))
+    foodBankId = request.values.get('foodBankId')
+    if separate_cities:
+        assign.createAllRoutesSeparatedCities(g.user.id,
+            num_vehicles=num_vehicles,
+            stopConversion=stop_conversion,
+            globalSpanCostCoefficient=global_span_cost,
+            solutionLimit=solution_limit)
+    else:
+        assign.createAllRoutes(g.user.id,
+            num_vehicles=num_vehicles,
+            stopConversion=stop_conversion,
+            globalSpanCostCoefficient=global_span_cost,
+            solutionLimit=solution_limit)
+    return "Routes generated successfully!"
+
+@bp.route('/loading_status/<int:foodBankId>', methods=(['GET', 'POST']))
+def loading_status(foodBankId):
+    status = conn.execute(select([users.c.doneCalculating]).where(users.c.id==foodBankId)).fetchone()[0]
+    return str(status)
+
 
 @bp.route('/route_link/<query>')
 def google_maps_redirect(query):

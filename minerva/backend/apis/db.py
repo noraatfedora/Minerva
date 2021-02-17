@@ -72,6 +72,7 @@ users = Table(
     Column('householdSize', Integer),
     Column('inSpreadsheet', Integer),
     Column('apiKey', String(255)),
+    Column('doneCalculating', Boolean),
     Column('disabledDate', Date())
 )
 
