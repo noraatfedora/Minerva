@@ -116,9 +116,10 @@ def upload_data():
             print("Form: " + str(request.form))
             if request.form['spreadsheet-type'] == 'master-spreadsheet':
                 importMasterList(request, filename, fileType, delete, header, disabledUsers)
-            else:
+            elif request.form['spreadsheet-type'] == 'routes-spreadsheet':
                 importRoutesList(request, filename, fileType, delete, header)
-            
+            elif request.form['spreadsheet-type'] == 'family-member-data':
+                importFamilyMemberData(request, filename, fileType, delete, header)
             setCoords(environ['GOOGLE_API'])
             cities = ['Tacoma', 'University Place', 'Parkland', 'Spanaway', 'Lakewood', 'Puyallup', 'Fife', 'Federal Way', 'Algona', 'Pacific', 'Joint Base Lewis-McChord', 'Steilacoom']
             disableOutOfRange(cities)
@@ -238,6 +239,39 @@ def importRoutesList(request, filename, fileType, delete, header):
                         foodBankId=getFoodBank(row['Address 1']))
     if delete:
         conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
+
+def importFamilyMemberData(request, filename, fileType, delete, header):
+    df = pd.DataFrame()
+    conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
+    if (fileType == 'csv'):
+        df = pd.read_csv(request.files['users'], header=header, keep_default_na=False)
+    else:
+        print(dir(request.files['users']))
+        df = pd.read_excel(request.files['users'].read(), sheet_name="Master list", header=header, keep_default_na=False)
+        df = df.dropna(thresh=2)
+        print("asdf")
+    for index, row in df.iterrows():
+        row_rp = conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
+        if row_rp == None: # skip people that have been deleted
+            continue
+        for x in range(1, 16):
+            race = row['Person ' + str(x) + ' Race/Ethnicity']
+            if race == None or race == '':
+                break
+            race = race.split(' & ')
+            dob = row['Person ' + str(x) + ' date of birth']
+            print('Data: ' + str((row['Person ' + str(x) + ' date of birth'])))
+            if type(dob) == str: # This usually happens when someone only enters the last 4 digits of a date, which breaks the date formatting, so we'll just guess if it's post or pre 2000
+                if int(dob[-2:]) < 30: # Using 30 for future proofing, if it's post-2030 why are you still using this software
+                    dob = dob[:-4] + '20' + dob[-2:]
+                else:
+                    dob = dob[:-4] + '19' + dob[-2:]
+                print(dob)
+                dob = datetime.strptime(dob, '%m/%d/%Y')
+            
+            dob = dob.date()
+            conn.execute(family_members.insert().values(user=row_rp.id, dob=dob, race=dumps(race)))
+    
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
