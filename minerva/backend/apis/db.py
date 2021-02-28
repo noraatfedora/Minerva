@@ -78,7 +78,7 @@ users = Table(
 family_members = Table(
     'family_members', meta,
     Column('user', Integer),
-    Column('name', String()),
+    Column('dob', Date),
     Column('race', String())
 )
 
