@@ -134,10 +134,10 @@ def importMasterList(request, filename, fileType, delete, header, disabledSheet=
     if (fileType == 'csv'):
         masterDf = pd.read_csv(request.files['users'], header=header, keep_default_na=False)
     else:
-        masterDf = pd.read_excel(request.files['users'], sheet_name="Master list", header=header, keep_default_na=False)
+        masterDf = pd.read_excel(request.files['users'].read(), sheet_name="Master list", header=header, keep_default_na=False)
         masterDf = masterDf.dropna(thresh=2)
         if disabledSheet:
-            disabledDf = pd.read_excel(request.files['users'], sheet_name="Disabled clients", header=header, keep_default_na=False)
+            disabledDf = pd.read_excel(request.files['users'].read(), sheet_name="Disabled clients", header=header, keep_default_na=False)
             disabledDf = disabledDf.dropna(thresh=2)
             addUsersFromDf(disabledDf, True)
     addUsersFromDf(masterDf, False)
