@@ -92,10 +92,11 @@ def send_spreadsheet():
     if google_maps:
         outputColumns.append("Google Maps")
     pdList = []
+    routeCount = 0
     for route in routesList:
         usersList = getUsers(route.id, addOriginal=True, includeDepot=True, columns=[users.c.id, users.c.name, users.c.email, users.c.formattedAddress, users.c.address2, users.c.cellPhone, users.c.instructions])
-        count = 0
         for user in usersList:
+            userCount = 1
             try:
                 parsed = usaddress.tag(user['Full Address'])[0]
                 user['City'] = parsed['PlaceName']
@@ -120,8 +121,7 @@ def send_spreadsheet():
                 user['Last Name'] = ''
             if 'Google Maps' in outputColumns:
                 user['Google Maps'] = google_maps_qr.make_single_url(user['Full Address'])
-            user['Number'] = count
-            count += 1
+            user['Number'] = userCount
         google_maps_link = google_maps_qr.make_url(usersList) 
         # remove food bank
         usersList.remove(usersList[0])
@@ -129,10 +129,10 @@ def send_spreadsheet():
         row_num = 15
         create_blank_rows(row_num - len(usersList), usersList, outputColumns)
         if google_maps:
-            footerContent = [['', 'Google maps link:', google_maps_link], ['', 'Assigned to: ', ''], ['', 'Date:', ''], ['', 'Route ' + str(count)]]
+            footerContent = [['', 'Google maps link:', google_maps_link], ['', 'Assigned to: ', ''], ['', 'Date:', ''], ['', 'Route ' + str(routeCount)]]
         else:
-            footerContent = [['', 'Assigned to: ', ''], ['', 'Date:', ''], ['', 'Route ' + str(count)]]
-            
+            footerContent = [['', 'Assigned to: ', ''], ['', 'Date:', ''], ['', 'Route ' + str(routeCount)]]
+        routeCount += 1
         create_footer_rows(footerContent, usersList, outputColumns)
         df = pd.DataFrame(usersList)
         pdList.append(df)
