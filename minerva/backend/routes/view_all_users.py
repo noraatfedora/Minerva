@@ -229,7 +229,7 @@ def generateUserDataFrame(userRpList):
             parsed = usaddress.tag(userDict['Full Address'])[0]
             userDict['City'] = parsed['PlaceName']
             userDict['Zip'] = parsed['ZipCode']
-            addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetName', 'StreetNamePostType']
+            addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetName', 'StreetNamePostDirectional', 'StreetNamePostModifier', 'StreetNamePostType']
             address = ""
             for attribute in addressFormat:
                 if attribute not in parsed.keys():
