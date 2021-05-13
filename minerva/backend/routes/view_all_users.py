@@ -17,8 +17,31 @@ from openpyxl import load_workbook, styles
 from barcode.writer import ImageWriter
 from minerva.backend.apis import assign, order_assignment
 import io, pdfkit, base64, qrcode, datetime
+from fuzzywuzzy import fuzz
 from minerva.backend.apis.email import send_recieved_notification, send_bagged_notification
 bp = Blueprint('view_all_users', __name__)
+
+class Duplicate:
+    # Generates a color for these cards
+    # by setting the hue to a hash of the user ID's
+    def generate_hue(self):
+        return hash(sum(self.userIds)) % 255
+
+    # Score here should be the max score
+    # out of any combo in the list
+    def __init__(self, userIds, score):
+        self.userIds = userIds
+        self.score = score
+        self.hue = self.generate_hue()
+    
+    def __eq__(self, other):
+        return self.userIds == other.userIds
+    
+    def __hash__(self):
+        return sum(self.userIds) 
+    
+    def __str__(self):
+        return ("Duplicate with score " + str(self.score) + " containing " + str(self.userIds))
 
 @login_required
 @admin_required
@@ -26,6 +49,7 @@ bp = Blueprint('view_all_users', __name__)
 def all_users():
     #itemsList = conn.execute(items.select(items.c.foodBankId==g.user.foodBankId)).fetchall()
     userList = getUserList()
+    showingDuplicates = False
     print(create_master_spreadsheet())
     if request.method == "POST" and 'num-vehicles' in request.values.to_dict().keys():
         print(request.values.to_dict())
@@ -39,6 +63,33 @@ def all_users():
         orderId = int(request.args.get("order"))
         order_assignment.assign(orderId=orderId, volunteerId=volunteerId)
         return redirect("/all_users")
+    elif 'find-duplicates' in request.args.keys():
+        # TODO: this is a really really shitty algorithm
+        # and can definitley be sped up (but I only need to
+        # run it once a week so it should be OK)
+        setDuplicates = set() # set of sets of user ID's
+        for firstUser in userList:
+            userIdSet = {firstUser.id}
+            scoreMax = 0
+            for secondUser in userList:
+                score = fuzz.ratio(firstUser.name, secondUser.name)
+                print("Ratio: " + str(score))
+                # TODO: make this use things other than name
+                if score > 80:
+                    userIdSet.add(secondUser.id)
+                    scoreMax = max(score, scoreMax)
+            if len(userIdSet) > 1:
+                setDuplicates.add(Duplicate(userIdSet, scoreMax))
+        # print("Set duplicates:" + str(next(iter(setDuplicates))))
+        userList = []
+        for duplicate in setDuplicates:
+            for userId in duplicate.userIds:
+                row = (conn.execute(users.select().where(users.c.id==userId)).fetchone())
+                d = dict(row.items())
+                d['hue'] = duplicate.hue
+                userList.append(d)
+        showingDuplicates = True
+
     if request.method == "POST":
         key = next(request.form.keys())
         print("Key: " + str(key))
@@ -73,7 +124,7 @@ def all_users():
         else:
             activeUsersCount += 1
 
-    return render_template("view_all_orders.html", users=userList, volunteers=volunteers, activeUsersCount=activeUsersCount, disabledUsersCount=disabledUsersCount)
+    return render_template("view_all_orders.html", users=userList, showingDuplicates=showingDuplicates, volunteers=volunteers, activeUsersCount=activeUsersCount, disabledUsersCount=disabledUsersCount)
 
 def getUserList():
     return conn.execute(users.select().order_by(desc(users.c.disabled)).where(and_(users.c.foodBankId == g.user.id, users.c.role == "RECIEVER"))).fetchall()
