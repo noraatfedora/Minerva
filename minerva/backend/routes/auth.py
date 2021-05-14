@@ -75,9 +75,6 @@ def upload_data():
         instructions = fetch_delete('instructions', form)
         restrictions = []
 
-        for restriction in dietaryRestrictions:
-            if restriction in request.form:
-                restrictions.append(restriction)
         error = ""
 
         if (not email == "") and conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
@@ -101,6 +98,7 @@ def upload_data():
             for i in range(0, len(keys), 2):
                 conn.execute(family_members.insert(), user=user_id,
                              name=form[keys[i]], race=form[keys[i + 1]])
+        setCoords(environ['GOOGLE_API'])
     
     else:
         message = "Successfully uploaded the spreadsheet!"
