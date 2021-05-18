@@ -1,10 +1,12 @@
 {% extends "base.html" %} {% block content %}
 <center>
-<h2>{{ user['name'] }}</h2>
+<h2>Edit Data for {{ user['name'] }}</h2>
 <small><a href="https://jaredgoodman03.github.io/Minerva-docs/admin-instructions#editing-user-data" target="_blank">Click to view instructions</a></small>
 <div class="card-container">
     <form name="move-user" method="POST" class="form">
     <div class="card grid-card text-left task-incomplete" style="width: 50rem;">
+    <div class="card-header">Name:
+        <input type="text" class="form-control-aesthetic col-sm" value="{{ user['name'] }}" id="name" name="name" /></div>
     <div class="card-header">Address:
         <input type="text" class="form-control-aesthetic col-sm" value="{{ user['formattedAddress'] }}" id="address" name="address" /></div>
     <div class="card-header">Apt:
@@ -16,7 +18,10 @@
     <div class="card-header">Notes:
         <input type="text" class="form-control-aesthetic col-sm" value="{{ user['instructions'] }}" id="instructions" name="instructions" /></div>
     <div class="card-header">
-        <button type="submit" class="btn bw-btn">Save changes</button>
+        <button type="submit" class="btn bw-btn" name="action-on-exit" value="enable">Save changes</button>
+    </div>
+    <div class="card-header">
+        <button type="submit" class="btn bw-btn bg-danger" name="action-on-exit" value="disable">Save changes and Disable User</button>
     </div>
     </form>
     </div>
