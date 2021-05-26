@@ -5,4 +5,5 @@ __pycache__/
 venv/
 minerva.wsgi
 minerva/backend/apis/instance/*
+minerva/backend/apis/database/*
 minerva/backend/apis/instance/routes.xlsx
