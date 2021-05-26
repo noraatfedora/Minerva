@@ -85,6 +85,7 @@ def create_app(test_config=None):
     app.register_blueprint(modify_volunteers.bp)
 
     from minerva.backend.routes import view_all_users
+    print("regestering view all users blueprint")
     app.register_blueprint(view_all_users.bp)
 
     from minerva.backend.routes import routes_view

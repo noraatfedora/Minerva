@@ -137,9 +137,10 @@ def loadingScreen(num_vehicles=40):
 @admin_required
 @bp.route('/routes-spreadsheet/', methods=('GET', 'POST'))
 def send_spreadsheet():
+    print("Sending spreadsheet...")
     google_maps = request.args.get('map') == 'true'
     routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
-    outputColumns = ['Number', 'First Name', "Last Name", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
+    outputColumns = ['Number', 'First Name', "Last Name", "Address", "Apt", "City", "State", "Zip", "Phone", "Notes"]
     if google_maps:
         outputColumns.append("Google Maps")
     pdList = []
@@ -151,6 +152,7 @@ def send_spreadsheet():
             try:
                 parsed = usaddress.tag(user['Full Address'])[0]
                 user['City'] = parsed['PlaceName']
+                user['State'] = 'WA'
                 user['Zip'] = parsed['ZipCode']
                 addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetName', 'StreetNamePostType']
                 address = ""
@@ -207,6 +209,26 @@ def send_spreadsheet():
                     maxWidth = str(cell.value)
             ws.column_dimensions[col[0].column_letter].width = len(maxWidth)
     writer.save()
+    return send_file(fileName, as_attachment=True)
+
+@login_required
+@admin_required
+@bp.route('/routes-overview/', methods=('GET', 'POST'))
+def send_overview():
+    
+    routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
+    dictList = []
+    count = 0
+    for route in routesList:
+        dictList.append({
+            'Route Number': count,
+            'Length': len(loads(route.content)),
+            'Date': ' '
+        })
+        count += 1
+    fileName = environ['INSTANCE_PATH'] + 'routes-overview.xlsx'
+    df = pd.DataFrame(dictList)
+    df.to_excel(fileName, index=False, header=True)
     return send_file(fileName, as_attachment=True)
 
 def create_blank_rows(num_rows, currentList, outputColumns):
