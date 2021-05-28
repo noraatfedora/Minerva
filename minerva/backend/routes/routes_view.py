@@ -98,7 +98,7 @@ def generate_new_routes():
             stopConversion=stop_conversion,
             globalSpanCostCoefficient=global_span_cost,
             solutionLimit=solution_limit)
-    return "Routes generated successfully!"
+    return redirect('/routes')
 
 @bp.route('/loading_status/<int:foodBankId>', methods=(['GET', 'POST']))
 def loading_status(foodBankId):
