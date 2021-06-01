@@ -6,6 +6,7 @@ from minerva.backend.apis.db import  conn, users
 from barcode.writer import ImageWriter
 from babel.dates import format_datetime
 from datetime import datetime
+from  flask_socketio import SocketIO, emit
 
 print("In application.py!")
 
@@ -26,6 +27,9 @@ def create_app(test_config=None):
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
+
+    socketio = SocketIO(app)
+    socketio.init_app(app)
 
     # ensure the instance folder exists
     try:
@@ -98,7 +102,12 @@ def create_app(test_config=None):
 
     print("Blueprints registered!")
 
+    @socketio.on('message')
+    def handle_message(message):
+        print("Received message: ", message)
+
     return app
+
 
 # Uncomment the below lines if you want debugging tools
 app = create_app()

@@ -14,12 +14,13 @@
         <input type="hidden" name="separateCities" value="{{ separateCities }}">
     </form>
     <script>
+        /*
+                */
+        // Client Side Javascript to receive numbers.
         var url = 'http://{{ host }}/generate_new_routes?num_vehicles={{ num_vehicles }}&global_span_cost={{ global_span_cost }}&stop_conversion={{ stop_conversion }}&solution_limit={{ solution_limit }}&separate_cities={{ separate_cities }}'
 
-        fetch(url).then(result => {
-            window.location = window.location.href;
-        })
-
+        window.location = url
+        
     </script>
 </center>
 {% endblock content %}
