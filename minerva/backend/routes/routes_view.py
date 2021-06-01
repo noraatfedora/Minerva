@@ -251,7 +251,7 @@ def master_driver_printout():
     }
     html = render_template("driver_printout.html", routes=routeDictList)
     pdf = pdfkit.from_string(html, False, options=options)
-    response = make_response(pdf)
+    response = make_response(pdf )
     response.headers['Content-type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'inline;'
 

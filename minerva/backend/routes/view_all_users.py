@@ -12,6 +12,7 @@ from minerva.backend.apis.db import users, conn, items, routes
 from sqlalchemy import and_, select, desc
 import pandas as pd
 from os import environ
+from datetime import date
 from barcode import Code128
 from openpyxl import load_workbook, styles
 from barcode.writer import ImageWriter
@@ -189,7 +190,7 @@ def send_spreadsheet():
         create_footer_rows(footerContent, usersList, outputColumns)
         df = pd.DataFrame(usersList)
         pdList.append(df)
-    fileName = environ['INSTANCE_PATH'] + 'routes.xlsx'
+    fileName = environ['INSTANCE_PATH'] + 'routes-' + getDateString() + '.xlsx'
     writer = pd.ExcelWriter(fileName, engine="openpyxl")
     for index in range(0, len(pdList)):
         pdList[index].to_excel(writer, sheet_name="Route " + str(index), index=False, columns=outputColumns)
@@ -226,10 +227,13 @@ def send_overview():
             'Date': ' '
         })
         count += 1
-    fileName = environ['INSTANCE_PATH'] + 'routes-overview.xlsx'
+    fileName = environ['INSTANCE_PATH'] + 'routes-overview-' + getDateString() + '.xlsx'
     df = pd.DataFrame(dictList)
     df.to_excel(fileName, index=False, header=True)
     return send_file(fileName, as_attachment=True)
+
+def getDateString():
+    return date.today().strftime('%m.%d')
 
 def create_blank_rows(num_rows, currentList, outputColumns):
     for y in range(0, num_rows):

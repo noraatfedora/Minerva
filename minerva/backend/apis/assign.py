@@ -360,6 +360,7 @@ def createAllRoutesSeparatedCities(foodBankId, num_vehicles=100, stopConversion=
             conn.execute(routes.insert().values(foodBankId=foodBankId, length=length, content=json.dumps(route), volunteerId=-1))
     routesToSpreadsheet(foodBankId)
 
+'''
 def routesToSpreadsheet(foodBankId):
     routesList = conn.execute(routes.select().where(routes.c.foodBankId==foodBankId))
     pdList = []
@@ -376,6 +377,7 @@ def routesToSpreadsheet(foodBankId):
     writer.save()
 
     return fileName
+'''
 
 
 # Returns a list of users based off the given route ID
