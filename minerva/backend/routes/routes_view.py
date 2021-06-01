@@ -98,7 +98,7 @@ def generate_new_routes():
             stopConversion=stop_conversion,
             globalSpanCostCoefficient=global_span_cost,
             solutionLimit=solution_limit)
-    return "Routes generated successfully!"
+    return redirect('/routes')
 
 @bp.route('/loading_status/<int:foodBankId>', methods=(['GET', 'POST']))
 def loading_status(foodBankId):
@@ -251,7 +251,7 @@ def master_driver_printout():
     }
     html = render_template("driver_printout.html", routes=routeDictList)
     pdf = pdfkit.from_string(html, False, options=options)
-    response = make_response(pdf)
+    response = make_response(pdf )
     response.headers['Content-type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'inline;'
 
