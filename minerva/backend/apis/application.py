@@ -98,6 +98,9 @@ def create_app(test_config=None):
     from minerva.backend.routes import edit_user_page
     app.register_blueprint(edit_user_page.bp)
 
+    from minerva.backend.routes import client_change_form
+    app.register_blueprint(client_change_form.bp)
+
     app.jinja_env.filters['datetime'] = format_datetime
 
     print("Blueprints registered!")
