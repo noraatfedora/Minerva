@@ -15,4 +15,4 @@ bp = Blueprint('client_change_form', __name__)
 
 @bp.route('/client_form', methods=('GET', 'POST'))
 def client_form():
-    return render_template('auth/change_form.html', intro_text='Eloise's Cooking Pot Delivery Information Update Form')
+    return render_template('auth/change_form.html', intro_text='Eloise\'s Cooking Pot Delivery Information Update Form')
