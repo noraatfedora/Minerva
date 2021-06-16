@@ -304,7 +304,7 @@ def createAllRoutes(foodBankId, num_vehicles=100, stopConversion=1000, globalSpa
         if len(route) == 2:
             continue
         conn.execute(routes.insert().values(foodBankId=foodBankId, length=length, content=json.dumps(route), volunteerId=-1))
-    routesToSpreadsheet(foodBankId)
+    #routesToSpreadsheet(foodBankId)
     
 def createAllRoutesSeparatedCities(foodBankId, num_vehicles=100, stopConversion=1000, globalSpanCostCoefficient=4000, solutionLimit=10000):
     minLength = 4 # TODO: make this configurable
