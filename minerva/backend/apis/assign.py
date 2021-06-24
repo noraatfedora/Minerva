@@ -358,7 +358,7 @@ def createAllRoutesSeparatedCities(foodBankId, num_vehicles=100, stopConversion=
             if len(route) == 2:
                 continue
             conn.execute(routes.insert().values(foodBankId=foodBankId, length=length, content=json.dumps(route), volunteerId=-1))
-    routesToSpreadsheet(foodBankId)
+    #routesToSpreadsheet(foodBankId)
 
 '''
 def routesToSpreadsheet(foodBankId):
