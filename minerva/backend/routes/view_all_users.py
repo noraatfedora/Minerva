@@ -223,7 +223,7 @@ def send_overview():
     for route in routesList:
         dictList.append({
             'Route Number': count,
-            'Length': len(loads(route.content)),
+            'Length': len(loads(route.content)) - 2,
             'Date': ' '
         })
         count += 1
