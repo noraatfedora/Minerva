@@ -77,13 +77,13 @@ def upload_data():
 
         error = ""
 
-        if (not email == "") and conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
+        if (not email == "") and (not email=="info@themadfseattle.org") and conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
             error += '\nUser {} is already registered.'.format(email)
 
         if error == "":
             conn.execute(users.insert(), name=name, birthday=birthday, email=email, address=address,
-                         role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
-                         zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), lastDelivered=datetime.now(), restrictions=dumps(restrictions))
+                role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
+                zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), lastDelivered=datetime.now(), restrictions=dumps(restrictions))
 
             user_id = conn.execute(users.select().where(
                 users.c.email == email)).fetchone().id
@@ -97,7 +97,7 @@ def upload_data():
 
             for i in range(0, len(keys), 2):
                 conn.execute(family_members.insert(), user=user_id,
-                             name=form[keys[i]], race=form[keys[i + 1]])
+                            name=form[keys[i]], race=form[keys[i + 1]])
         setCoords(environ['GOOGLE_API'])
     
     else:
@@ -150,7 +150,7 @@ def addUsersFromDf(df, disabled):
             disabledDate = row['Last Name'].date()
             continue
         # This checks to make sure email is not nan
-        if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email']=="":
+        if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email']=="" and not row['Email']=="info@themadfseattle.org":
             emailUser = conn.execute(users.select().where(users.c.email == row['Email'])).fetchone()
             if emailUser is not None:
                 print("Skipping " + str(row) + " because of a duplicate email")
