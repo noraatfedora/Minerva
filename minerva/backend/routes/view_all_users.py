@@ -155,7 +155,7 @@ def send_spreadsheet():
                 user['City'] = parsed['PlaceName']
                 user['State'] = 'WA'
                 user['Zip'] = parsed['ZipCode']
-                addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetName', 'StreetNamePostType']
+                addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetNamePreModifier', 'StreetNamePreType', 'StreetName', 'StreetNamePostDirectional', 'StreetNamePostModifier', 'StreetNamePostType']
                 address = ""
                 for attribute in addressFormat:
                     if attribute not in parsed.keys():
