@@ -1,13 +1,15 @@
 from flask import ( Blueprint, flash, g, redirect, render_template,
     request, session, url_for, Flask, make_response, send_file
 )
+from sqlalchemy.sql.functions import current_date
 from werkzeug.exceptions import abort
 from minerva.backend.routes.auth import login_required, admin_required
 import usaddress
+import re
 from json import loads, dumps
 from collections import OrderedDict
 from minerva.backend.apis import google_maps_qr
-from minerva.backend.apis.assign import getUsers
+from minerva.backend.apis.assign import getUsers, measure
 from minerva.backend.apis.db import users, conn, items, routes
 from sqlalchemy import and_, select, desc
 import pandas as pd
@@ -266,9 +268,9 @@ def create_master_spreadsheet():
                     'cellPhone': 'Phone',
                     'instructions': 'Notes'}
     enabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==False))).fetchall()
-    enabled = generateUserDataFrame(enabledRpList)
+    enabled = generateUserDataFrame(enabledRpList, prettyNames)
     disabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==True)).order_by(users.c.disabledDate)).fetchall()
-    disabled = generateUserDataFrame(disabledRpList)
+    disabled = generateUserDataFrame(disabledRpList, prettyNames)
     outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
     writer = pd.ExcelWriter(environ['INSTANCE_PATH'] + 'client-master-list.xlsx')
     enabled.to_excel(writer, sheet_name="Master list", columns=outputColumns, startrow=0, index=False, na_rep="")
@@ -276,14 +278,105 @@ def create_master_spreadsheet():
     writer.save()
     return send_file(environ['INSTANCE_PATH'] + 'client-master-list.xlsx', as_attachment=True)
 
-def generateUserDataFrame(userRpList):
-    columns = ['name', 'email', 'formattedAddress', 'address2', 'cellPhone', 'instructions']
+@login_required
+@admin_required
+@bp.route('/doordash-spreadsheet', methods=('GET', 'POST'))
+def create_doordash_spreadsheet():
+    def get_proximity(lat, lon):
+        fb = conn.execute(users.select(users.c.id==g.user.foodBankId)).fetchone()
+        fbLat = fb.latitude
+        fbLon = fb.longitude
+        return measure(lat, lon, fbLat, fbLon)
+
+
+    #columns = ['name', 'email', 'formattedAddress', 'address2', 'cellPhone', 'instructions']
     prettyNames = {'formattedAddress': 'Full Address',
                     'address2': 'Apt',
                     'name': 'Name',
                     'email':'Email',
-                    'cellPhone': 'Phone',
-                    'instructions': 'Notes'}
+                    'cellPhone': 'Phone'}
+    enabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==False))).fetchall()
+    dictList = []
+    staticValues = {
+        'Pickup Location Name': 'Eloise\'s Cooking Pot',
+        'StoreID Provided by Doordash': 'ELOISE-01',
+        'Pickup Window Start': '10:00AM',
+        'Pickup Window End': '1:00PM',
+        'Dropoff Instructions': 'Please leave items, take a pictue and leave. Do not return anything'
+    } 
+    outputColumns = ['Pickup Location Name', 'StoreID Provided by Doordash', 'Date of Delivery', 'Pickup Window Start',
+        'Pickup Window End', 'Client First Name', "Client Last Name", "Client Street Address", "Client Unit", "Client City", "Client State", "Client Zip", "Client Phone", "Dropoff Instructions"]
+
+    for row in enabledRpList:
+        columns = ['name', 'formattedAddress', 'address2', 'cellPhone', 'latitude', 'longitude']
+        row2dict = lambda r: {c: betterStr(getattr(r, c)) for c in columns}
+        d = row2dict(row)
+        # doordash drivers can't go to the joint base
+        if 'Joint Base Lewis-McChord' not in d['formattedAddress']:
+            d['proxmity'] = get_proximity(d['latitude'], d['longitude'])
+            try:
+                d['Client First Name'], d['Client Last Name'] = d['name'].split(' ')
+            except:
+                d['Client First Name'] = d['name']
+                d['Client Last Name'] = ''
+            parsed = usaddress.tag(d['formattedAddress'])[0]
+            d['Client City'] = parsed['PlaceName']
+            if 'ZipCode' in parsed:
+                d['Client Zip'] = parsed['ZipCode']
+            else:
+                d['Client Zip'] = ''
+            d['Client State'] = parsed['StateName']
+            addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetNamePreModifier', 'StreetNamePreType', 'StreetName', 'StreetNamePostDirectional', 'StreetNamePostModifier', 'StreetNamePostType']
+            address = ""
+            for attribute in addressFormat:
+                if attribute not in parsed.keys():
+                    continue
+                if address == "":
+                    address = parsed[attribute]
+                else:
+                    address = address + " " + parsed[attribute]
+            d['Client Street Address'] = address
+            d['Client Unit'] = d.pop('address2')
+            phone = d.pop('cellPhone')
+            # Strip all non-numeric characters
+            phone = re.sub('[^0-9]', '', phone)
+            # Get last 10 digits
+            phone = phone[-10:]
+            if phone == "":
+                phone = environ['DEFAULT_PHONE_NUM']
+            d['Client Phone'] = phone
+            d.update(staticValues)
+            dictList.append(d)
+
+    # Sort the dictList by proximity
+    sortedList = sorted(dictList, key=lambda k: k['proxmity'], reverse=True)
+    wednesdayList = []
+    thursdayList = []
+    # Sets wednesday to be the date of the next wednesday
+    currentDate = datetime.datetime.today()
+    wednesdayDate = currentDate + datetime.timedelta((9-currentDate.weekday()) % 7)
+    thursdayDate = currentDate + datetime.timedelta((10-currentDate.weekday()) % 7)
+    dateFormat = '%m/%d/%Y'
+    for x in range(0, len(sortedList)):
+        if x % 2 == 0:
+            sortedList[x]['Date of Delivery'] = wednesdayDate.strftime(dateFormat)
+            wednesdayList.append(sortedList[x])
+        else:
+            sortedList[x]['Date of Delivery'] = thursdayDate.strftime(dateFormat)
+            thursdayList.append(sortedList[x])
+    # Add empty row to wednesday list for spacing
+    wednesdayList.append({'Client First Name': '', 'Client Last Name': '', 'Client Street Address': '', 'Client Unit': '', 'Client City': '', 'Client State': '', 'Client Zip': '', 'Client Phone': '', 'date': ''})
+    outputDf = pd.DataFrame(wednesdayList + thursdayList)
+    print(outputDf.columns)
+    
+    filename = 'doordash-' + getDateString() + '.xlsx'
+    writer = pd.ExcelWriter(environ['INSTANCE_PATH'] + filename)
+    outputDf.to_excel(writer, sheet_name="Doordash clients", columns=outputColumns, startrow=0, index=False, na_rep="")
+    writer.save()
+    return send_file(environ['INSTANCE_PATH'] + filename, as_attachment=True)
+    
+def generateUserDataFrame(userRpList, prettyNames):
+    columns = ['name', 'email', 'formattedAddress', 'address2', 'cellPhone', 'instructions']
     row2dict = lambda r: {prettyNames[c]: betterStr(getattr(r, c)) for c in columns}
     userDictList = []
     disabled = userRpList[0].disabled
