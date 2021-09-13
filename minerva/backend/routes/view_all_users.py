@@ -142,7 +142,7 @@ def loadingScreen(num_vehicles=40):
 def send_spreadsheet():
     print("Sending spreadsheet...")
     google_maps = request.args.get('map') == 'true'
-    routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
+    routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id).order_by(routes.c.length)).fetchall()
     outputColumns = ['Number', 'First Name', "Last Name", "Address", "Apt", "City", "State", "Zip", "Phone", "Notes"]
     if google_maps:
         outputColumns.append("Google Maps")
@@ -218,8 +218,7 @@ def send_spreadsheet():
 @admin_required
 @bp.route('/routes-overview/', methods=('GET', 'POST'))
 def send_overview():
-    
-    routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id)).fetchall()
+    routesList = conn.execute(routes.select(routes.c.foodBankId==g.user.id).order_by(routes.c.length)).fetchall()
     dictList = []
     count = 0
     for route in routesList:
