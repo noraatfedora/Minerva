@@ -294,6 +294,11 @@ def create_doordash_spreadsheet():
                     'name': 'Name',
                     'email':'Email',
                     'cellPhone': 'Phone'}
+    routesRpList = conn.execute(routes.select(routes.c.foodBankId==g.user.id).order_by(routes.c.length)).fetchall()[0:6]
+    removeIds = []
+    for route in routesRpList:
+        removeIds.extend(loads(route.content))
+
     enabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==False))).fetchall()
     dictList = []
     staticValues = {
@@ -307,6 +312,8 @@ def create_doordash_spreadsheet():
         'Pickup Window End', 'Client First Name', "Client Last Name", "Client Street Address", "Client Unit", "Client City", "Client State", "Client Zip", "Client Phone", "Dropoff Instructions"]
 
     for row in enabledRpList:
+        if row.id in removeIds:
+            continue
         columns = ['name', 'formattedAddress', 'address2', 'cellPhone', 'latitude', 'longitude']
         row2dict = lambda r: {c: betterStr(getattr(r, c)) for c in columns}
         d = row2dict(row)
