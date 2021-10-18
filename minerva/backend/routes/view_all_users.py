@@ -312,8 +312,8 @@ def create_doordash_spreadsheet():
         'Pickup Window End', 'Client First Name', "Client Last Name", "Client Street Address", "Client Unit", "Client City", "Client State", "Client Zip", "Client Phone", "Dropoff Instructions"]
 
     for row in enabledRpList:
-        if row.id in removeIds:
-            continue
+        #if row.id in removeIds:
+        #    continue
         columns = ['name', 'formattedAddress', 'address2', 'cellPhone', 'latitude', 'longitude']
         row2dict = lambda r: {c: betterStr(getattr(r, c)) for c in columns}
         d = row2dict(row)
