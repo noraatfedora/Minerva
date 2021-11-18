@@ -266,11 +266,14 @@ def create_master_spreadsheet():
                     'email':'Email',
                     'cellPhone': 'Phone',
                     'instructions': 'Notes'}
+    outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
     enabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==False))).fetchall()
     enabled = generateUserDataFrame(enabledRpList, prettyNames)
     disabledRpList = conn.execute(users.select(and_(users.c.role=="RECIEVER", users.c.foodBankId==g.user.id, users.c.disabled==True)).order_by(users.c.disabledDate)).fetchall()
-    disabled = generateUserDataFrame(disabledRpList, prettyNames)
-    outputColumns = ['First Name', "Last Name", "Email", "Address", "Apt", "City", "Zip", "Phone", "Notes"]
+    if len(disabledRpList) > 0:
+        disabled = generateUserDataFrame(disabledRpList, prettyNames)
+    else:
+        disabled = pd.DataFrame(columns=outputColumns)
     writer = pd.ExcelWriter(environ['INSTANCE_PATH'] + 'client-master-list.xlsx')
     enabled.to_excel(writer, sheet_name="Master list", columns=outputColumns, startrow=0, index=False, na_rep="")
     disabled.to_excel(writer, sheet_name="Disabled clients", columns=outputColumns, startrow=0, index=False, na_rep="")
