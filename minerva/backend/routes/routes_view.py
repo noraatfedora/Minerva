@@ -92,7 +92,7 @@ def generate_new_routes():
     global_span_cost = int(request.values.get('global_span_cost'))
     stop_conversion = int(request.values.get('stop_conversion'))
     solution_limit = int(request.values.get('solution_limit'))
-    separate_cities = 'separate_cities' in request.values.get('separate_cities').lower()
+    separate_cities = 'true' in request.values.get('separate_cities').lower()
     print("Raw data:")
     print(request.values.get('separate_cities'))
     print("Seperating cities:")
