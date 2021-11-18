@@ -2,7 +2,7 @@ import os
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
-from minerva.backend.apis.db import  conn, users
+from minerva.backend.apis.db import conn, users
 from barcode.writer import ImageWriter
 from babel.dates import format_datetime
 from datetime import datetime

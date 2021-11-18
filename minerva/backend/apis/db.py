@@ -72,7 +72,8 @@ users = Table(
     Column('householdSize', Integer),
     Column('inSpreadsheet', Integer),
     Column('apiKey', String(255)),
-    Column('disabledDate', Date())
+    Column('disabledDate', Date()),
+    Column('distance', Float())
 )
 
 family_members = Table(

@@ -294,7 +294,7 @@ def create_doordash_spreadsheet():
                     'name': 'Name',
                     'email':'Email',
                     'cellPhone': 'Phone'}
-    routesRpList = conn.execute(routes.select(routes.c.foodBankId==g.user.id).order_by(routes.c.length)).fetchall()[0:6]
+    routesRpList = conn.execute(routes.select(routes.c.foodBankId==g.user.id).order_by(routes.c.length)).fetchall()
     removeIds = []
     for route in routesRpList:
         removeIds.extend(loads(route.content))
