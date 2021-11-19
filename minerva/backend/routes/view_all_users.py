@@ -321,7 +321,7 @@ def create_doordash_spreadsheet():
         row2dict = lambda r: {c: betterStr(getattr(r, c)) for c in columns}
         d = row2dict(row)
         # doordash drivers can't go to the joint base
-        if 'Joint Base Lewis-McChord' not in d['formattedAddress']:
+        if 'mcchord' not in d['formattedAddress'].lower():
             d['proxmity'] = get_proximity(d['latitude'], d['longitude'])
             try:
                 d['Client First Name'], d['Client Last Name'] = d['name'].split(' ')
@@ -409,7 +409,7 @@ def generateUserDataFrame(userRpList, prettyNames):
             parsed = usaddress.tag(userDict['Full Address'])[0]
             userDict['City'] = parsed['PlaceName']
             userDict['Zip'] = parsed['ZipCode']
-            addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetNamePreModifier', 'StreetNamePreType', 'StreetName', 'StreetNamePostDirectional', 'StreetNamePostModifier', 'StreetNamePostType']
+            addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetNamePreModifier', 'StreetNamePreType', 'StreetName', 'StreetNamePostDirectional', 'StreetNamePostModifier', 'StreetNamePostType', 'SubaddressIdentifier']
             address = ""
             for attribute in addressFormat:
                 if attribute not in parsed.keys():
@@ -418,6 +418,19 @@ def generateUserDataFrame(userRpList, prettyNames):
                     address = parsed[attribute]
                 else:
                     address = address + " " + parsed[attribute]
+            apt = user.address2
+            if not apt:
+                aptFormat = ['OccupancyType', 'OccupancyIdentifier']
+                for attribute in aptFormat:
+                    if attribute not in parsed.keys():
+                        continue
+                    if apt == "":
+                        apt = parsed[attribute]
+                    else:
+                        apt = apt + " " + parsed[attribute]
+                userDict['Apt'] = apt
+                print("Setting apt value to " + apt)
+                conn.execute(users.update().where(users.c.id==user.id).values(address2=apt))
         except:
             address = userDict['Full Address']
         userDict['Address'] = address

@@ -42,7 +42,7 @@ def create_data(num_vehicles, gscce, stopConversion, solutionLimit, users, maxim
         user_num = 0
         while user_num < len(data['users']):
             user = data['users'][user_num]
-            if 'joint base' in user.formattedAddress.lower():
+            if 'mcchord' in user.formattedAddress.lower():
                 jblm.append(data['users'].pop(user_num))
             else:
                 user_num += 1
@@ -75,26 +75,28 @@ def setCoords(API_key):
     googleWrapper = geopy.geocoders.GoogleV3(api_key=API_key)
     userList = conn.execute(users.select()).fetchall()
     for user in userList:
+        if not (user.address):
+            continue
         if not (user.latitude and user.longitude and user.formattedAddress):
             fullAddr = str(user['address']) + ", " + str(user['zipCode'])
-            #print("Fulladdr: " + fullAddr)
+            print("Fulladdr: " + fullAddr)
             coords = googleWrapper.geocode(query=fullAddr, timeout=100)
             if coords == None:  # One of the zip codes in the spreadsheet is wrong
                 coords = googleWrapper.geocode(
                     query=user['address'] + " WA", timeout=100)
-            #print("Name: " + str(user['name']))
-            #print("Original address: " + str(user['address']))
-            #print("Coords: " + str(coords))
+            print("Name: " + str(user['name']))
+            print("Original address: " + str(user['address']))
+            print("Coords: " + str(coords.latitude) + ", " + str(coords.longitude))
             distance = measure(
-                g.user.latitude, g.user.longitude, coords[1][0], coords[1][1])
+                g.user.latitude, g.user.longitude, coords.latitude, coords.longitude)
 
             conn.execute(users.update().where(users.c.id == user.id).values(
-                formattedAddress=coords[0],
-                latitude=coords[1][0],
-                longitude=coords[1][1],
+                formattedAddress=str(coords),
+                latitude=coords.latitude,
+                longitude=coords.longitude,
                 distance=distance
             ))
-        if not user.distance:
+        elif not user.distance:
             distance = measure(
                 g.user.latitude, g.user.longitude, user.latitude, user.longitude)
             conn.execute(users.update().where(users.c.id == user.id).values(
@@ -374,7 +376,7 @@ def createAllRoutesSeparatedCities(foodBankId, num_vehicles=101, stopConversion=
             biggestCity = city
     keyArr = list(placesDict.keys())
     for city in keyArr:
-        if len(placesDict[city]) < minLength or (doordash and 'joint' not in city.lower()):
+        if len(placesDict[city]) < minLength or (doordash and 'mcchord' not in city.lower()):
             placesDict[biggestCity] = placesDict[biggestCity] + \
                 placesDict.pop(city, None)
 
