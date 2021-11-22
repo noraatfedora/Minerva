@@ -47,9 +47,11 @@ def create_data(num_vehicles, gscce, stopConversion, solutionLimit, users, maxim
             else:
                 user_num += 1
         data['users'] = data['users'][:(num_users - len(jblm))] + jblm
-        reccomended_num_vehicles = int(len(users) / maximumStops - 1) + 1
+        reccomended_num_vehicles = int(len(data['users']) / (maximumStops - 1)) + 1
         data['num_vehicles'] = min(num_vehicles, reccomended_num_vehicles)
         print("length of users: " + str(len(data['users'])))
+        print("Num vehicles: " + str(data['num_vehicles']))
+        print("max stops: " + str(maximumStops))
     else:
         data['num_vehicles'] = int(len(users) / maximumStops - 1) + 1
 

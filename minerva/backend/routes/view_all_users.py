@@ -395,10 +395,13 @@ def generateUserDataFrame(userRpList, prettyNames):
         if (user.disabledDate != disabledDate or firstDate) and disabled:
             disabledDate = user.disabledDate
             blankRow = {'First Name': '', 'Last Name': '', 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
-            if type(disabledDate) == str: # Type changes depending on if you're using mysql or sqlite apparently
-                removalRow = {'First Name': 'Removal', 'Last Name': disabledDate, 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
+            if disabledDate:
+                if type(disabledDate) == str: # Type changes depending on if you're using mysql or sqlite apparently
+                    removalRow = {'First Name': 'Removal', 'Last Name': disabledDate, 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
+                else:
+                    removalRow = {'First Name': 'Removal', 'Last Name': disabledDate.strftime('%m-%d-%y'), 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
             else:
-                removalRow = {'First Name': 'Removal', 'Last Name': disabledDate.strftime('%m-%d-%y'), 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
+                    removalRow = {'First Name': 'Removal', 'Last Name': '', 'Email': '', 'Address': '', 'Apt': '', 'City': '', 'Zip': '', 'Phone': '', 'Notes': ''}
 
             if not firstDate:
                 userDictList.append(blankRow)
