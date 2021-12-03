@@ -126,54 +126,6 @@ def measure(lat1, lon1, lat2, lon2):
 def demand_callback(from_index):
     return 1
 
-# returns array of user ID's
-
-
-def getNextRoute(volunteerId, foodBankId):
-    oldId = conn.execute(select([routes.c.id]).where(
-        routes.c.volunteerId == volunteerId)).fetchone()
-    routeList = conn.execute(routes.select().where(
-        and_(routes.c.foodBankId == foodBankId, routes.c.volunteerId == -1))).fetchall()
-    now = datetime.now()
-    # wow tuples how pythonic
-    maxRoute = (-1, -1)  # ID, cost
-    for route in routeList:
-        cost = getRouteCost(json.loads(route.content), now)
-        #print("Cost: " + str(cost))
-        #print("Route: " + str(route))
-        if cost > maxRoute[1]:
-            maxRoute = (route.id, cost)
-    print("updating to route " + str(maxRoute[0]))
-    conn.execute(routes.update().where(
-        routes.c.id == maxRoute[0]).values(volunteerId=volunteerId))
-    if oldId != None:
-        conn.execute(routes.update().where(
-            routes.c.id == oldId[0]).values(volunteerId=-1))
-    return maxRoute[0]
-
-# route is a list of user ID's, time is a datetime object (pass it datetime.now)
-
-
-def getRouteCost(route, time):
-    cost = 0
-    for userId in route:
-        if userId == g.user.id or userId == g.user.foodBankId:
-            continue
-        lastDelivered = conn.execute(
-            select([users.c.lastDelivered]).where(users.c.id == userId)).fetchone()
-        # print(lastDelivered)
-        # Uncomment this line to fix the cold start problem
-        # conn.execute(users.update().where(users.c.id==userId).values(lastDelivered=time))
-        if lastDelivered == None or lastDelivered[0] == None:
-            lastDelivered = time
-        else:
-            lastDelivered = lastDelivered[0]
-        delta = (lastDelivered - time)
-        #print("Total seconds: " + str(delta.total_seconds()))
-        cost += delta.total_seconds() ** 2
-    return cost
-
-
 def create_distance_matrix(data):
     distance_matrix = []
     print("Creating distance matrix...")

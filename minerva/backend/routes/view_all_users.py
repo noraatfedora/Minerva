@@ -24,6 +24,8 @@ from fuzzywuzzy import fuzz
 from minerva.backend.apis.email import send_recieved_notification, send_bagged_notification
 bp = Blueprint('view_all_users', __name__)
 
+addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetNamePreModifier', 'StreetNamePreType', 'StreetName', 'StreetNamePostType', 'StreetNamePostModifier', 'StreetNamePostDirectional']
+
 class Duplicate:
     # Generates a color for these cards
     # by setting the hue to a hash of the user ID's
@@ -157,7 +159,6 @@ def send_spreadsheet():
                 user['City'] = parsed['PlaceName']
                 user['State'] = 'WA'
                 user['Zip'] = parsed['ZipCode']
-                addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetNamePreModifier', 'StreetNamePreType', 'StreetName', 'StreetNamePostDirectional', 'StreetNamePostModifier', 'StreetNamePostType']
                 address = ""
                 for attribute in addressFormat:
                     if attribute not in parsed.keys():
@@ -335,7 +336,6 @@ def create_doordash_spreadsheet():
             else:
                 d['Client Zip'] = ''
             d['Client State'] = parsed['StateName']
-            addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetNamePreModifier', 'StreetNamePreType', 'StreetName', 'StreetNamePostDirectional', 'StreetNamePostModifier', 'StreetNamePostType']
             address = ""
             for attribute in addressFormat:
                 if attribute not in parsed.keys():
@@ -412,7 +412,6 @@ def generateUserDataFrame(userRpList, prettyNames):
             parsed = usaddress.tag(userDict['Full Address'])[0]
             userDict['City'] = parsed['PlaceName']
             userDict['Zip'] = parsed['ZipCode']
-            addressFormat = ['AddressNumber', 'StreetNamePreDirectional', 'StreetNamePreModifier', 'StreetNamePreType', 'StreetName', 'StreetNamePostDirectional', 'StreetNamePostModifier', 'StreetNamePostType', 'SubaddressIdentifier']
             address = ""
             for attribute in addressFormat:
                 if attribute not in parsed.keys():

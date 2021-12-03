@@ -176,7 +176,7 @@ def getRoutes():
         routeDict['google_maps'] = google_maps_qr.make_url(
             routeDict['userList'])
         routeDict['parsedContent'] = loads(route_rp.content)
-        score = assign.getRouteCost(routeDict['parsedContent'], datetime.now())
+        score = 0
         scoreAverage += score
         routeDict['score'] = score
         routeDict['osm'] = google_maps_qr.osm_url(routeDict['userList'])
@@ -209,11 +209,7 @@ def getUsers(routeId):
         if user_rp == None:
             continue
         userObj = row2dict(user_rp)
-        if user_rp['lastDelivered']:
-            userObj['doneToday'] = user_rp['lastDelivered'].date(
-            ) == datetime.today().date()
-        else:
-            userObj['doneToday'] = False
+        userObj['doneToday'] = False
         toReturn.append(userObj)
 
     return toReturn

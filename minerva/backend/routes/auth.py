@@ -213,8 +213,9 @@ def disableOutOfRange(cities):
         users.c.foodBankId == g.user.id, users.c.disabled == False, users.c.role == "RECIEVER")))
     for user in usersList:
         disable = True
+        print('User: ' + user.name) 
         for city in cities:
-            if city in user.city or (user.formattedAddress and city in user.formattedAddress):
+            if (not user.city or city in user.city) or (user.formattedAddress and city in user.formattedAddress):
                 disable = False
         if disable:
             conn.execute(users.update().where(users.c.id == user.id).values(
