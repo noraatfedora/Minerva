@@ -310,7 +310,7 @@ def create_doordash_spreadsheet():
         'StoreID Provided by Doordash': 'ELOISE-01',
         'Pickup Window Start': '10:00AM',
         'Pickup Window End': '1:00PM',
-        'Dropoff Instructions': 'Please leave items, take a pictue and leave. Do not return anything'
+        'Dropoff Instructions': 'Please leave items, take a picture and leave. Do not return anything'
     } 
     outputColumns = ['Pickup Location Name', 'StoreID Provided by Doordash', 'Date of Delivery', 'Pickup Window Start',
         'Pickup Window End', 'Client First Name', "Client Last Name", "Client Street Address", "Client Unit", "Client City", "Client State", "Client Zip", "Client Phone", "Dropoff Instructions"]
@@ -438,8 +438,11 @@ def generateUserDataFrame(userRpList, prettyNames):
         userDict['Address'] = address
         names = userDict['Name'].split(" ", maxsplit=1)
         userDict['First Name'] = names[0]
-        userDict['Last Name'] = names[1]
-        if userDict['Last Name'] == "nan":
+        if len(names) > 1:
+            userDict['Last Name'] = names[1]
+            if userDict['Last Name'] == "nan":
+                userDict['Last Name'] = ''
+        else:
             userDict['Last Name'] = ''
         userDictList.append(userDict)
     df = pd.DataFrame(userDictList)

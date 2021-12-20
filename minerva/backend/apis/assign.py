@@ -27,7 +27,7 @@ def create_data(num_vehicles, gscce, stopConversion, solutionLimit, users, maxim
 
     data['API_key'] = environ['GOOGLE_API']
     print("Google api key: " + str(data['API_key']))
-    data['users'] = users
+    data['users'] = users.copy()
     setCoords(data['API_key'])
 
     def getDistanceFromFoodBank(user):
@@ -35,12 +35,16 @@ def create_data(num_vehicles, gscce, stopConversion, solutionLimit, users, maxim
 
     data['users'].sort(key=getDistanceFromFoodBank)
     data['users'].insert(0, g.user)
-
+    print("we're about to do the trolling and everything has been sorted")
+    for user in data['users']:
+        print(user.name)
     if doordash:
         num_users = num_vehicles * 13
         jblm = []
         user_num = 0
+        print("doing the trolling")
         while user_num < len(data['users']):
+            print(data['users'][user_num].name)
             user = data['users'][user_num]
             if 'mcchord' in user.formattedAddress.lower():
                 jblm.append(data['users'].pop(user_num))
@@ -52,9 +56,12 @@ def create_data(num_vehicles, gscce, stopConversion, solutionLimit, users, maxim
         print("length of users: " + str(len(data['users'])))
         print("Num vehicles: " + str(data['num_vehicles']))
         print("max stops: " + str(maximumStops))
+
+        print("right after we do the trolling")
+        for user in data['users']:
+            print(user.name)
     else:
         data['num_vehicles'] = int(len(users) / maximumStops - 1) + 1
-
     data['vehicle_capacities'] = []
     for vehicleNum in range(data['num_vehicles']):
         data['vehicle_capacities'].append(maximumStops)
@@ -306,6 +313,7 @@ def createAllRoutesSeparatedCities(foodBankId, num_vehicles=101, stopConversion=
         users.c.disabled == False
     ))).fetchall()
 
+
     placesDict = {}  # Keys are cities and values are arrays of user RowProxy's
 
     # Distribute users into dictionary by city
@@ -317,10 +325,9 @@ def createAllRoutesSeparatedCities(foodBankId, num_vehicles=101, stopConversion=
             placesDict[city].append(user)
         else:
             placesDict[city] = [user]
-        print(user['formattedAddress'])
 
-    data = create_data(num_vehicles, globalSpanCostCoefficient,
-                       stopConversion, solutionLimit, usersList, doordash=True)
+    #data = create_data(num_vehicles, globalSpanCostCoefficient,
+    #                   stopConversion, solutionLimit, usersList, doordash=True)
 
     print("placesDict keys: " + str(placesDict.keys()))
     # Now, we take cities that have less than five people (e.g. Fife) and plop them into the biggest city (like Tacoma)
@@ -330,7 +337,7 @@ def createAllRoutesSeparatedCities(foodBankId, num_vehicles=101, stopConversion=
             biggestCity = city
     keyArr = list(placesDict.keys())
     for city in keyArr:
-        if len(placesDict[city]) < minLength or (doordash and 'mcchord' not in city.lower()):
+        if (len(placesDict[city]) < minLength or (doordash and 'mcchord' not in city.lower())) and not city == biggestCity:
             placesDict[biggestCity] = placesDict[biggestCity] + \
                 placesDict.pop(city, None)
 
@@ -340,8 +347,15 @@ def createAllRoutesSeparatedCities(foodBankId, num_vehicles=101, stopConversion=
     # Now, the real fun begins
     for city in placesDict.keys():
         print("Calculating routes for " + city + "...")
+        print('users before create_data for ' + city)
+        for user in placesDict[city]:
+            print(user.id)
+
         data = create_data(num_vehicles, globalSpanCostCoefficient, stopConversion,
                            solutionLimit, placesDict[city], addToMax=True, doordash=doordash)
+        print("Users after create_data for " + city)
+        for user in data['users']:
+            print(user.id)
         assignments = get_order_assignments(
             num_vehicles, data, stopConversion, globalSpanCostCoefficient, solutionLimit)
         localRouteList = []
