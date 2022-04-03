@@ -78,10 +78,9 @@ def upload_data():
 
         error = ""
 
-        if (not email == "") and (not email == "info@themadfseattle.org") and conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
+        if (not email == "") and (not email.lower() == "info@themadfseattle.org") and conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
             error += '\nUser {} is already registered.'.format(email)
-
-        if error == "":
+        else:
             conn.execute(users.insert(), name=name, birthday=birthday, email=email, address=address,
                          role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
                          zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), lastDelivered=datetime.now(), restrictions=dumps(restrictions))

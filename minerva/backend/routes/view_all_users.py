@@ -321,6 +321,7 @@ def create_doordash_spreadsheet():
         columns = ['name', 'formattedAddress', 'address2', 'cellPhone', 'latitude', 'longitude']
         row2dict = lambda r: {c: betterStr(getattr(r, c)) for c in columns}
         d = row2dict(row)
+        print(d)
         # doordash drivers can't go to the joint base
         if 'mcchord' not in d['formattedAddress'].lower():
             d['proxmity'] = get_proximity(d['latitude'], d['longitude'])

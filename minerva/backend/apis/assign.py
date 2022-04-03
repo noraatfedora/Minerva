@@ -94,6 +94,7 @@ def setCoords(API_key):
                 coords = googleWrapper.geocode(
                     query=user['address'] + " WA", timeout=100)
             print("Name: " + str(user['name']))
+            print("full user data: " + str(user))
             print("Original address: " + str(user['address']))
             print("Coords: " + str(coords.latitude) + ", " + str(coords.longitude))
             distance = measure(
@@ -318,6 +319,8 @@ def createAllRoutesSeparatedCities(foodBankId, num_vehicles=101, stopConversion=
 
     # Distribute users into dictionary by city
     for user in usersList:
+        print(user['name'])
+        print(user['formattedAddress'])
         parsed = usaddress.tag(user['formattedAddress'])[0]
         city = parsed['PlaceName']
         #print("City: " + city)
