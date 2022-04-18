@@ -399,7 +399,7 @@ def create_doordash_spreadsheet():
                 else:
                     address = address + " " + parsed[attribute]
             d['Client Street Address*'] = address
-            d['Client Unit*'] = d.pop('address2')
+            d['Client Unit'] = d.pop('address2')
             phone = d.pop('cellPhone')
             # Strip all non-numeric characters
             phone = re.sub('[^0-9]', '', phone)
