@@ -64,7 +64,8 @@ def upload_data():
         form = request.form.to_dict()
 
         name = fetch_delete('name', form)
-        birthday = datetime.strptime(fetch_delete('birthday', form), "%Y-%m-%d")
+        birthday = datetime.strptime(
+            fetch_delete('birthday', form), "%Y-%m-%d")
         email = fetch_delete('email', form)
         password = fetch_delete('password', form)
         confirm = fetch_delete('confirm', form)
@@ -77,13 +78,12 @@ def upload_data():
 
         error = ""
 
-        if (not email == "") and (not email=="info@themadfseattle.org") and conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
+        if (not email == "") and (not email.lower() == "info@themadfseattle.org") and conn.execute(users.select().where(users.c.email == email)).fetchone() is not None:
             error += '\nUser {} is already registered.'.format(email)
-
-        if error == "":
+        else:
             conn.execute(users.insert(), name=name, birthday=birthday, email=email, address=address,
-                role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
-                zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), lastDelivered=datetime.now(), restrictions=dumps(restrictions))
+                         role="RECIEVER", instructions=instructions, cellPhone=cellPhone, homePhone=homePhone,
+                         zipCode=zipCode, completed=0, foodBankId=getFoodBank(address), lastDelivered=datetime.now(), restrictions=dumps(restrictions))
 
             user_id = conn.execute(users.select().where(
                 users.c.email == email)).fetchone().id
@@ -97,51 +97,64 @@ def upload_data():
 
             for i in range(0, len(keys), 2):
                 conn.execute(family_members.insert(), user=user_id,
-                            name=form[keys[i]], race=form[keys[i + 1]])
+                             name=form[keys[i]], race=form[keys[i + 1]])
         setCoords(environ['GOOGLE_API'])
-    
+
     else:
+        import traceback
         message = "Successfully uploaded the spreadsheet!"
-        try:
-            file = request.files.get('users')
-            filename = file.filename
-            splitname = filename.split(".")
-            fileType = splitname[len(splitname) - 1]
-            print(request.form)
-            delete = 'delete-checkbox' in request.form.keys()
-            header = int(request.form['header'])
-            disabledUsers = 'disabled-checkbox' in request.form.keys()
-            print("Form: " + str(request.form))
-            if request.form['spreadsheet-type'] == 'master-spreadsheet':
-                importMasterList(request, filename, fileType, delete, header, disabledUsers)
-            elif request.form['spreadsheet-type'] == 'routes-spreadsheet':
-                importRoutesList(request, filename, fileType, delete, header)
-            elif request.form['spreadsheet-type'] == 'family-member-data':
-                importFamilyMemberData(request, filename, fileType, delete, header)
-            setCoords(environ['GOOGLE_API'])
-            cities = ['Tacoma', 'University Place', 'Parkland', 'Spanaway', 'Lakewood', 'Puyallup', 'Fife', 'Federal Way', 'Algona', 'Pacific', 'Joint Base Lewis-McChord', 'Steilacoom']
-            disableOutOfRange(cities)
-        except Exception as e:
+        # try:
+        file = request.files.get('users')
+        filename = file.filename
+        splitname = filename.split(".")
+        fileType = splitname[len(splitname) - 1]
+        print(request.form)
+        delete = 'delete-checkbox' in request.form.keys()
+        header = int(request.form['header'])
+        disabledUsers = 'disabled-checkbox' in request.form.keys()
+        print("Form: " + str(request.form))
+        if request.form['spreadsheet-type'] == 'master-spreadsheet':
+            importMasterList(request, filename, fileType,
+                delete, header, disabledUsers)
+        elif request.form['spreadsheet-type'] == 'routes-spreadsheet':
+            importRoutesList(request, filename, fileType, delete, header)
+        elif request.form['spreadsheet-type'] == 'family-member-data':
+            importFamilyMemberData(
+                request, filename, fileType, delete, header)
+        setCoords(environ['GOOGLE_API'])
+        cities = ['Tacoma', 'University Place', 'Parkland', 'Spanaway', 'Lakewood', 'Puyallup',
+                    'Fife', 'Federal Way', 'Algona', 'Pacific', 'Joint Base Lewis-McChord', 'Steilacoom']
+        disableOutOfRange(cities)
+        '''
+        # except Exception as e:
             message = "Something went wrong while uploading the spreadsheet. You can view the documentation for correct formatting <a href='https://jaredgoodman03.github.io/Minerva-docs/admin-instructions#file-upload'> here. </a> Here's the error message, so you can figure out what's wrong: <br> <code> " + str(e) + "</code>"
-            
+        '''
+
     return render_template('upload_data.html', title='All Users', message=message)
+
 
 def importMasterList(request, filename, fileType, delete, header, disabledSheet=True):
     masterDf = pd.DataFrame()
-    conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
+    conn.execute(users.update().where(and_(users.c.foodBankId ==
+                 g.user.id, users.c.role == "RECIEVER")).values(inSpreadsheet=0))
     if (fileType == 'csv'):
-        masterDf = pd.read_csv(request.files['users'], header=header, keep_default_na=False)
+        masterDf = pd.read_csv(
+            request.files['users'], header=header, keep_default_na=False)
     else:
-        masterDf = pd.read_excel(request.files['users'].read(), sheet_name="Master list", header=header, keep_default_na=False)
+        masterDf = pd.read_excel(request.files['users'].read(
+        ), sheet_name="Master list", header=header, keep_default_na=False)
         masterDf = masterDf.dropna(thresh=2)
         if disabledSheet:
-            disabledDf = pd.read_excel(request.files['users'].read(), sheet_name="Disabled clients", header=header, keep_default_na=False)
+            disabledDf = pd.read_excel(request.files['users'].read(
+            ), sheet_name="Disabled clients", header=header, keep_default_na=False)
             disabledDf = disabledDf.dropna(thresh=2)
             addUsersFromDf(disabledDf, True)
     addUsersFromDf(masterDf, False)
 
     if delete:
-        conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
+        conn.execute(users.delete().where(and_(users.c.foodBankId == g.user.id,
+                     users.c.role == "RECIEVER", users.c.inSpreadsheet == 0)))
+
 
 def addUsersFromDf(df, disabled):
     disabledDate = date.today()
@@ -150,17 +163,21 @@ def addUsersFromDf(df, disabled):
             disabledDate = row['Last Name'].date()
             continue
         # This checks to make sure email is not nan
-        if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email']=="" and not row['Email']=="info@themadfseattle.org":
-            emailUser = conn.execute(users.select().where(users.c.email == row['Email'])).fetchone()
+        if 'Email' in row.keys() and (type(row['Email']) == str) and not row['Email'] == "" and not row['Email'] == "info@themadfseattle.org":
+            emailUser = conn.execute(users.select().where(
+                users.c.email == row['Email'])).fetchone()
             if emailUser is not None:
                 print("Skipping " + str(row) + " because of a duplicate email")
-                conn.execute(users.update().where(users.c.id == emailUser.id).values(inSpreadsheet=1, disabledDate=disabledDate, disabled=disabled))
+                conn.execute(users.update().where(users.c.id == emailUser.id).values(
+                    inSpreadsheet=1, disabledDate=disabledDate, disabled=disabled))
                 continue
         else:
-            nameUser = conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
+            nameUser = conn.execute(users.select().where(users.c.name == betterStr(
+                row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
             if nameUser is not None:
                 print("Found duplicate name in " + str(row))
-                conn.execute(users.update().where(users.c.id == nameUser.id).values(inSpreadsheet=1, disabledDate=disabledDate, disabled=disabled))
+                conn.execute(users.update().where(users.c.id == nameUser.id).values(
+                    inSpreadsheet=1, disabledDate=disabledDate, disabled=disabled))
                 continue
         if 'state' not in row.keys():
             state = 'WA'
@@ -172,43 +189,53 @@ def addUsersFromDf(df, disabled):
         else:
             hh_size = row['Household Size']
         conn.execute(users.insert(),
-                    name=betterStr(row['First Name']) + " " + betterStr(row['Last Name']),
-                    email=betterStr(row['Email']),
-                    address=betterStr(row['Address']),
-                    address2=betterStr(row['Apt']),
-                    role="RECIEVER",
-                    instructions=betterStr(row['Notes']),
-                    cellPhone=betterStr(row['Phone']),
-                    zipCode=betterStr(row['Zip']),
-                    city=betterStr(row['City']),
-                    state=state,
-                    householdSize=hh_size,
-                    inSpreadsheet=1,
-                    foodBankId=g.user.id,
-                    disabled=disabled,
-                    disabledDate=disabledDate)
-    
+                     name=betterStr(row['First Name']) +
+                     " " + betterStr(row['Last Name']),
+                     email=betterStr(row['Email']),
+                     address=betterStr(row['Address']),
+                     address2=betterStr(row['Apt']),
+                     role="RECIEVER",
+                     instructions=betterStr(row['Notes']),
+                     cellPhone=betterStr(row['Phone']),
+                     zipCode=betterStr(row['Zip']),
+                     city=betterStr(row['City']),
+                     state=state,
+                     householdSize=hh_size,
+                     inSpreadsheet=1,
+                     foodBankId=g.user.id,
+                     disabled=disabled,
+                     disabledDate=disabledDate)
+
+
 def disableOutOfRange(cities):
-    usersList = conn.execute(users.select().where(and_(users.c.foodBankId==g.user.id, users.c.disabled==False, users.c.role=="RECIEVER")))
+    usersList = conn.execute(users.select().where(and_(
+        users.c.foodBankId == g.user.id, users.c.disabled == False, users.c.role == "RECIEVER")))
     for user in usersList:
         disable = True
+        print('User: ' + user.name) 
         for city in cities:
-            if city in user.formattedAddress:
+            if (not user.city or city in user.city) or (user.formattedAddress and city in user.formattedAddress):
                 disable = False
         if disable:
-            conn.execute(users.update().where(users.c.id==user.id).values(disabled=True, disabledDate=date.today()))
+            conn.execute(users.update().where(users.c.id == user.id).values(
+                disabled=True, disabledDate=date.today()))
+
 
 def betterStr(value):
-    if value is None or value=="nan":
+    if value is None or value == "nan":
         return ""
     else:
         return str(value)
+
+
 def importRoutesList(request, filename, fileType, delete, header):
     print(type(request.files['users']))
     xlFile = pd.ExcelFile(request.files['users'])
     sheets = xlFile.sheet_names
-    dfDict = pd.read_excel(request.files['users'], sheet_name=sheets, header=header)
-    conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
+    dfDict = pd.read_excel(
+        request.files['users'], sheet_name=sheets, header=header)
+    conn.execute(users.update().where(and_(users.c.foodBankId ==
+                 g.user.id, users.c.role == "RECIEVER")).values(inSpreadsheet=0))
     for key in dfDict:
         df = dfDict[key]
         for index, row in df.iterrows():
@@ -219,38 +246,46 @@ def importRoutesList(request, filename, fileType, delete, header):
                 else:
                     fullName = row['First Name']
                 if conn.execute(users.select().where(users.c.name == fullName)).fetchone() is not None:
-                    conn.execute(users.update().where(users.c.name == fullName).values(inSpreadsheet=1))
+                    conn.execute(users.update().where(
+                        users.c.name == fullName).values(inSpreadsheet=1))
                 else:
                     conn.execute(users.insert(),
-                        name=str(row['First Name']) + " " + str(row['Last Name']),
-                        email="",
-                        address=row['Address 1'],
-                        address2=row['Apt'],
-                        role="RECIEVER",
-                        instructions=row['Notes'],
-                        cellPhone=row['Phone Number'],
-                        zipCode=row['Zip'],
-                        city=row['City'],
-                        state=row['State'],
-                        householdSize=-1,
-                        inSpreadsheet=1,
-                        foodBankId=getFoodBank(row['Address 1']))
+                                 name=str(row['First Name']) +
+                                 " " + str(row['Last Name']),
+                                 email="",
+                                 address=row['Address 1'],
+                                 address2=row['Apt'],
+                                 role="RECIEVER",
+                                 instructions=row['Notes'],
+                                 cellPhone=row['Phone Number'],
+                                 zipCode=row['Zip'],
+                                 city=row['City'],
+                                 state=row['State'],
+                                 householdSize=-1,
+                                 inSpreadsheet=1,
+                                 foodBankId=getFoodBank(row['Address 1']))
     if delete:
-        conn.execute(users.delete().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER", users.c.inSpreadsheet==0)))
+        conn.execute(users.delete().where(and_(users.c.foodBankId == g.user.id,
+                     users.c.role == "RECIEVER", users.c.inSpreadsheet == 0)))
+
 
 def importFamilyMemberData(request, filename, fileType, delete, header):
     df = pd.DataFrame()
-    conn.execute(users.update().where(and_(users.c.foodBankId==g.user.id, users.c.role=="RECIEVER")).values(inSpreadsheet=0))
+    conn.execute(users.update().where(and_(users.c.foodBankId ==
+                 g.user.id, users.c.role == "RECIEVER")).values(inSpreadsheet=0))
     if (fileType == 'csv'):
-        df = pd.read_csv(request.files['users'], header=header, keep_default_na=False)
+        df = pd.read_csv(request.files['users'],
+                         header=header, keep_default_na=False)
     else:
         print(dir(request.files['users']))
-        df = pd.read_excel(request.files['users'].read(), sheet_name="Master list", header=header, keep_default_na=False)
+        df = pd.read_excel(request.files['users'].read(
+        ), sheet_name="Master list", header=header, keep_default_na=False)
         df = df.dropna(thresh=2)
         print("asdf")
     for index, row in df.iterrows():
-        row_rp = conn.execute(users.select().where(users.c.name == betterStr(row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
-        if row_rp == None: # skip people that have been deleted
+        row_rp = conn.execute(users.select().where(users.c.name == betterStr(
+            row['First Name']) + " " + betterStr(row['Last Name']))).fetchone()
+        if row_rp == None:  # skip people that have been deleted
             continue
         for x in range(1, 16):
             race = row['Person ' + str(x) + ' Race/Ethnicity']
@@ -259,17 +294,19 @@ def importFamilyMemberData(request, filename, fileType, delete, header):
             race = race.split(' & ')
             dob = row['Person ' + str(x) + ' date of birth']
             print('Data: ' + str((row['Person ' + str(x) + ' date of birth'])))
-            if type(dob) == str: # This usually happens when someone only enters the last 4 digits of a date, which breaks the date formatting, so we'll just guess if it's post or pre 2000
-                if int(dob[-2:]) < 30: # Using 30 for future proofing, if it's post-2030 why are you still using this software
+            if type(dob) == str:  # This usually happens when someone only enters the last 4 digits of a date, which breaks the date formatting, so we'll just guess if it's post or pre 2000
+                # Using 30 for future proofing, if it's post-2030 why are you still using this software
+                if int(dob[-2:]) < 30:
                     dob = dob[:-4] + '20' + dob[-2:]
                 else:
                     dob = dob[:-4] + '19' + dob[-2:]
                 print(dob)
                 dob = datetime.strptime(dob, '%m/%d/%Y')
-            
+
             dob = dob.date()
-            conn.execute(family_members.insert().values(user=row_rp.id, dob=dob, race=dumps(race)))
-    
+            conn.execute(family_members.insert().values(
+                user=row_rp.id, dob=dob, race=dumps(race)))
+
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -278,7 +315,8 @@ def register():
         form = request.form.to_dict()
 
         name = fetch_delete('name', form)
-        birthday = datetime.strptime(fetch_delete('birthday', form), "%Y-%m-%d")
+        birthday = datetime.strptime(
+            fetch_delete('birthday', form), "%Y-%m-%d")
         email = fetch_delete('email', form)
         password = fetch_delete('password', form)
         confirm = fetch_delete('confirm', form)

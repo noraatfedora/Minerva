@@ -91,13 +91,16 @@
       aria-controls="collapse-stats">
       Route statistics
     </a>
+    <a href='/doordash-spreadsheet' value="doordash" name="doordash"
+      class="btn bw-btn">Export extra clients for DoorDash</a>
+
     <div class="spacer"></div>
     <div class="collapse-container">
       <div id="collapse-advanced" class="collapse inline">
         <div class="card text-left task-incomplete">
           <div class="card-header">
             Maximum number of routes:
-            <input type="number" class="form-control-aesthetic col-md-2" value="100" id="num_vehicles"
+            <input type="number" class="form-control-aesthetic col-md-2" value="6" id="num_vehicles"
               name="num_vehicles" />
             <small><a href="javascript:explainMaxRoutes()">What's this?</a></small>
           </div>
@@ -122,9 +125,9 @@
           </div>
           <div class="card-header">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="separateCities" value="separate_cities"
-                id="separate_cities">
-              <label class="form-check-label" for="separateCities">One city per route</label>
+              <input class="form-check-input" type="checkbox" name="separate_cities" value="separate_cities"
+                id="separate_cities" checked>
+              <label class="form-check-label" for="separate_cities">One city per route</label>
               <small><a href="javascript:explainSeparateCities()">What's this?</a></small>
             </div>
           </div>
