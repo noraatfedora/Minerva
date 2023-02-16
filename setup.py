@@ -9,7 +9,7 @@ setup(
     install_requires=[
         'Flask==1.1.2',
         'SQLAlchemy==1.3.18',
-        'Werkzeug==1.0.1',
+        'Werkzeug==2.2.3',
         'barcode_generator==0.1rc15',
         'click==7.1.2',
         'babel',
