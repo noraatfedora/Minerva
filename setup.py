@@ -7,7 +7,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'Flask==1.1.2',
+        'Flask==2.3.2',
         'SQLAlchemy==1.3.18',
         'Werkzeug==1.0.1',
         'barcode_generator==0.1rc15',
